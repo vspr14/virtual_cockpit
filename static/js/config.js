@@ -1,0 +1,14 @@
+const JOYSTICK_LETHARGY = 0.6;
+const JOYSTICK_DEADZONE = 0.05;
+
+const VJOY_MAP = {
+    PARKING_BRAKE: 1,
+    REVERSE_TOGGLE: 2,
+    IDLE_BUTTON: 3,
+    GEAR_UP: 4,
+    GEAR_DOWN: 4,
+    CAM_UP: 5,
+    CAM_DOWN: 6,
+    CAM_MOVE_MODE: 8,
+    CAM_BASE: 10 
+};

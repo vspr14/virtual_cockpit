@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MSFS Glass Cockpit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="screen-layout">
+        <div class="left-column">
+            <div class="cam-control-stack">
+                <div class="v-btns">
+                    <button id="camUp" class="nav-btn">UP</button>
+                    <button id="camDown" class="nav-btn">DOWN</button>
+                </div>
+                <div class="joy-container small-joy">
+                    <span class="label">CAM PAN</span>
+                    <div class="joy-zone" id="camJoy">
+                        <div class="joy-puck" id="camPuck"></div>
+                    </div>
+                    <div style="display: flex; gap: 8px; margin-top: 8px;">
+                        <button id="moveMode" class="sub-btn blue-btn" style="flex: 1; padding: 18px 0; font-size: 1em;">MOVE</button>
+                        <button id="resetCam" class="sub-btn blue-btn" style="flex: 1; padding: 18px 0; font-size: 1em;">RESET</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="joy-zone-container stick-right">
+                <span class="label">FLIGHT STICK</span>
+                <div class="joy-zone" id="joyZone">
+                    <div class="joy-puck" id="joyPuck"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="center-zone">
+            <div class="nav-bar">
+                <button id="showCams" class="nav-btn active">CAMERAS</button>
+                <button id="showControls" class="nav-btn">CONTROLS</button>
+            </div>
+
+            <div class="grid-container">
+                <div id="camGrid" class="grid-layer active"></div>
+                
+                <div id="controlGrid" class="grid-layer ap-panel">
+                    <div class="ap-module">
+                        <div class="ap-display">
+                            <span class="label">SPD</span>
+                            <div class="ap-value" id="spdVal">250</div>
+                        </div>
+                        <div class="knob-container">
+                            <div class="rotary-knob" id="spdKnob">
+                                <div class="knob-indicator"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ap-module">
+                        <div class="ap-display">
+                            <span class="label">HDG</span>
+                            <div class="ap-value" id="hdgVal">000</div>
+                        </div>
+                        <div class="knob-container">
+                            <div class="rotary-knob" id="hdgKnob">
+                                <div class="knob-indicator"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ap-module">
+                        <div class="ap-display">
+                            <span class="label">ALT</span>
+                            <div class="ap-value" id="altVal">10000</div>
+                        </div>
+                        <div class="knob-container">
+                            <div class="rotary-knob" id="altKnob">
+                                <div class="knob-indicator"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="ap-module">
+                        <div class="ap-display">
+                            <span class="label">V/S</span>
+                            <div class="ap-value" id="vsVal">0</div>
+                        </div>
+                        <div class="knob-container">
+                            <div class="rotary-knob" id="vsKnob">
+                                <div class="knob-indicator"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                
+            </div>
+            <div class="pedestal-row">
+               
+                <div class="b777-gear-container">
+                    <span class="label">GEAR</span>
+                    <div class="b777-gear-track">
+                        <div id="gearHandle" class="b777-gear-arm gear-up">
+                            <div class="b777-gear-knob"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="v-group" style="padding-left: 30px;">
+                    <span class="label">FLAPS</span>
+                    <div class="center-v-wrap">
+                        <div id="flapLabels" class="flap-labels-container"></div>
+                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="fSlider">
+                    </div>
+                    <div class="spacer-btn"></div>
+                </div>
+
+                <div class="v-group">
+                    <span class="label">SPOIL</span>
+                    <div class="center-v-wrap">
+                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="sSlider">
+                    </div>
+                    <button id="armBtn" class="sub-btn blue-btn">ARM SPOILERS</button>
+                </div>
+
+                <div class="v-group">
+                    <span class="label">BRAKE</span>
+                    <div class="center-v-wrap">
+                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="bSlider">
+                    </div>
+                    <button id="pbBtn" class="sub-btn red-btn">PARKING BRAKE</button>
+                </div>
+            </div>
+
+            <div class="rudder-card">
+                <span class="label">RUDDER CONTROL</span>
+                <input type="range" min="0" max="1" step="0.001" value="0.5" id="rSlider">
+            </div>
+        </div>
+
+        <div class="throttle-zone">
+            <span class="label">THROTTLE</span>
+            <div class="t-v-wrap">
+                <div id="throttleLabels" class="throttle-labels-container"></div>
+                <input type="range" min="0" max="1" step="0.001" value="0" class="t-slider" id="tSlider">
+            </div>
+            <button id="idleBtn" class="btn-rev" style="background: #444; margin-bottom: 30px;">IDLE</button>
+            <button id="revBtn" class="btn-rev">REVERSE</button>
+        </div>
+    </div>
+
+    <script>window.DEBUG_UI = {{ 'true' if debug_ui else 'false' }};</script>
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script src="{{ url_for('serve_profile', profile_name=profile_name + '.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
