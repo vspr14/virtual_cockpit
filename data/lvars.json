@@ -1,23 +1,28 @@
 {
-  "vars": [
-    { "key": "fcu_spd", "lvar": "L:N_FCU_SPEED", "note":""},
-    { "key": "fcu_spd_inc", "lvar": "(L:E_FCU_SPEED) ++ (>L:E_FCU_SPEED)", "note":"do not use"},
-    { "key": "fcu_spd_dec", "lvar": "(L:E_FCU_SPEED) -- (<L:E_FCU_SPEED)", "note":"do not use"},
-    { "key": "fcu_hdg", "lvar": "L:N_FCU_HEADING", "note":""},
-    { "key": "fcu_hdg_inc", "lvar": "(L:E_FCU_HEADING) ++ (>L:E_FCU_HEADING)", "note":"do not use"},
-    { "key": "fcu_hdg_dec", "lvar": "(L:E_FCU_HEADING) -- (<L:E_FCU_HEADING)", "note":"do not use"},
-    { "key": "fcu_alt", "lvar": "L:FNX_FCU_ALT", "note":""},
-    { "key": "fcu_alt_inc", "lvar": "(L:E_FCU_ALT) ++ (>L:E_FCU_ALT)", "note":"do not use"},
-    { "key": "fcu_alt_dec", "lvar": "(L:E_FCU_ALT) -- (<L:E_FCU_ALT)", "note":"do not use"},
-    { "key": "fcu_vs", "lvar": "L:N_FCU_VERTICAL_SPEED", "note":""},
-    { "key": "fcu_vs_inc", "lvar": "(L:E_FCU_VS) ++ (>L:E_FCU_VS)", "note":"do not use"},
-    { "key": "fcu_vs_dec", "lvar": "(L:E_FCU_VS) -- (<L:E_FCU_VS)", "note":"do not use"},
-    { "key": "gear_handle", "lvar": "L:S_MIP_GEAR", "note":"0 when up and 1 when down"},
-    {"key": "brake_left", "lvar": "L:N_FC_BRAKE_LEFT_CAPT", "note":"0 to 1"},
-    { "key": "spoilers_handle", "lvar": "L:A_FC_SPEEDBRAKE", "note":"1 to 3 for range and 0 when armed"},
-    { "key": "flaps_handle", "lvar": "L:S_FC_FLAPS", "note":"0 to 4"},
-    {"key":"parking_brake", "lvar": "L:S_MIP_PARKING_BRAKE", "note":"1 or 0"},
-    {"key":"throttle_left", "lvar": "L:A_FC_THROTTLE_LEFT_INPUT", "note":"2 -5 FOR 0 TO 100% AND 1 idle rev to 0 FOR max REVERSE"},
-    { "key": "ap_disc_capt", "lvar": "L:S_FC_CAPT_INST_DISCONNECT", "note":"press to disconnect AP"}
-  ]
+  "profiles": {
+    "fenix_a320": {
+      "vars": [
+        { "key": "ap_state", "lvar": "L:S_FCU_AP1", "note":"1 or 0"},
+        { "key": "gear_handle", "lvar": "L:S_MIP_GEAR", "note":"0 when up and 1 when down"},
+        {"key": "brake_left", "lvar": "L:N_FC_BRAKE_LEFT_CAPT", "note":"0 to 1"},
+        { "key": "spoilers_handle", "lvar": "L:A_FC_SPEEDBRAKE", "note":"1 to 3 for range and 0 when armed"},
+        { "key": "flaps_handle", "lvar": "L:S_FC_FLAPS", "note":"0 to 4"},
+        {"key":"parking_brake", "lvar": "L:S_MIP_PARKING_BRAKE", "note":"1 or 0"},
+        {"key":"throttle_left", "lvar": "L:A_FC_THROTTLE_LEFT_INPUT", "note":"2 -5 FOR 0 TO 100% AND 1 idle rev to 0 FOR max REVERSE"},
+        { "key": "ap_engage", "lvar": "(L:S_FCU_AP1) ++ (>L:S_FCU_AP1)", "note":"press to engage AP"},
+        { "key": "ap_state_off", "lvar": "L:S_FCU_AP1", "note":"set AP off"},
+        { "key": "ap_disconnect", "lvar": "L:S_FC_CAPT_INST_DISCONNECT", "note":"press to disconnect AP"}
+      ]
+    },
+    "pmdg_737": {
+      "vars": [
+        { "key": "ap_master", "lvar": "A:AUTOPILOT MASTER", "note":"1 or 0"}
+      ]
+    },
+    "pmdg_777": {
+      "vars": [
+        { "key": "ap_master", "lvar": "A:AUTOPILOT MASTER", "note":"1 or 0"}
+      ]
+    }
+  }
 }

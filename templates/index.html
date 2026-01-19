@@ -250,12 +250,25 @@
                     updateDots();
 
                     if(pin.length === 4) {
-                        // Mock verification - Replace with your fetch if needed
-                        if(pin === '1234') { 
+                        fetch('/verify_pin', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ pin })
+                        })
+                            .then((res) => {
+                                if (!res.ok) throw new Error('bad');
+                                return res.json();
+                            })
+                            .then((data) => {
+                                if (data && data.ok) {
                             showButtons();
                         } else {
                             showError('Incorrect PIN');
                         }
+                            })
+                            .catch(() => {
+                                showError('Incorrect PIN');
+                            });
                     }
                 });
             });
@@ -309,12 +322,25 @@
                     updateDots();
 
                     if(pin.length === 4) {
-                        // Mock verification - Replace with your fetch if needed
-                        if(pin === '1234') { 
+                        fetch('/verify_pin', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ pin })
+                        })
+                            .then((res) => {
+                                if (!res.ok) throw new Error('bad');
+                                return res.json();
+                            })
+                            .then((data) => {
+                                if (data && data.ok) {
                             showButtons();
                         } else {
                             showError('Incorrect PIN');
                         }
+                            })
+                            .catch(() => {
+                                showError('Incorrect PIN');
+                            });
                     }
                 });
             });

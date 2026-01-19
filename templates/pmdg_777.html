@@ -6,14 +6,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/tracking@1.1.3/build/tracking-min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tracking@1.1.3/build/data/face-min.js"></script>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
 <body>
     <div class="screen-layout">
         <div class="left-column">
             <div class="cam-control-stack">
-                <div class="v-btns">
-                    <button id="camUp" class="nav-btn">UP</button>
-                    <button id="camDown" class="nav-btn">DOWN</button>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <button id="headtrackSettingsBtn" class="headtrack-settings-btn">⚙️</button>
+                    <button id="webcamStreamBtn" class="webcam-stream-btn">CAM</button>
+                    <button id="headTrackBtn" class="headtrack-btn">📹</button>
                 </div>
                 <div class="joy-container small-joy">
                     <span class="label">CAM PAN</span>
@@ -38,63 +42,11 @@
         <div class="center-zone">
             <div class="nav-bar">
                 <button id="showCams" class="nav-btn active">CAMERAS</button>
-                <button id="showControls" class="nav-btn">CONTROLS</button>
+                <button id="showOfp" class="nav-btn">OFP</button>
             </div>
 
             <div class="grid-container">
                 <div id="camGrid" class="grid-layer active"></div>
-                
-                <div id="controlGrid" class="grid-layer ap-panel">
-                    <div class="ap-module">
-                        <div class="ap-display">
-                            <span class="label">SPD</span>
-                            <div class="ap-value" id="spdVal">250</div>
-                        </div>
-                        <div class="knob-container">
-                            <div class="rotary-knob" id="spdKnob">
-                                <div class="knob-indicator"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ap-module">
-                        <div class="ap-display">
-                            <span class="label">HDG</span>
-                            <div class="ap-value" id="hdgVal">000</div>
-                        </div>
-                        <div class="knob-container">
-                            <div class="rotary-knob" id="hdgKnob">
-                                <div class="knob-indicator"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ap-module">
-                        <div class="ap-display">
-                            <span class="label">ALT</span>
-                            <div class="ap-value" id="altVal">10000</div>
-                        </div>
-                        <div class="knob-container">
-                            <div class="rotary-knob" id="altKnob">
-                                <div class="knob-indicator"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ap-module">
-                        <div class="ap-display">
-                            <span class="label">V/S</span>
-                            <div class="ap-value" id="vsVal">0</div>
-                        </div>
-                        <div class="knob-container">
-                            <div class="rotary-knob" id="vsKnob">
-                                <div class="knob-indicator"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                
             </div>
             <div class="pedestal-row">
                
@@ -131,6 +83,12 @@
                     </div>
                     <button id="pbBtn" class="sub-btn red-btn">PARKING BRAKE</button>
                 </div>
+                <div class="ap-btn-wrap">
+                    <button id="apBtn" class="ap-btn">
+                        <div id="apIndicator" class="ap-indicator"></div>
+                        A/P
+                    </button>
+                </div>
             </div>
 
             <div class="rudder-card">
@@ -146,6 +104,67 @@
             </div>
             <button id="idleBtn" class="btn-rev" style="background: #444; margin-bottom: 30px;">IDLE</button>
             <button id="revBtn" class="btn-rev">REVERSE</button>
+        </div>
+    </div>
+
+    <div id="headtrackSettingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Head Tracking Settings</h2>
+                <button class="modal-close" id="headtrackSettingsClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="settings-group">
+                    <label>OpenTrack Host:</label>
+                    <input type="text" id="headtrackHost" value="localhost" />
+                </div>
+                <div class="settings-group">
+                    <label>Port:</label>
+                    <input type="number" id="headtrackPort" value="5001" />
+                </div>
+                <div class="settings-group">
+                    <label>Pitch Sensitivity: <span id="pitchSensVal">50</span></label>
+                    <input type="range" id="pitchSens" min="0" max="200" step="1" value="50" />
+                </div>
+                <div class="settings-group">
+                    <label>Roll Sensitivity: <span id="rollSensVal">50</span></label>
+                    <input type="range" id="rollSens" min="0" max="200" step="1" value="50" />
+                </div>
+                <div class="settings-group">
+                    <label>Yaw Sensitivity: <span id="yawSensVal">50</span></label>
+                    <input type="range" id="yawSens" min="0" max="200" step="1" value="50" />
+                </div>
+                <div class="settings-group">
+                    <label>X Sensitivity: <span id="xSensVal">50</span></label>
+                    <input type="range" id="xSens" min="0" max="200" step="1" value="50" />
+                </div>
+                <div class="settings-group">
+                    <label>Y Sensitivity: <span id="ySensVal">50</span></label>
+                    <input type="range" id="ySens" min="0" max="200" step="1" value="50" />
+                </div>
+                <div class="settings-group">
+                    <label>Z Sensitivity: <span id="zSensVal">50</span></label>
+                    <input type="range" id="zSens" min="0" max="200" step="1" value="50" />
+                </div>
+                <div class="settings-group">
+                    <label>Smoothing: <span id="smoothingVal">0.0</span></label>
+                    <input type="range" id="smoothing" min="0" max="1" step="0.05" value="0.0" />
+                </div>
+                <div class="settings-group">
+                    <label>Invert:</label>
+                    <div class="invert-checkboxes">
+                        <label><input type="checkbox" id="invertPitch" /> Pitch</label>
+                        <label><input type="checkbox" id="invertRoll" /> Roll</label>
+                        <label><input type="checkbox" id="invertYaw" /> Yaw</label>
+                        <label><input type="checkbox" id="invertX" /> X</label>
+                        <label><input type="checkbox" id="invertY" /> Y</label>
+                        <label><input type="checkbox" id="invertZ" /> Z</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="headtrackSettingsSave" class="btn-primary">Save</button>
+            </div>
         </div>
     </div>
 

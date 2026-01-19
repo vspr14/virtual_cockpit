@@ -13,12 +13,14 @@ MAPPING_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "data", "lvars.json"
 _mf = None
 _vr = None
 
-def _load_mapping():
+def _load_mapping(profile_name):
     if not os.path.exists(MAPPING_PATH):
         return []
     with open(MAPPING_PATH, "r") as handle:
         data = json.load(handle)
-    return data.get("vars", [])
+    profiles = data.get("profiles", {})
+    profile = profiles.get(profile_name, {})
+    return profile.get("vars", [])
 
 def _get_mf():
     global _mf, _vr
@@ -41,10 +43,10 @@ def _find_lvar(vars_list, key):
             return item.get("lvar")
     return None
 
-def read_lvars_payload():
+def read_lvars_payload(profile_name):
     if SimConnectMobiFlight is None or MobiFlightVariableRequests is None:
         return {"error": "mobiflight_module_not_installed"}
-    vars_list = _load_mapping()
+    vars_list = _load_mapping(profile_name)
     if not vars_list:
         return {"error": "no_vars_configured"}
     _, vr = _get_mf()
@@ -64,10 +66,10 @@ def read_lvars_payload():
         return {"error": "no_vars_configured"}
     return result
 
-def write_lvar_value(key, value):
+def write_lvar_value(profile_name, key, value):
     if SimConnectMobiFlight is None or MobiFlightVariableRequests is None:
         return {"error": "mobiflight_module_not_installed"}
-    vars_list = _load_mapping()
+    vars_list = _load_mapping(profile_name)
     lvar = _find_lvar(vars_list, key)
     if not lvar:
         return {"error": "unknown_key"}
@@ -79,10 +81,10 @@ def write_lvar_value(key, value):
     vr.set(cmd)
     return {"status": "ok"}
 
-def read_lvar_value(key):
+def read_lvar_value(profile_name, key):
     if SimConnectMobiFlight is None or MobiFlightVariableRequests is None:
         return {"error": "mobiflight_module_not_installed"}
-    vars_list = _load_mapping()
+    vars_list = _load_mapping(profile_name)
     lvar = _find_lvar(vars_list, key)
     if not lvar:
         return {"error": "unknown_key"}
@@ -94,10 +96,10 @@ def read_lvar_value(key):
     expr = _normalize_expr(lvar)
     return {"value": vr.get(expr)}
 
-def step_lvar_value(key, delta):
+def step_lvar_value(profile_name, key, delta):
     if SimConnectMobiFlight is None or MobiFlightVariableRequests is None:
         return {"error": "mobiflight_module_not_installed"}
-    vars_list = _load_mapping()
+    vars_list = _load_mapping(profile_name)
     lvar = _find_lvar(vars_list, key)
     if not lvar:
         return {"error": "unknown_key"}

@@ -78,6 +78,17 @@ Open in a browser:
 http://localhost:5000
 ```
 
+### Webcam stream to OBS Virtual Camera
+1. Start the Flask app on the Windows PC.
+2. Open the site on the iPad and enable the CAM button.
+3. In OBS, add a Browser Source with this URL:
+```
+http://<pc-ip>:5000/stream.mjpeg
+```
+4. Start OBS Virtual Camera.
+5. In OpenTrack, select OBS Virtual Camera as the input camera.
+6. Use NeuralNet or PointTracker as usual.
+
 ## 4. What each thing does (including folder structure)
 
 ```
