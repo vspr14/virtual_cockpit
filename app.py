@@ -31,10 +31,200 @@ device_2 = None
 aq = None
 current_wheel_brake = 0
 PIN = '1234'
+PROFILE_JSON_DATA = {
+    'fenix_a320': {
+        'name': 'Fenix A320',
+        'ui': {
+            'camera_config': [
+                {'id': 1, 'name': 'Captain'},
+                {'id': 2, 'name': 'Left Engine'},
+                {'id': 3, 'name': 'Left Wing'},
+                {'id': 4, 'name': 'Right Engine'},
+                {'id': 5, 'name': 'Right Wing'},
+                {'id': 6, 'name': 'EFB'},
+                {'id': 7, 'name': 'FMC'},
+                {'id': 8, 'name': 'Overhead'},
+                {'id': 9, 'name': 'MCP'},
+                {'id': 10, 'name': 'Custom'}
+            ],
+            'flap_detents': [
+                {'index': 0, 'label': '0', 'val': 0.0},
+                {'index': 1, 'label': '1', 'val': 0.25},
+                {'index': 2, 'label': '2', 'val': 0.5},
+                {'index': 3, 'label': '3', 'val': 0.75},
+                {'index': 4, 'label': 'FULL', 'val': 1.0}
+            ],
+            'throttle_detents': [
+                {'label': 'CLB', 'val': 0.70},
+                {'label': 'FLX/MCT', 'val': 0.85},
+                {'label': 'TO/GA', 'val': 1.0}
+            ],
+            'control_sensitivity': 1,
+            'control_response': 1.6,
+            'throttle_detent_snap': 0.05,
+            'reverse_behavior': {
+                'spool_down_ms': 0,
+                'idle_floor': 0.007,
+                'idle_rev': 0.0065,
+                'idle_bump_up': 0.05,
+                'idle_bump_ms': 150,
+                'idle_bump_down': 0.0005
+            },
+            'arm_spoilers_button': True
+        },
+        'mappings': {
+            'vjoy': {
+                'PARKING_BRAKE': 1,
+                'REVERSE_TOGGLE': 2,
+                'IDLE_BUTTON': 3,
+                'ARM_SPOILERS': 35,
+                'GEAR_UP': 4,
+                'GEAR_DOWN': 4,
+                'AUTOPILOT': 5,
+                'CAM_MOVE_MODE': 8,
+                'CAM_BASE': 10
+            }
+        }
+    },
+    'fenix_a350': {
+        'name': 'Fenix A350',
+        'ui': {
+            'camera_config': [
+                {'id': 1, 'name': 'Captain'},
+                {'id': 2, 'name': 'Left Engine'},
+                {'id': 3, 'name': 'Left Wing'},
+                {'id': 4, 'name': 'Right Engine'},
+                {'id': 5, 'name': 'Right Wing'},
+                {'id': 6, 'name': 'EFB'},
+                {'id': 7, 'name': 'FMC'},
+                {'id': 8, 'name': 'Overhead'},
+                {'id': 9, 'name': 'MCP'},
+                {'id': 10, 'name': 'Custom'}
+            ],
+            'flap_detents': [
+                {'index': 0, 'label': '0', 'val': 0.0},
+                {'index': 1, 'label': '1', 'val': 0.25},
+                {'index': 2, 'label': '2', 'val': 0.5},
+                {'index': 3, 'label': '3', 'val': 0.75},
+                {'index': 4, 'label': 'FULL', 'val': 1.0}
+            ],
+            'throttle_detents': [
+                {'label': 'CLB', 'val': 0.70},
+                {'label': 'FLX/MCT', 'val': 0.85},
+                {'label': 'TO/GA', 'val': 1.0}
+            ],
+            'control_sensitivity': 1,
+            'control_response': 1.6,
+            'throttle_detent_snap': 0.05,
+            'reverse_behavior': {
+                'spool_down_ms': 0,
+                'idle_floor': 0.007,
+                'idle_rev': 0.0065,
+                'idle_bump_up': 0.05,
+                'idle_bump_ms': 150,
+                'idle_bump_down': 0.0005
+            },
+            'arm_spoilers_button': True
+        },
+        'mappings': {
+            'vjoy': {
+                'PARKING_BRAKE': 1,
+                'REVERSE_TOGGLE': 2,
+                'IDLE_BUTTON': 3,
+                'ARM_SPOILERS': 35,
+                'GEAR_UP': 4,
+                'GEAR_DOWN': 4,
+                'AUTOPILOT': 5,
+                'CAM_MOVE_MODE': 8,
+                'CAM_BASE': 10
+            }
+        }
+    },
+    'pmdg_737': {
+        'name': 'PMDG 737',
+        'ui': {
+            'camera_config': [
+                {'id': 1, 'name': 'Captain'},
+                {'id': 2, 'name': 'Left Engine'},
+                {'id': 3, 'name': 'Left Wing'},
+                {'id': 4, 'name': 'Right Engine'},
+                {'id': 5, 'name': 'Right Wing'},
+                {'id': 6, 'name': 'EFB'},
+                {'id': 7, 'name': 'FMC'},
+                {'id': 8, 'name': 'Overhead'},
+                {'id': 9, 'name': 'MCP'},
+                {'id': 10, 'name': 'Custom'}
+            ],
+            'flap_detents': [
+                {'index': 0, 'label': 'UP', 'val': 0.0},
+                {'index': 1, 'label': '1', 'val': 0.16},
+                {'index': 2, 'label': '5', 'val': 0.33},
+                {'index': 3, 'label': '15', 'val': 0.50},
+                {'index': 4, 'label': '20', 'val': 0.66},
+                {'index': 5, 'label': '25', 'val': 0.83},
+                {'index': 6, 'label': '30', 'val': 1.0}
+            ]
+        },
+        'mappings': {
+            'vjoy': {
+                'PARKING_BRAKE': 1,
+                'REVERSE_TOGGLE': 2,
+                'IDLE_BUTTON': 3,
+                'GEAR_UP': 4,
+                'GEAR_DOWN': 4,
+                'AUTOPILOT': 5,
+                'CAM_UP': 6,
+                'CAM_DOWN': 7,
+                'CAM_MOVE_MODE': 8,
+                'CAM_BASE': 10
+            }
+        }
+    },
+    'pmdg_777': {
+        'name': 'PMDG 777',
+        'ui': {
+            'camera_config': [
+                {'id': 1, 'name': 'Captain'},
+                {'id': 2, 'name': 'Left Engine'},
+                {'id': 3, 'name': 'Left Wing'},
+                {'id': 4, 'name': 'Right Engine'},
+                {'id': 5, 'name': 'Right Wing'},
+                {'id': 6, 'name': 'EFB'},
+                {'id': 7, 'name': 'FMC'},
+                {'id': 8, 'name': 'Overhead'},
+                {'id': 9, 'name': 'MCP'},
+                {'id': 10, 'name': 'Custom'}
+            ],
+            'flap_detents': [
+                {'index': 0, 'label': 'UP', 'val': 0.0},
+                {'index': 1, 'label': '1', 'val': 0.16},
+                {'index': 2, 'label': '5', 'val': 0.33},
+                {'index': 3, 'label': '15', 'val': 0.50},
+                {'index': 4, 'label': '20', 'val': 0.66},
+                {'index': 5, 'label': '25', 'val': 0.83},
+                {'index': 6, 'label': '30', 'val': 1.0}
+            ]
+        },
+        'mappings': {
+            'vjoy': {
+                'PARKING_BRAKE': 1,
+                'REVERSE_TOGGLE': 2,
+                'IDLE_BUTTON': 3,
+                'GEAR_UP': 4,
+                'GEAR_DOWN': 4,
+                'AUTOPILOT': 5,
+                'CAM_UP': 6,
+                'CAM_DOWN': 7,
+                'CAM_MOVE_MODE': 8,
+                'CAM_BASE': 10
+            }
+        }
+    }
+}
 
 @app.before_request
 def require_pin():
-    allowed = {'index', 'verify_pin'}
+    allowed = {'index', 'verify_pin', 'set_session'}
     if request.endpoint in allowed:
         return
     if request.endpoint is None:
@@ -148,11 +338,12 @@ def set_lvar():
     value = data.get('value')
     if key is None or value is None:
         return jsonify({"error": "missing_key_or_value"}), 400
+    profile_override = data.get('profile')
+    profile_name = profile_override or session.get('active_profile', 'pmdg_777')
     try:
         val = float(value)
     except Exception:
         return jsonify({"error": "invalid_value"}), 400
-    profile_name = session.get('active_profile', 'pmdg_777')
     result = write_lvar_value(profile_name, key, val)
     if "error" in result:
         return jsonify(result), 503
@@ -165,11 +356,12 @@ def step_lvar():
     delta = data.get('delta')
     if key is None or delta is None:
         return jsonify({"error": "missing_key_or_delta"}), 400
+    profile_override = data.get('profile')
+    profile_name = profile_override or session.get('active_profile', 'pmdg_777')
     try:
         delta_val = float(delta)
     except Exception:
         return jsonify({"error": "invalid_delta"}), 400
-    profile_name = session.get('active_profile', 'pmdg_777')
     result = step_lvar_value(profile_name, key, delta_val)
     if "error" in result:
         return jsonify(result), 503
@@ -183,6 +375,19 @@ def verify_pin():
         return jsonify({'ok': True})
     return jsonify({'ok': False}), 401
 
+@app.route('/session', methods=['POST'])
+def set_session():
+    data = request.json or {}
+    pin = str(data.get('pin', ''))
+    profile_name = data.get('profile')
+    if pin != PIN:
+        return jsonify({'ok': False}), 401
+    if not profile_name:
+        return jsonify({"error": "missing_profile"}), 400
+    session['authed'] = True
+    session['active_profile'] = profile_name
+    return jsonify({'ok': True, 'profile': profile_name})
+
 @app.route('/profiles/<profile_name>')
 def serve_profile(profile_name):
     if not profile_name.endswith('.js'):
@@ -192,6 +397,16 @@ def serve_profile(profile_name):
         with open(profile_path, 'r') as f:
             return f.read(), 200, {'Content-Type': 'application/javascript'}
     return '', 404
+
+@app.route('/profiles/<profile_name>.json')
+def serve_profile_json(profile_name):
+    name = profile_name
+    if name.endswith('.json'):
+        name = name[:-5]
+    data = PROFILE_JSON_DATA.get(name)
+    if not data:
+        return '', 404
+    return jsonify(data)
 
 @app.route('/<page>.html')
 def serve_page(page):
@@ -225,7 +440,8 @@ def update_sim():
     t = data.get('type')
     val = float(data.get('value', 0))
     rev = data.get('reverse', False)
-    profile_name = session.get('active_profile', 'pmdg_777')
+    profile_override = data.get('profile')
+    profile_name = profile_override or session.get('active_profile', 'pmdg_777')
     profile = get_profile(profile_name)
 
     try:

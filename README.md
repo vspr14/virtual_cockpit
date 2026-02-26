@@ -1,5 +1,7 @@
 # iPad Joy
 
+**Apple Developer account note:** The native SwiftUI iPad app for this project is designed to be built and run with a free Apple Developer account. All features described in section 7 for the iPad app (LAN networking to the Flask backend, TD timer with in-app alert and sound while the app is in the foreground, local state persistence, haptics, and OFP/METAR viewing) are supported under a free account. You cannot distribute the app via the App Store or TestFlight with a free account and will need to periodically rebuild it on your device because free provisioning profiles expire. Adding future integrations with advanced Apple services (such as Apple Pay, In-App Purchase, remote push notifications, or Sign in with Apple) would require upgrading to a paid Apple Developer Program membership.
+
 ## 1. What this project is about
 
 This is a touch-friendly flight control panel for MSFS, designed to run on an iPad or any browser and drive simulator controls through vJoy. The UI provides on-screen sliders, a virtual joystick, buttons, and aircraft-specific behavior via profiles. All primary interaction with MSFS is done by sending vJoy axis and button outputs; there is no continuous SimConnect sim-state polling.
