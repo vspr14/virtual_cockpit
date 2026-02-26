@@ -1,21 +1,19 @@
 # iPad Joy
 
 ## 1. What this project is about
-This is a touch-friendly flight control panel for MSFS, designed to run on an iPad or any browser and drive simulator controls through vJoy and MobiFlight L:Vars. It provides on-screen sliders, joysticks, buttons, and aircraft-specific behavior via profiles.
+This is a touch-friendly flight control panel for MSFS, designed to run on an iPad or any browser and drive simulator controls through vJoy. Sim state (flaps, gear, brakes, autopilot, etc.) is read via the official MSFS SDK (SimConnect). It provides on-screen sliders, joysticks, buttons, and aircraft-specific behavior via profiles.
 
 Key goals:
 - Mobile-friendly cockpit controls
-- Aircraft-specific behavior (Fenix A320, PMDG 737/777)
+- Aircraft-specific behavior (Fenix A320, Fenix A350, PMDG 737/777)
 - vJoy output for axes and buttons
-- MobiFlight L:Var read/write for aircraft state and inputs
+- SimConnect (MSFS SDK) for reading sim variables only
 
 ## 2. How to install (including dependencies)
 
 ### OS and simulator prerequisites
 - Windows with MSFS installed
-- vJoy installed
-- FSUIPC7 installed
-- MobiFlight WASM installed in MSFS
+- vJoy installed (Device 1 only; Device 2 optional)
 
 ### Python requirements
 - Python 3.8+ recommended
@@ -29,42 +27,23 @@ pip install -r requirements.txt
 
 Notes:
 - `pyvjoy` is required for vJoy button/axis output.
-- `simconnect` is required for SimConnect access.
-- MobiFlight support is based on the code from the https://github.com/Koseng/MSFSPythonSimConnectMobiFlightExtension repo.
+- `SimConnect` (e.g. from PyPI) is required for reading sim variables via the MSFS SDK.
 
 ## 3. How to set up
 
 ### vJoy configuration
 1. Open **vJoy Configuration**.
-2. Enable Device 1 and Device 2.
+2. Enable Device 1 (and optionally Device 2 if you add features that use it).
 3. Ensure Device 1 has at least:
    - Axes: X, Y, Z, RX, RY, RZ, SL0
    - Buttons: enough for your mappings (see profile file)
-4. Ensure Device 2 has:
-   - Axes: X and Y
-5. Apply and save the configuration.
+4. Apply and save the configuration.
 
 ### Button/axis verification
 1. Open **vJoy Monitor**.
 2. Move the UI controls in the browser.
 3. Confirm axes and buttons respond as expected.
 4. If a control does nothing, check the vJoy mapping in the profile.
-
-### L:Var setup
-1. Install FSUIPC7 and enable the MobiFlight WASM module in MSFS.
-2. L:Vars used by this app are defined in `data/lvars.json`.
-3. Only keys in `data/lvars.json` are read or written.
-
-### How to find L:Vars in MSFS
-1. Enable Developer Mode: **Options → General Options → Developers → Developer Mode**.
-2. Load into the aircraft you want.
-3. Open **Tools → Behaviors**.
-4. In the Behaviors window, open the **LocalVariables** tab and use the filter box to search by name.
-5. Hover a cockpit control and press **Ctrl + G** to jump to its related behavior or variable names.
-
-References:
-- https://docs.flightsimulator.com/html/Developer_Mode/Menus/Tools/Behaviors_Debug.htm
-- https://microsoft.github.io/msfs-avionics-mirror/2024/docs/interacting-with-msfs/simvars/
 
 ### Run the app
 From the project root:
@@ -78,17 +57,6 @@ Open in a browser:
 http://localhost:5000
 ```
 
-### Webcam stream to OBS Virtual Camera
-1. Start the Flask app on the Windows PC.
-2. Open the site on the iPad and enable the CAM button.
-3. In OBS, add a Browser Source with this URL:
-```
-http://<pc-ip>:5000/stream.mjpeg
-```
-4. Start OBS Virtual Camera.
-5. In OpenTrack, select OBS Virtual Camera as the input camera.
-6. Use NeuralNet or PointTracker as usual.
-
 ## 4. What each thing does (including folder structure)
 
 ```
@@ -96,11 +64,7 @@ ipad_joy/
   app.py                       Flask app and vJoy/SimConnect handlers
   backend/
     __init__.py
-    fsuipc_wapi_reader.py      L:Var read/write/step via MobiFlight
-    simconnect_mobiflight.py   SimConnect helper for MobiFlight client data
-    mobiflight_variable_requests.py  MobiFlight variable access
-  data/
-    lvars.json                 L:Var keys, expressions, and notes
+    simconnect_mobiflight.py   SimConnect helper (optional)
   profiles/
     fenix_a320.js              Aircraft profile and vJoy mappings
     pmdg_737.js
@@ -119,14 +83,9 @@ ipad_joy/
 
 ### Core behavior overview
 - **vJoy outputs**: handled in `app.py` (`/update_sim` endpoint).
-- **L:Var read/write**: handled in `backend/fsuipc_wapi_reader.py` and exposed via:
-  - `GET /lvars` for polling state
-  - `POST /lvars` for setting values
-  - `POST /lvars/step` for increment/decrement expressions
+- **Sim state (read-only)**: `GET /get_sim` returns SimConnect data (flaps, gear, spoilers, brakes, parking brake, autopilot master). The UI polls this and syncs sliders/indicators. Uses the official MSFS SDK (SimConnect) with standard SimVars (e.g. FLAPS_HANDLE_INDEX, GEAR_HANDLE_POSITION, BRAKE_LEFT_POSITION, AUTOPILOT_MASTER).
 - **Aircraft profiles**: in `profiles/*.js`, used to override UI behavior and vJoy mappings.
-- **L:Var definitions**: in `data/lvars.json`. Each entry includes a `key`, `lvar`, and optional `note`.
 
 ### Common customization points
-- Add or update L:Vars in `data/lvars.json`.
 - Update mappings per aircraft in `profiles/*.js`.
 - Adjust UI logic in `static/js/main.js`.

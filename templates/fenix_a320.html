@@ -6,35 +6,34 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <script src="https://cdn.jsdelivr.net/npm/tracking@1.1.3/build/tracking-min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tracking@1.1.3/build/data/face-min.js"></script>
-    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 </head>
 <body>
     <div class="screen-layout">
         <div class="left-column">
-            <div class="cam-control-stack">
-                <div style="display: flex; flex-direction: column; align-items: center; gap: 10px; margin-bottom: 10px;">
-                    <button id="headtrackSettingsBtn" class="headtrack-settings-btn">⚙️</button>
-                    <button id="webcamStreamBtn" class="webcam-stream-btn">CAM</button>
-                    <button id="headTrackBtn" class="headtrack-btn">📹</button>
+            <div class="tod-panel">
+                <div id="utcClock" class="utc-clock">--:--Z</div>
+                <div class="tod-input-row">
+                    <input id="todHour" class="tod-input" type="number" min="0" max="23" placeholder="HH">
+                    <span class="tod-separator">:</span>
+                    <input id="todMinute" class="tod-input" type="number" min="0" max="59" placeholder="MM">
+                    <button id="todSetBtn" class="tod-btn">SET TD</button>
                 </div>
-                <div class="joy-container small-joy">
-                    <span class="label">CAM PAN</span>
-                    <div class="joy-zone" id="camJoy">
-                        <div class="joy-puck" id="camPuck"></div>
-                    </div>
-                    <div style="display: flex; gap: 8px; margin-top: 8px;">
-                        <button id="moveMode" class="sub-btn blue-btn" style="flex: 1; padding: 18px 0; font-size: 1em;">MOVE</button>
-                        <button id="resetCam" class="sub-btn blue-btn" style="flex: 1; padding: 18px 0; font-size: 1em;">RESET</button>
-                    </div>
-                </div>
+                <div id="todStatus" class="tod-status"></div>
             </div>
-
             <div class="joy-zone-container stick-right">
                 <span class="label">FLIGHT STICK</span>
                 <div class="joy-zone" id="joyZone">
                     <div class="joy-puck" id="joyPuck"></div>
+                </div>
+            </div>
+
+            <div id="leftBrakeContainer" class="left-brake-container hidden">
+                <div class="v-group">
+                    <span class="label">BRAKE</span>
+                    <div class="center-v-wrap">
+                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="bSliderLeft">
+                    </div>
+                    <button id="pbBtnLeft" class="sub-btn red-btn">PARKING BRAKE</button>
                 </div>
             </div>
         </div>
@@ -48,7 +47,14 @@
             <div class="grid-container">
                 <div id="camGrid" class="grid-layer active"></div>
             </div>
-            <div class="pedestal-row">
+            <div id="metarContainer" class="metar-container hidden">
+                <div id="metarContent" class="metar-content"></div>
+                <button id="metarRefreshBtn" class="metar-refresh-btn" title="Refresh METAR">↻</button>
+                <button id="ofpRefreshBtn" class="metar-refresh-btn ofp-refresh-btn" title="Refresh SimBrief PDF">PDF ↻</button>
+            </div>
+            <div id="ofpContainer" class="ofp-container hidden"></div>
+            <div id="ofpCameraButtons" class="ofp-camera-buttons hidden"></div>
+            <div class="pedestal-row hidden">
                
                 <div class="b777-gear-container">
                     <span class="label">GEAR</span>
@@ -105,67 +111,6 @@
             </div>
             <button id="idleBtn" class="btn-rev" style="background: #444; margin-bottom: 30px;">IDLE</button>
             <button id="revBtn" class="btn-rev">REVERSE</button>
-        </div>
-    </div>
-
-    <div id="headtrackSettingsModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>Head Tracking Settings</h2>
-                <button class="modal-close" id="headtrackSettingsClose">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="settings-group">
-                    <label>OpenTrack Host:</label>
-                    <input type="text" id="headtrackHost" value="localhost" />
-                </div>
-                <div class="settings-group">
-                    <label>Port:</label>
-                    <input type="number" id="headtrackPort" value="5001" />
-                </div>
-                <div class="settings-group">
-                    <label>Pitch Sensitivity: <span id="pitchSensVal">50</span></label>
-                    <input type="range" id="pitchSens" min="0" max="200" step="1" value="50" />
-                </div>
-                <div class="settings-group">
-                    <label>Roll Sensitivity: <span id="rollSensVal">50</span></label>
-                    <input type="range" id="rollSens" min="0" max="200" step="1" value="50" />
-                </div>
-                <div class="settings-group">
-                    <label>Yaw Sensitivity: <span id="yawSensVal">50</span></label>
-                    <input type="range" id="yawSens" min="0" max="200" step="1" value="50" />
-                </div>
-                <div class="settings-group">
-                    <label>X Sensitivity: <span id="xSensVal">50</span></label>
-                    <input type="range" id="xSens" min="0" max="200" step="1" value="50" />
-                </div>
-                <div class="settings-group">
-                    <label>Y Sensitivity: <span id="ySensVal">50</span></label>
-                    <input type="range" id="ySens" min="0" max="200" step="1" value="50" />
-                </div>
-                <div class="settings-group">
-                    <label>Z Sensitivity: <span id="zSensVal">50</span></label>
-                    <input type="range" id="zSens" min="0" max="200" step="1" value="50" />
-                </div>
-                <div class="settings-group">
-                    <label>Smoothing: <span id="smoothingVal">0.0</span></label>
-                    <input type="range" id="smoothing" min="0" max="1" step="0.05" value="0.0" />
-                </div>
-                <div class="settings-group">
-                    <label>Invert:</label>
-                    <div class="invert-checkboxes">
-                        <label><input type="checkbox" id="invertPitch" /> Pitch</label>
-                        <label><input type="checkbox" id="invertRoll" /> Roll</label>
-                        <label><input type="checkbox" id="invertYaw" /> Yaw</label>
-                        <label><input type="checkbox" id="invertX" /> X</label>
-                        <label><input type="checkbox" id="invertY" /> Y</label>
-                        <label><input type="checkbox" id="invertZ" /> Z</label>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="headtrackSettingsSave" class="btn-primary">Save</button>
-            </div>
         </div>
     </div>
 

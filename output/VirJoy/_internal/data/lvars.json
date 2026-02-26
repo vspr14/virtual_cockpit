@@ -1,0 +1,28 @@
+{
+  "profiles": {
+    "fenix_a320": {
+      "vars": [
+        { "key": "ap_state", "lvar": "L:S_FCU_AP1", "note":"1 or 0"},
+        { "key": "gear_handle", "lvar": "L:S_MIP_GEAR", "note":"0 when up and 1 when down"},
+        {"key": "brake_left", "lvar": "L:N_FC_BRAKE_LEFT_CAPT", "note":"0 to 1"},
+        { "key": "spoilers_handle", "lvar": "L:A_FC_SPEEDBRAKE", "note":"1 to 3 for range and 0 when armed"},
+        { "key": "flaps_handle", "lvar": "L:S_FC_FLAPS", "note":"0 to 4"},
+        {"key":"parking_brake", "lvar": "L:S_MIP_PARKING_BRAKE", "note":"1 or 0"},
+        {"key":"throttle_left", "lvar": "L:A_FC_THROTTLE_LEFT_INPUT", "note":"2 -5 FOR 0 TO 100% AND 1 idle rev to 0 FOR max REVERSE"},
+        { "key": "ap_engage", "lvar": "(L:S_FCU_AP1) ++ (>L:S_FCU_AP1)", "note":"press to engage AP"},
+        { "key": "ap_state_off", "lvar": "L:S_FCU_AP1", "note":"set AP off"},
+        { "key": "ap_disconnect", "lvar": "L:S_FC_CAPT_INST_DISCONNECT", "note":"press to disconnect AP"}
+      ]
+    },
+    "pmdg_737": {
+      "vars": [
+        { "key": "ap_master", "lvar": "A:AUTOPILOT MASTER", "note":"1 or 0"}
+      ]
+    },
+    "pmdg_777": {
+      "vars": [
+        { "key": "ap_master", "lvar": "A:AUTOPILOT MASTER", "note":"1 or 0"}
+      ]
+    }
+  }
+}

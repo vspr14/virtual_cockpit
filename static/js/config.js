@@ -7,8 +7,9 @@ const VJOY_MAP = {
     IDLE_BUTTON: 3,
     GEAR_UP: 4,
     GEAR_DOWN: 4,
-    CAM_UP: 5,
-    CAM_DOWN: 6,
+    AUTOPILOT: 5,
+    CAM_UP: 6,
+    CAM_DOWN: 7,
     CAM_MOVE_MODE: 8,
-    CAM_BASE: 10 
+    CAM_BASE: 10
 };

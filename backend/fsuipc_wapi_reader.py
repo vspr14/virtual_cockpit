@@ -1,5 +1,6 @@
 import json
 import os
+import sys
 
 try:
     from backend.simconnect_mobiflight import SimConnectMobiFlight
@@ -8,8 +9,11 @@ except Exception:
     SimConnectMobiFlight = None
     MobiFlightVariableRequests = None
 
-BASE_DIR = os.path.dirname(__file__)
-MAPPING_PATH = os.path.abspath(os.path.join(BASE_DIR, "..", "data", "lvars.json"))
+if getattr(sys, 'frozen', False):
+    _BASE_DIR = sys._MEIPASS
+else:
+    _BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+MAPPING_PATH = os.path.join(_BASE_DIR, "data", "lvars.json")
 _mf = None
 _vr = None
 
