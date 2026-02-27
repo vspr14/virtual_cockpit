@@ -20,38 +20,46 @@ struct AircraftSelectionView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 24) {
-                Text("Select Aircraft")
-                    .font(.largeTitle)
+            ZStack {
+                Color(red: 5/255, green: 5/255, blue: 5/255)
+                    .edgesIgnoringSafeArea(.all)
+                
+                VStack(spacing: 0) {
+                    Text("Select Aircraft")
+                        .font(.system(size: 28, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.bottom, 30)
 
-                if let error = loadError {
-                    Text(error)
-                        .foregroundColor(.red)
-                }
-
-                ForEach(aircraft) { item in
-                    NavigationLink {
-                        CockpitView(profileName: item.id)
-                    } label: {
-                        Text(item.title)
-                            .frame(maxWidth: .infinity)
+                    if let error = loadError {
+                        Text(error)
+                            .foregroundColor(.red)
+                            .padding(.bottom, 20)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .disabled(isLoading)
-                }
 
-                if appState.isConnected {
-                    Text("Connected")
-                        .foregroundColor(.green)
-                } else {
-                    Text("Not connected")
-                        .foregroundColor(.red)
+                    VStack(spacing: 16) {
+                        ForEach(aircraft) { item in
+                            NavigationLink {
+                                CockpitView(profileName: item.id)
+                            } label: {
+                                Text(item.title.uppercased())
+                                    .font(.system(size: 16, weight: .bold))
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.vertical, 20)
+                                    .background(Color(red: 28/255, green: 28/255, blue: 30/255))
+                                    .cornerRadius(14)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14)
+                                            .stroke(Color(red: 58/255, green: 58/255, blue: 60/255), lineWidth: 2)
+                                    )
+                            }
+                            .disabled(isLoading)
+                        }
+                    }
+                    .frame(maxWidth: 400)
+                    .padding(.horizontal, 40)
                 }
-
-                Spacer()
             }
-            .padding(40)
-            .navigationTitle("iPad Joy")
         }
     }
 }

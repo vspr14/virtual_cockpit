@@ -75,7 +75,7 @@ final class BackendService: ObservableObject {
     }
 
     private func makeJSONRequest<T: Encodable>(url: URL, body: T) throws -> URLRequest {
-        var request = URLRequest(url: url)
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.httpBody = try JSONEncoder().encode(body)
@@ -122,14 +122,33 @@ final class BackendService: ObservableObject {
         let url = try makeURL(path: "/lvars")
         let payload = LVarPayload(key: key, value: value, delta: nil, profile: profile)
         let request = try makeJSONRequest(url: url, body: payload)
-        _ = try await session.data(for: request)
+        let (data, response) = try await session.data(for: request)
+        if let http = response as? HTTPURLResponse {
+            let msg = String(data: data, encoding: .utf8) ?? ""
+            if !(200...299).contains(http.statusCode) {
+                throw URLError(.badServerResponse, userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode): \(msg)"])
+            }
+            if msg.contains("<!DOCTYPE") || msg.contains("<html") {
+                throw URLError(.badServerResponse, userInfo: [NSLocalizedDescriptionKey: "Redirected to login page! Check Session/PIN."])
+            }
+        }
     }
 
     func stepLVar(key: String, delta: Double, profile: String?) async throws {
         let url = try makeURL(path: "/lvars/step")
         let payload = LVarPayload(key: key, value: nil, delta: delta, profile: profile)
         let request = try makeJSONRequest(url: url, body: payload)
-        _ = try await session.data(for: request)
+        let (data, response) = try await session.data(for: request)
+        
+        if let http = response as? HTTPURLResponse {
+            let msg = String(data: data, encoding: .utf8) ?? ""
+            if !(200...299).contains(http.statusCode) {
+                throw URLError(.badServerResponse, userInfo: [NSLocalizedDescriptionKey: "HTTP \(http.statusCode): \(msg)"])
+            }
+            if msg.contains("<!DOCTYPE") || msg.contains("<html") {
+                throw URLError(.badServerResponse, userInfo: [NSLocalizedDescriptionKey: "Redirected to login page! Check Session/PIN."])
+            }
+        }
     }
 
     func fetchProfile(name: String) async throws -> Profile {

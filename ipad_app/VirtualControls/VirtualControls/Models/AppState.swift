@@ -3,7 +3,7 @@ import SwiftUI
 import Combine
 
 final class AppState: ObservableObject {
-    @Published var baseURLString: String = ""
+    @Published var baseURLString: String = "http://192.168.1.235:5000"
     @Published var pin: String = ""
     @Published var activeProfileName: String?
     @Published var profile: Profile?
