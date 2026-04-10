@@ -351,6 +351,7 @@ def set_lvar():
 
 @app.route('/lvars/step', methods=['POST'])
 def step_lvar():
+    
     data = request.json or {}
     key = data.get('key')
     delta = data.get('delta')
@@ -363,6 +364,7 @@ def step_lvar():
     except Exception:
         return jsonify({"error": "invalid_delta"}), 400
     result = step_lvar_value(profile_name, key, delta_val)
+    
     if "error" in result:
         return jsonify(result), 503
     return jsonify(result)
@@ -417,19 +419,6 @@ def serve_page(page):
         return render_template(f"{page}.html", profile_name=profile_name, debug_ui=app.debug)
     return render_template('index.html'), 404
 
-@app.route('/debug/orientation', methods=['POST'])
-def debug_orientation():
-    data = request.json or {}
-    if 'alpha' in data and 'beta' in data and 'gamma' in data:
-        alpha = data.get('alpha')
-        beta = data.get('beta')
-        gamma = data.get('gamma')
-        print(f"ORIENTATION DEBUG: alpha={alpha}° beta={beta}° gamma={gamma}°")
-    else:
-        status = data.get('status', 'unknown')
-        message = data.get('message', '')
-        print(f"ORIENTATION DEBUG [{status}]: {message}")
-    return jsonify({"status": "logged"})
 
 @app.route('/update_sim', methods=['POST'])
 def update_sim():
