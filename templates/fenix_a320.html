@@ -6,10 +6,18 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 <body>
     <div class="screen-layout">
-        <div class="left-column">
+        <div class="left-column fenix-ovhd-dense">
             <div class="tod-panel">
                 <div id="utcClock" class="utc-clock">--:--Z</div>
                 <div class="tod-input-row">
@@ -31,89 +39,167 @@
                 </div>
             </div>
 
-            <div class="ovhd-section lights-panel">
-                <div class="ovhd-section-label">EXT LT</div>
-                <div class="lights-grid">
-                    <div class="flip-sw" id="swBeacon" role="button" tabindex="0">
-                        <span class="flip-pos-lbl">ON</span>
-                        <div class="flip-track"><div class="flip-lever"></div></div>
-                        <span class="flip-pos-lbl">OFF</span>
-                        <span class="flip-name">BEACON</span>
+            <div class="left-ovhd-pair">
+                <div class="ovhd-section packs-panel ovhd-flush">
+                    <div class="fuel-pumps-row">
+                        <div class="fuel-pumps-group">
+                            <span class="fuel-pumps-group-title">L TK</span>
+                            <div class="fuel-pumps-group-btns">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">1</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelLt1" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">2</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelLt2" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fuel-pumps-group">
+                            <span class="fuel-pumps-group-title">CTR TK</span>
+                            <div class="fuel-pumps-group-btns">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">1</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelCtr1" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">2</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelCtr2" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fuel-pumps-group">
+                            <span class="fuel-pumps-group-title">R TK</span>
+                            <div class="fuel-pumps-group-btns">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">1</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelRt1" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">2</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelRt2" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flip-sw" id="swNavLogo" role="button" tabindex="0">
-                        <span class="flip-pos-lbl">ON</span>
-                        <div class="flip-track"><div class="flip-lever"></div></div>
-                        <span class="flip-pos-lbl">OFF</span>
-                        <span class="flip-name">NAV LOGO</span>
+                    <div class="ovhd-pbpair-row">
+                        <div class="ovhd-pbpair-btns">
+                            <div class="pack-btn-wrap">
+                                <span class="pack-label">BAT 1</span>
+                                <div class="pack-housing">
+                                    <button type="button" id="btnBat1" class="pack-btn off">
+                                        <div class="pack-fault">FAULT</div>
+                                        <div class="pack-off-ind">OFF</div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="pack-btn-wrap">
+                                <span class="pack-label">BAT 2</span>
+                                <div class="pack-housing">
+                                    <button type="button" id="btnBat2" class="pack-btn off">
+                                        <div class="pack-fault">FAULT</div>
+                                        <div class="pack-off-ind">OFF</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="flip-sw" id="swWingScan" role="button" tabindex="0">
-                        <span class="flip-pos-lbl">ON</span>
-                        <div class="flip-track"><div class="flip-lever"></div></div>
-                        <span class="flip-pos-lbl">OFF</span>
-                        <span class="flip-name">WING</span>
-                    </div>
-                    <div class="flip-sw" id="swLandL" role="button" tabindex="0">
-                        <span class="flip-pos-lbl">ON</span>
-                        <div class="flip-track"><div class="flip-lever"></div></div>
-                        <span class="flip-pos-lbl">OFF</span>
-                        <span class="flip-name">LAND L</span>
-                    </div>
-                    <div class="flip-sw" id="swLandR" role="button" tabindex="0">
-                        <span class="flip-pos-lbl">ON</span>
-                        <div class="flip-track"><div class="flip-lever"></div></div>
-                        <span class="flip-pos-lbl">OFF</span>
-                        <span class="flip-name">LAND R</span>
-                    </div>
-                    <div class="flip-sw" id="swRwyTo" role="button" tabindex="0">
-                        <span class="flip-pos-lbl">ON</span>
-                        <div class="flip-track"><div class="flip-lever"></div></div>
-                        <span class="flip-pos-lbl">OFF</span>
-                        <span class="flip-name">RWY TO</span>
+                    <div class="packs-stack">
+                        <div class="packs-row packs-row-endcaps">
+                            <div class="pack-btn-wrap">
+                                <span class="pack-label">PACK 1</span>
+                                <div class="pack-housing">
+                                    <button type="button" id="btnPack1" class="pack-btn">
+                                        <div class="pack-fault">FAULT</div>
+                                        <div class="pack-off-ind">OFF</div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="pack-btn-wrap">
+                                <span class="pack-label">PACK 2</span>
+                                <div class="pack-housing">
+                                    <button type="button" id="btnPack2" class="pack-btn">
+                                        <div class="pack-fault">FAULT</div>
+                                        <div class="pack-off-ind">OFF</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="packs-row packs-row-center">
+                            <div class="pack-btn-wrap pack-apu-wrap">
+                                <span class="pack-label">APU BLEED</span>
+                                <div class="pack-housing pack-apu-housing">
+                                    <button type="button" id="btnApuBleed" class="pack-btn pack-apu off">
+                                        <div class="pack-off-ind pack-apu-readout">ON</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="lights-3pos-row">
-                    <div class="flip-sw-3" id="swStrobe" data-pos="1" role="button" tabindex="0">
-                        <div class="flip3-inner">
-                            <div class="flip3-labels">
-                                <span>ON</span>
-                                <span>AUTO</span>
-                                <span>OFF</span>
-                            </div>
-                            <div class="flip3-track"><div class="flip3-lever"></div></div>
-                        </div>
-                        <span class="flip-name">STROBE</span>
-                    </div>
-                    <div class="flip-sw-3" id="swNose" data-pos="2" role="button" tabindex="0">
-                        <div class="flip3-inner">
-                            <div class="flip3-labels">
-                                <span>TAXI</span>
-                                <span>T.O</span>
-                                <span>OFF</span>
-                            </div>
-                            <div class="flip3-track"><div class="flip3-lever"></div></div>
-                        </div>
-                        <span class="flip-name">NOSE</span>
+                <div class="ovhd-section lights-panel ovhd-flush">
+                    <div class="ext-lt-panel" id="extLtLightsHost">
+                        <div class="ext-lt-viewport" id="extLtLightsViewport" tabindex="0" role="region" aria-label="Exterior lights"></div>
                     </div>
                 </div>
-            </div>
-
-            <div class="ovhd-section packs-panel">
-                <div class="ovhd-section-label">PACKS</div>
-                <div class="packs-grid">
-                    <div class="pack-btn-wrap">
-                        <span class="pack-label">PACK 1</span>
-                        <div class="pack-housing">
-                            <button type="button" id="btnPack1" class="pack-btn">
-                                <div class="pack-off-ind">OFF</div>
-                            </button>
+                <div class="ovhd-section apu-oh-stack ovhd-flush">
+                    <div class="apu-oh-row">
+                        <div class="pack-btn-wrap">
+                            <span class="pack-label">MASTER SW</span>
+                            <div class="pack-housing pack-apu-housing">
+                                <button type="button" id="btnApuMasterOh" class="pack-btn pack-apu off">
+                                    <div class="pack-off-ind pack-apu-readout">ON</div>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    <div class="pack-btn-wrap">
-                        <span class="pack-label">PACK 2</span>
-                        <div class="pack-housing">
-                            <button type="button" id="btnPack2" class="pack-btn">
-                                <div class="pack-off-ind">OFF</div>
-                            </button>
+                    <div class="apu-oh-row">
+                        <div class="pack-btn-wrap">
+                            <span class="pack-label">START</span>
+                            <div class="pack-housing">
+                                <button type="button" id="btnApuStartOh" class="pack-btn pack-apu-start off">
+                                    <div class="apu-start-avail">AVAIL</div>
+                                    <div class="pack-fault">FAULT</div>
+                                    <div class="pack-apu-start-on">ON</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="apu-oh-row eng-mode-oh-row">
+                        <div class="eng-mode-horiz" id="engModeOhRoot" data-pos="1">
+                            <div class="eng-mode-3d-host">
+                                <div class="eng-mode-3d-viewport" id="engMode3dViewport" tabindex="0" role="region" aria-label="Engine mode"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -179,38 +265,6 @@
                     </button>
                 </div>
             </div>
-
-            <div class="ovhd-section eng-start-panel hidden">
-                <div class="ovhd-section-label">ENG START</div>
-                <div class="eng-start-inner">
-                    <div class="eng-mode-row">
-                        <button type="button" class="eng-mode-pos ovhd-btn" data-mode="0">
-                            <span class="btn-label">CRANK</span>
-                            <div class="btn-led"></div>
-                        </button>
-                        <button type="button" class="eng-mode-pos ovhd-btn selected" data-mode="1">
-                            <span class="btn-label">NORM</span>
-                            <div class="btn-led"></div>
-                        </button>
-                        <button type="button" class="eng-mode-pos ovhd-btn" data-mode="2">
-                            <span class="btn-label">IGN</span>
-                            <div class="btn-led"></div>
-                        </button>
-                    </div>
-                    <div class="eng-masters-row">
-                        <button type="button" id="btnEng1" class="ovhd-btn eng-master">
-                            <span class="btn-label">ENG 1</span>
-                            <span class="btn-sub">MASTER</span>
-                            <div class="btn-led">ON</div>
-                        </button>
-                        <button type="button" id="btnEng2" class="ovhd-btn eng-master">
-                            <span class="btn-label">ENG 2</span>
-                            <span class="btn-sub">MASTER</span>
-                            <div class="btn-led">ON</div>
-                        </button>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="throttle-zone a320">
@@ -221,28 +275,9 @@
             </div>
             <button id="idleBtn" class="btn-rev" style="background: #444; margin-bottom: 8px;">IDLE</button>
             <button id="revBtn" class="btn-rev" style="margin-bottom: 8px;">REVERSE</button>
-
-            <div class="ovhd-section apu-panel">
-                <div class="ovhd-section-label">APU</div>
-                <div class="apu-grid">
-                    <button type="button" id="btnApuMaster" class="ovhd-btn">
-                        <span class="btn-label">MASTER</span>
-                        <div class="btn-led">AVAIL</div>
-                    </button>
-                    <button type="button" id="btnApuStart" class="ovhd-btn">
-                        <span class="btn-label">START</span>
-                        <div class="btn-led">ON</div>
-                    </button>
-                    <button type="button" id="btnApuBleed" class="ovhd-btn">
-                        <span class="btn-label">BLEED</span>
-                        <div class="btn-led">ON</div>
-                    </button>
-                </div>
-            </div>
         </div>
     </div>
 
-    <script>window.DEBUG_UI = {{ 'true' if debug_ui else 'false' }};</script>
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
     <script src="{{ url_for('serve_profile', profile_name=profile_name + '.js') }}"></script>
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>

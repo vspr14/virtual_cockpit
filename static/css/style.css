@@ -1,11 +1,11 @@
-@import url('https://fonts.googleapis.com/css2?family=B612+Mono&family=B612:wght@400;700&family=Barlow+Condensed:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=B612+Mono&family=B612:wght@400;700&family=Barlow+Condensed:wght@400;600;700&family=Lato:wght@400;700;900&display=swap');
 
 :root {
     --bg: #050505; --card: #161618; --blue: #007aff;
     --orange: #ff9500; --red: #ff3b30; --text: #ffffff;
 
-    --airbus-panel:   #5a6474;
-    --airbus-subpanel:#4e5868;
+    --airbus-panel:   #384a5f;
+    --airbus-subpanel:#2f3f52;
     --airbus-btn:     #1e2535;
     --airbus-btn-on:  #161d2c;
     --airbus-text:    #d8dce6;
@@ -32,18 +32,22 @@ html, body {
     text-size-adjust: 100%;
     -webkit-user-select: none;
     user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: auto;
 }
 
 .screen-layout {
     display: grid; 
-    grid-template-columns: 258px 1fr 218px;
+    grid-template-columns: minmax(252px, min(520px, max(440px, 38vw))) 1fr 218px;
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100);
     width: 100vw; 
     box-sizing: border-box; 
-    padding: 10px 10px calc(var(--vh, 1vh) * 6) 10px;
+    padding: 10px 10px 5px 10px;
     gap: 15px;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: hidden;
     touch-action: pan-x pan-y;
 }
 
@@ -53,11 +57,50 @@ html, body {
     flex-direction: column;
     gap: 8px;
     height: 100%;
-    overflow: hidden;
+    overflow-x: visible;
+    overflow-y: hidden;
     background: var(--airbus-panel);
     border-radius: 8px;
-    padding: 8px;
+    padding: 8px 14px 8px 8px;
     box-sizing: border-box;
+}
+
+.left-column.fenix-ovhd-dense {
+    gap: 4px;
+    padding: 4px 14px 6px 8px;
+}
+
+.left-column.fenix-ovhd-dense .tod-panel {
+    gap: 5px;
+    margin-bottom: 8px;
+}
+
+.left-column.fenix-ovhd-dense .utc-clock {
+    font-size: 1.08em;
+}
+
+.left-column.fenix-ovhd-dense .left-ovhd-pair {
+    margin-top: -6px;
+}
+
+.left-column.fenix-ovhd-dense .fuel-pumps-row {
+    padding: 2px 6px 6px;
+}
+
+.left-column.fenix-ovhd-dense .ovhd-pbpair-row {
+    padding: 2px 0 0;
+}
+
+.left-column.fenix-ovhd-dense .packs-panel.ovhd-flush .packs-stack {
+    padding: 4px 2px 0;
+}
+
+.left-column.fenix-ovhd-dense .packs-stack {
+    gap: 10px;
+}
+
+.left-column.fenix-ovhd-dense .ext-lt-viewport {
+    padding-bottom: 66%;
 }
 
 .tod-panel {
@@ -612,6 +655,134 @@ button {
     margin-bottom: 5px;
 }
 
+.left-ovhd-pair {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+}
+
+.ovhd-section.ovhd-flush {
+    background: var(--airbus-panel);
+    border: none;
+    border-top: none;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+}
+
+.packs-panel.ovhd-flush .packs-stack {
+    padding: 6px 2px 0;
+}
+
+.fuel-pumps-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-end;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 2px 6px 10px;
+    gap: 12px 16px;
+}
+
+.fuel-pumps-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    flex: 0 0 auto;
+}
+
+.fuel-pumps-group-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 5px;
+}
+
+.left-column .pack-housing {
+    width: 60px;
+    height: 58px;
+}
+
+.left-column .pack-btn {
+    width: 50px;
+    height: 51px;
+    padding: 3px 2px 3px;
+}
+
+.left-column .pack-label {
+    font-size: 9px;
+    letter-spacing: 0.06em;
+}
+
+.left-column .pack-fault {
+    padding-top: 9px;
+    font-size: 7.5px;
+}
+
+.left-column .pack-off-ind {
+    font-size: 9px;
+    padding: 2px 0;
+}
+
+.left-column .pack-btn.pack-apu .pack-apu-readout {
+    font-size: 9px;
+    padding: 2px 0;
+}
+
+.left-column .pack-btn.pack-apu-start .apu-start-avail {
+    padding-top: 12px;
+    font-size: 6.5px;
+}
+
+.left-column .pack-btn.pack-apu-start .pack-fault {
+    padding-top: 16px;
+}
+
+.left-column .pack-btn.pack-apu-start .pack-apu-start-on {
+    font-size: 9px;
+    padding: 2px 0;
+}
+
+.fuel-pumps-group-title {
+    font-family: 'Barlow Condensed', 'B612', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    color: #a8b4c4;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    user-select: none;
+    line-height: 1;
+}
+
+.ovhd-pbpair-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 4px 0 2px;
+}
+
+.ovhd-pbpair-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+}
+
 /* ───────────────────────────────────────────
    A320 PUSHBUTTON INDICATOR (PBI)
    Dark face + white legend + dark LED window
@@ -728,6 +899,37 @@ button {
 /* ───────────────────────────────────────────
    2-POSITION FLIP SWITCH  (BEACON, NAV, etc.)
    ─────────────────────────────────────────── */
+.metal-tog-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    cursor: grab;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    padding: 4px 0 2px;
+}
+
+.metal-tog-viewport {
+    width: 104px;
+    height: 104px;
+    border-radius: 4px;
+    overflow: hidden;
+    background: #0d1118;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.75);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 3;
+    pointer-events: auto;
+    touch-action: none;
+}
+
+.metal-tog-viewport canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
 .flip-sw {
     display: flex;
     flex-direction: column;
@@ -883,19 +1085,234 @@ button {
 }
 
 .lights-panel {
-    flex-grow: 1;
+    flex-grow: 0;
     display: flex;
     flex-direction: column;
+    align-items: stretch;
+    background: var(--airbus-panel);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 0;
 }
 
 .lights-panel .ovhd-section-label {
     flex-shrink: 0;
+    margin: 0 0 2px 0;
+    padding: 0;
 }
 
-.packs-grid {
+.lights-panel.ovhd-flush .ovhd-section-label {
+    margin: 2px 4px 2px;
+    padding: 0;
+}
+
+.ext-lt-panel {
+    width: 100%;
+    min-height: 0;
+    flex: 0 0 auto;
+    min-width: 0;
     display: flex;
-    gap: 12px;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+.ext-lt-viewport {
+    width: 100%;
+    height: 0;
+    min-height: 0;
+    padding-bottom: 72%;
+    position: relative;
+    border-radius: 0;
+    overflow: hidden;
+    background: var(--airbus-panel);
+    touch-action: none;
+    -webkit-touch-callout: none;
+    margin: 0;
+}
+
+.ext-lt-viewport canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.packs-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: stretch;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.packs-row-endcaps {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    min-width: 0;
+    gap: 4px;
+    box-sizing: border-box;
+}
+
+.packs-row-center {
+    display: flex;
     justify-content: center;
+    width: 100%;
+}
+
+.pack-apu-wrap {
+    margin-top: 2px;
+}
+
+.pack-btn.pack-apu .pack-apu-readout {
+    letter-spacing: 0.22em;
+}
+
+.pack-btn.pack-apu.off .pack-apu-readout {
+    border-color: rgba(200, 212, 228, 0.38);
+    color: rgba(200, 212, 228, 0.38);
+    box-shadow: none;
+    text-shadow: none;
+}
+
+.pack-btn.pack-apu:not(.off) .pack-apu-readout {
+    border: 1.5px solid #1e7fd4;
+    color: #1e7fd4;
+    box-shadow:
+        0 0 8px rgba(15, 100, 190, 0.48),
+        inset 0 0 3px rgba(10, 75, 150, 0.28);
+    text-shadow: 0 0 5px rgba(30, 120, 200, 0.55);
+}
+
+.apu-oh-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0 4px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.apu-oh-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-end;
+    width: 100%;
+}
+
+.eng-mode-oh-row {
+    align-items: center;
+    padding-top: 4px;
+}
+
+.eng-mode-horiz {
+    width: 100%;
+    max-width: 240px;
+    margin: 0 auto;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.eng-mode-3d-host {
+    width: 100%;
+    position: relative;
+}
+
+.eng-mode-3d-viewport {
+    width: 100%;
+    height: 0;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 0;
+    background: var(--airbus-panel);
+    touch-action: none;
+    -webkit-touch-callout: none;
+    padding-bottom: 46%;
+}
+
+.eng-mode-3d-viewport canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.pack-btn.pack-apu-start {
+    padding-bottom: 5px;
+}
+
+.pack-btn.pack-apu-start .apu-start-avail {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-top: 14px;
+    font-family: 'B612', 'B612 Mono', monospace;
+    font-size: 7.5px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: rgba(24, 208, 80, 0.22);
+    text-transform: uppercase;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    transition: color 0.15s, text-shadow 0.15s;
+}
+
+.pack-btn.pack-apu-start:not(.off) .apu-start-avail {
+    color: #18d050;
+    text-shadow:
+        0 0 10px rgba(24, 208, 80, 0.75),
+        0 0 16px rgba(24, 208, 80, 0.45);
+}
+
+.pack-btn.pack-apu-start .pack-fault {
+    padding-top: 22px;
+}
+
+.pack-btn.pack-apu-start .pack-apu-start-on {
+    position: relative;
+    z-index: 1;
+    width: calc(100% - 4px);
+    border: 1.5px solid rgba(200, 212, 228, 0.38);
+    border-radius: 4px;
+    padding: 3px 0;
+    margin-top: auto;
+    text-align: center;
+    font-family: 'Barlow Condensed', 'B612', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    color: rgba(200, 212, 228, 0.38);
+    box-shadow: none;
+    text-shadow: none;
+    pointer-events: none;
+    user-select: none;
+    transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.pack-btn.pack-apu-start:not(.off) .pack-apu-start-on {
+    border: 1.5px solid #1e7fd4;
+    color: #1e7fd4;
+    box-shadow:
+        0 0 8px rgba(15, 100, 190, 0.48),
+        inset 0 0 3px rgba(10, 75, 150, 0.28);
+    text-shadow: 0 0 5px rgba(30, 120, 200, 0.55);
 }
 
 .pack-btn-wrap {
@@ -907,8 +1324,8 @@ button {
 
 /* Bezel / housing — black square slightly bigger than the button, white outline */
 .pack-housing {
-    width: 76px;
-    height: 76px;
+    width: 71px;
+    height: 68px;
     background: #030406;
     border: 2px solid rgba(255,255,255,0.75);
     border-radius: 4px;
@@ -922,33 +1339,59 @@ button {
 }
 
 /* Button: ON (default) = pressed/receded into housing (Z-axis back) */
+.pack-fault {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    padding-top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'B612', 'B612 Mono', monospace;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--led-amber);
+    text-transform: uppercase;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    opacity: 0;
+    text-shadow: 0 0 8px rgba(255, 170, 0, 0.45);
+    white-space: nowrap;
+}
+
+.pack-btn.pack-fault-lit .pack-fault {
+    opacity: 1;
+}
+
 .pack-btn {
-    width: 62px;
-    height: 62px;
-    background: #070a0f;
-    border: 1px solid #030507;
+    position: relative;
+    width: 59px;
+    height: 60px;
+    background: #000000;
+    border: 1px solid #000000;
     border-radius: 2px;
-    padding: 8px 6px 6px;
+    padding: 4px 2px 4px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
     cursor: pointer;
     box-shadow:
-        inset 0 5px 12px rgba(0,0,0,0.95),
-        inset 0 2px 5px rgba(0,0,0,0.7);
+        inset 0 -14px 22px rgba(0, 0, 0, 0.92),
+        inset 0 5px 12px rgba(0, 0, 0, 0.65);
     touch-action: manipulation;
     -webkit-touch-callout: none;
     transform: perspective(120px) translateZ(-4px) scale(0.97);
 }
 
-/* Button: OFF = pops forward out of housing (Z-axis toward viewer) */
 .pack-btn.off {
-    background: #0d1118;
+    background: #000000;
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.06),
-        0 0 0 1px rgba(255,255,255,0.06),
-        0 6px 14px rgba(0,0,0,0.85);
+        inset 0 -10px 18px rgba(0, 0, 0, 0.88),
+        inset 0 3px 8px rgba(0, 0, 0, 0.55),
+        0 0 0 1px rgba(0, 0, 0, 0.5),
+        0 6px 14px rgba(0, 0, 0, 0.92);
     transform: perspective(120px) translateZ(5px) scale(1.02);
 }
 
@@ -1002,10 +1445,12 @@ button {
 }
 
 .pack-off-ind {
-    width: calc(100% - 8px);
+    position: relative;
+    z-index: 1;
+    width: calc(100% - 4px);
     border: 1.5px solid rgba(200,212,228,0.38);
     border-radius: 4px;
-    padding: 5px 0;
+    padding: 3px 0;
     text-align: center;
     font-family: 'Barlow Condensed', 'B612', sans-serif;
     font-size: 10px;
@@ -1038,31 +1483,8 @@ button {
     gap: 4px;
 }
 
-/* ENG START PANEL */
-.eng-start-panel {
-    flex-shrink: 0;
-}
-
-.eng-start-inner {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.eng-mode-row {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 4px;
-}
-
-.eng-masters-row {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 4px;
-}
-
-.eng-master {
-    --led-color: var(--led-green);
+.apu-grid-two {
+    grid-template-columns: 1fr 1fr;
 }
 
 .throttle-zone .apu-panel {

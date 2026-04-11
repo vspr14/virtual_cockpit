@@ -408,7 +408,6 @@ document.addEventListener('DOMContentLoaded', () => {
     bindButtonTouch(ofpBtn);
     const gridContainer = document.querySelector('.grid-container');
     const pedestalRow = document.querySelector('.pedestal-row');
-    const engStartPanel = document.querySelector('.eng-start-panel');
     const ofpContainer = document.getElementById('ofpContainer');
     const metarContainer = document.getElementById('metarContainer');
     const metarContent = document.getElementById('metarContent');
@@ -416,6 +415,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const ofpCameraButtonsEl = document.getElementById('ofpCameraButtons');
     const leftColumn = document.querySelector('.left-column');
     const leftBrakeContainer = document.getElementById('leftBrakeContainer');
+    let engModeOhApply = null;
     let ofpFrame = null;
     let ofpLoading = false;
     let ofpCache = null;
@@ -480,7 +480,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (gridContainer) gridContainer.classList.add('hidden');
         if (pedestalRow) pedestalRow.classList.add('hidden');
-        if (engStartPanel) engStartPanel.classList.add('hidden');
         if (ofpContainer) ofpContainer.classList.remove('hidden');
         if (ofpCameraButtonsEl) ofpCameraButtonsEl.classList.remove('hidden');
         if (leftBrakeContainer) leftBrakeContainer.classList.remove('hidden');
@@ -491,7 +490,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const showCams = () => {
         if (gridContainer) gridContainer.classList.remove('hidden');
         if (pedestalRow) pedestalRow.classList.remove('hidden');
-        if (engStartPanel) engStartPanel.classList.remove('hidden');
         if (ofpContainer) ofpContainer.classList.add('hidden');
         if (metarContainer) metarContainer.classList.add('hidden');
         if (ofpCameraButtonsEl) ofpCameraButtonsEl.classList.add('hidden');
@@ -1000,7 +998,9 @@ document.addEventListener('DOMContentLoaded', () => {
         pbBtnLeft.onclick = parkingBrakeHandler;
     }
 
-    const setOvhdLvar = (key, value) => {};
+    const setOvhdLvar = (key, value) => {
+        setLvar(key, value);
+    };
 
     const initFlipDrag = (el, lvarKey, positions) => {
         const is3 = positions === 3;
@@ -1070,19 +1070,30 @@ document.addEventListener('DOMContentLoaded', () => {
         el.addEventListener('pointercancel', endDrag);
     };
 
-    [
-        ['swBeacon',   'beacon',      2],
-        ['swNavLogo',  'nav_logo',    2],
-        ['swWingScan', 'wing_scan',   2],
-        ['swLandL',    'land_left',   2],
-        ['swLandR',    'land_right',  2],
-        ['swRwyTo',    'rwy_turnoff', 2],
-        ['swStrobe',   'strobe',      3],
-        ['swNose',     'nose_light',  3],
-    ].forEach(([id, lvarKey, positions]) => {
-        const el = document.getElementById(id);
-        if (el) initFlipDrag(el, lvarKey, positions);
-    });
+    const extLtVp = document.getElementById('extLtLightsViewport');
+    if (extLtVp) {
+        import('/static/js/ext_lt_lights_panel.js')
+            .then((mod) => {
+                mod.attachExtLtLightsPanel(extLtVp, {
+                    emit: (key, val) => setOvhdLvar(key, val),
+                });
+            })
+            .catch(() => {});
+    } else {
+        [
+            ['swStrobe',   'strobe',      3],
+            ['swBeacon',   'beacon',      2],
+            ['swWingScan', 'wing_scan',   2],
+            ['swNavLogo',  'nav_logo',    3],
+            ['swRwyTo',    'rwy_turnoff', 2],
+            ['swLandL',    'land_left',   3],
+            ['swLandR',    'land_right',  3],
+            ['swNose',     'nose_light',  3],
+        ].forEach(([id, lvarKey, positions]) => {
+            const el = document.getElementById(id);
+            if (el) initFlipDrag(el, lvarKey, positions);
+        });
+    }
 
     const toggleOvhdBtn = (id, lvarKey) => {
         const btn = document.getElementById(id);
@@ -1093,46 +1104,66 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    ['btnPack1', 'btnPack2'].forEach((id, i) => {
+    window.setPackFaultIndicator = (packIndex, lit) => {
+        const id = packIndex === 0 ? 'btnPack1' : 'btnPack2';
+        const el = document.getElementById(id);
+        if (el) el.classList.toggle('pack-fault-lit', !!lit);
+    };
+
+    const bindPackStyleToggle = (id, lvarKey) => {
         const btn = document.getElementById(id);
         if (!btn) return;
         let busy = false;
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             if (busy) return;
             busy = true;
             const goingOff = !this.classList.contains('off');
             const animClass = goingOff ? 'pack-anim-release' : 'pack-anim-press';
             this.classList.add(animClass);
-            this.addEventListener('animationend', () => {
-                this.classList.remove(animClass);
-                this.classList.toggle('off', goingOff);
-                setOvhdLvar(i === 0 ? 'pack1' : 'pack2', goingOff ? 0 : 1);
-                busy = false;
-            }, { once: true });
+            this.addEventListener(
+                'animationend',
+                () => {
+                    this.classList.remove(animClass);
+                    this.classList.toggle('off', goingOff);
+                    if (lvarKey) {
+                        setOvhdLvar(lvarKey, goingOff ? 0 : 1);
+                    }
+                    busy = false;
+                },
+                { once: true }
+            );
         });
-    });
+    };
 
-    toggleOvhdBtn('btnApuMaster', 'apu_master');
-    toggleOvhdBtn('btnApuBleed',  'apu_bleed');
-    toggleOvhdBtn('btnEng1',      'eng1_master');
-    toggleOvhdBtn('btnEng2',      'eng2_master');
+    bindPackStyleToggle('btnPack1', 'pack1');
+    bindPackStyleToggle('btnPack2', 'pack2');
+    bindPackStyleToggle('btnApuBleed', 'apu_bleed');
+    bindPackStyleToggle('btnBat1');
+    bindPackStyleToggle('btnBat2');
+    bindPackStyleToggle('btnApuMasterOh', 'apu_master');
+    bindPackStyleToggle('btnApuStartOh', 'apu_start');
+    [
+        ['btnFuelLt1', 'fuel_lt1'],
+        ['btnFuelLt2', 'fuel_lt2'],
+        ['btnFuelCtr1', 'fuel_ctr1'],
+        ['btnFuelCtr2', 'fuel_ctr2'],
+        ['btnFuelRt1', 'fuel_rt1'],
+        ['btnFuelRt2', 'fuel_rt2'],
+    ].forEach(([id, key]) => bindPackStyleToggle(id, key));
 
-    const btnApuStart = document.getElementById('btnApuStart');
-    if (btnApuStart) {
-        btnApuStart.addEventListener('click', function() {
-            this.classList.add('on');
-            setTimeout(() => this.classList.remove('on'), 300);
-            setOvhdLvar('apu_start', 1);
-        });
+    const engModeOhRoot = document.getElementById('engModeOhRoot');
+    if (engModeOhRoot) {
+        import('/static/js/eng_mode_selector.js')
+            .then(async (mod) => {
+                const api = await mod.initEngModeSelector(engModeOhRoot, {
+                    emit: (mode) => setOvhdLvar('eng_mode', mode),
+                });
+                if (api && typeof api.applyExternal === 'function') {
+                    engModeOhApply = api.applyExternal;
+                }
+            })
+            .catch(() => {});
     }
-
-    document.querySelectorAll('.eng-mode-pos').forEach(pos => {
-        pos.addEventListener('click', () => {
-            document.querySelectorAll('.eng-mode-pos').forEach(p => p.classList.remove('selected'));
-            pos.classList.add('selected');
-            setOvhdLvar('eng_mode', parseInt(pos.dataset.mode));
-        });
-    });
 
     const STATE_KEY = 'virtual_cockpit_state';
     const DEFAULT_STATE = { flaps: 0, throttle: 0, spoilers: 0, brake: 0 };
