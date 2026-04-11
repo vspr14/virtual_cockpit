@@ -20,12 +20,6 @@
                 </div>
                 <div id="todStatus" class="tod-status"></div>
             </div>
-            <div class="joy-zone-container stick-right">
-                <span class="label">FLIGHT STICK</span>
-                <div class="joy-zone" id="joyZone">
-                    <div class="joy-puck" id="joyPuck"></div>
-                </div>
-            </div>
 
             <div id="leftBrakeContainer" class="left-brake-container hidden">
                 <div class="v-group">
@@ -34,6 +28,94 @@
                         <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="bSliderLeft">
                     </div>
                     <button id="pbBtnLeft" class="sub-btn red-btn">PARKING BRAKE</button>
+                </div>
+            </div>
+
+            <div class="ovhd-section lights-panel">
+                <div class="ovhd-section-label">EXT LT</div>
+                <div class="lights-grid">
+                    <div class="flip-sw" id="swBeacon" role="button" tabindex="0">
+                        <span class="flip-pos-lbl">ON</span>
+                        <div class="flip-track"><div class="flip-lever"></div></div>
+                        <span class="flip-pos-lbl">OFF</span>
+                        <span class="flip-name">BEACON</span>
+                    </div>
+                    <div class="flip-sw" id="swNavLogo" role="button" tabindex="0">
+                        <span class="flip-pos-lbl">ON</span>
+                        <div class="flip-track"><div class="flip-lever"></div></div>
+                        <span class="flip-pos-lbl">OFF</span>
+                        <span class="flip-name">NAV LOGO</span>
+                    </div>
+                    <div class="flip-sw" id="swWingScan" role="button" tabindex="0">
+                        <span class="flip-pos-lbl">ON</span>
+                        <div class="flip-track"><div class="flip-lever"></div></div>
+                        <span class="flip-pos-lbl">OFF</span>
+                        <span class="flip-name">WING</span>
+                    </div>
+                    <div class="flip-sw" id="swLandL" role="button" tabindex="0">
+                        <span class="flip-pos-lbl">ON</span>
+                        <div class="flip-track"><div class="flip-lever"></div></div>
+                        <span class="flip-pos-lbl">OFF</span>
+                        <span class="flip-name">LAND L</span>
+                    </div>
+                    <div class="flip-sw" id="swLandR" role="button" tabindex="0">
+                        <span class="flip-pos-lbl">ON</span>
+                        <div class="flip-track"><div class="flip-lever"></div></div>
+                        <span class="flip-pos-lbl">OFF</span>
+                        <span class="flip-name">LAND R</span>
+                    </div>
+                    <div class="flip-sw" id="swRwyTo" role="button" tabindex="0">
+                        <span class="flip-pos-lbl">ON</span>
+                        <div class="flip-track"><div class="flip-lever"></div></div>
+                        <span class="flip-pos-lbl">OFF</span>
+                        <span class="flip-name">RWY TO</span>
+                    </div>
+                </div>
+                <div class="lights-3pos-row">
+                    <div class="flip-sw-3" id="swStrobe" data-pos="1" role="button" tabindex="0">
+                        <div class="flip3-inner">
+                            <div class="flip3-labels">
+                                <span>ON</span>
+                                <span>AUTO</span>
+                                <span>OFF</span>
+                            </div>
+                            <div class="flip3-track"><div class="flip3-lever"></div></div>
+                        </div>
+                        <span class="flip-name">STROBE</span>
+                    </div>
+                    <div class="flip-sw-3" id="swNose" data-pos="2" role="button" tabindex="0">
+                        <div class="flip3-inner">
+                            <div class="flip3-labels">
+                                <span>TAXI</span>
+                                <span>T.O</span>
+                                <span>OFF</span>
+                            </div>
+                            <div class="flip3-track"><div class="flip3-lever"></div></div>
+                        </div>
+                        <span class="flip-name">NOSE</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ovhd-section packs-panel">
+                <div class="ovhd-section-label">PACKS</div>
+                <div class="packs-grid">
+                    <div class="pack-btn-wrap">
+                        <span class="pack-label">PACK 1</span>
+                        <div class="pack-housing">
+                            <button type="button" id="btnPack1" class="pack-btn">
+                                <div class="pack-off-ind">OFF</div>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="pack-btn-wrap">
+                        <span class="pack-label">PACK 2</span>
+                        <div class="pack-housing">
+                            <button type="button" id="btnPack2" class="pack-btn">
+                                <div class="pack-off-ind">OFF</div>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -54,8 +136,8 @@
             </div>
             <div id="ofpContainer" class="ofp-container hidden"></div>
             <div id="ofpCameraButtons" class="ofp-camera-buttons hidden"></div>
+
             <div class="pedestal-row hidden">
-               
                 <div class="b777-gear-container">
                     <span class="label">GEAR</span>
                     <div class="b777-gear-track">
@@ -64,7 +146,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="v-group" style="padding-left: 30px;">
                     <span class="label">FLAPS</span>
                     <div class="center-v-wrap">
@@ -89,6 +171,7 @@
                     </div>
                     <button id="pbBtn" class="sub-btn red-btn">PARKING BRAKE</button>
                 </div>
+
                 <div class="ap-btn-wrap">
                     <button id="apBtn" class="ap-btn">
                         <div id="apIndicator" class="ap-indicator"></div>
@@ -97,9 +180,36 @@
                 </div>
             </div>
 
-            <div class="rudder-card">
-                <span class="label">RUDDER CONTROL</span>
-                <input type="range" min="0" max="1" step="0.001" value="0.5" id="rSlider">
+            <div class="ovhd-section eng-start-panel hidden">
+                <div class="ovhd-section-label">ENG START</div>
+                <div class="eng-start-inner">
+                    <div class="eng-mode-row">
+                        <button type="button" class="eng-mode-pos ovhd-btn" data-mode="0">
+                            <span class="btn-label">CRANK</span>
+                            <div class="btn-led"></div>
+                        </button>
+                        <button type="button" class="eng-mode-pos ovhd-btn selected" data-mode="1">
+                            <span class="btn-label">NORM</span>
+                            <div class="btn-led"></div>
+                        </button>
+                        <button type="button" class="eng-mode-pos ovhd-btn" data-mode="2">
+                            <span class="btn-label">IGN</span>
+                            <div class="btn-led"></div>
+                        </button>
+                    </div>
+                    <div class="eng-masters-row">
+                        <button type="button" id="btnEng1" class="ovhd-btn eng-master">
+                            <span class="btn-label">ENG 1</span>
+                            <span class="btn-sub">MASTER</span>
+                            <div class="btn-led">ON</div>
+                        </button>
+                        <button type="button" id="btnEng2" class="ovhd-btn eng-master">
+                            <span class="btn-label">ENG 2</span>
+                            <span class="btn-sub">MASTER</span>
+                            <div class="btn-led">ON</div>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -109,8 +219,26 @@
             <div class="t-v-wrap">
                 <input type="range" min="0" max="1" step="0.001" value="0" class="t-slider" id="tSlider">
             </div>
-            <button id="idleBtn" class="btn-rev" style="background: #444; margin-bottom: 30px;">IDLE</button>
-            <button id="revBtn" class="btn-rev">REVERSE</button>
+            <button id="idleBtn" class="btn-rev" style="background: #444; margin-bottom: 8px;">IDLE</button>
+            <button id="revBtn" class="btn-rev" style="margin-bottom: 8px;">REVERSE</button>
+
+            <div class="ovhd-section apu-panel">
+                <div class="ovhd-section-label">APU</div>
+                <div class="apu-grid">
+                    <button type="button" id="btnApuMaster" class="ovhd-btn">
+                        <span class="btn-label">MASTER</span>
+                        <div class="btn-led">AVAIL</div>
+                    </button>
+                    <button type="button" id="btnApuStart" class="ovhd-btn">
+                        <span class="btn-label">START</span>
+                        <div class="btn-led">ON</div>
+                    </button>
+                    <button type="button" id="btnApuBleed" class="ovhd-btn">
+                        <span class="btn-label">BLEED</span>
+                        <div class="btn-led">ON</div>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

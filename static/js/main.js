@@ -1,4 +1,4 @@
-let isReverse = false, throttleBlocked = false, rudderResetting = false, pbState = true, isArmed = false, gearIsDown = false;
+let isReverse = false, throttleBlocked = false, pbState = true, isArmed = false, gearIsDown = false;
 let selectedCamId = null;
 let apMasterOn = false;
 
@@ -94,8 +94,6 @@ const getVjoyMapping = (key) => {
 };
 
 const initUI = () => {
-    createJoystick('joyZone', 'joyPuck', 'flight_controls');
-
     const camGrid = document.getElementById('camGrid');
     let selectedCamBtn = null;
     const cameraConfig = window.PROFILE?.ui?.camera_config || window.PROFILE?.camera_config || [];
@@ -410,13 +408,13 @@ document.addEventListener('DOMContentLoaded', () => {
     bindButtonTouch(ofpBtn);
     const gridContainer = document.querySelector('.grid-container');
     const pedestalRow = document.querySelector('.pedestal-row');
+    const engStartPanel = document.querySelector('.eng-start-panel');
     const ofpContainer = document.getElementById('ofpContainer');
     const metarContainer = document.getElementById('metarContainer');
     const metarContent = document.getElementById('metarContent');
     const metarRefreshBtn = document.getElementById('metarRefreshBtn');
     const ofpCameraButtonsEl = document.getElementById('ofpCameraButtons');
     const leftColumn = document.querySelector('.left-column');
-    const flightStick = document.querySelector('.joy-zone-container.stick-right');
     const leftBrakeContainer = document.getElementById('leftBrakeContainer');
     let ofpFrame = null;
     let ofpLoading = false;
@@ -482,9 +480,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         if (gridContainer) gridContainer.classList.add('hidden');
         if (pedestalRow) pedestalRow.classList.add('hidden');
+        if (engStartPanel) engStartPanel.classList.add('hidden');
         if (ofpContainer) ofpContainer.classList.remove('hidden');
         if (ofpCameraButtonsEl) ofpCameraButtonsEl.classList.remove('hidden');
-        if (flightStick) flightStick.classList.add('hidden');
         if (leftBrakeContainer) leftBrakeContainer.classList.remove('hidden');
         if (leftColumn) leftColumn.classList.add('ofp-mode');
         setNavActive(ofpBtn);
@@ -493,10 +491,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const showCams = () => {
         if (gridContainer) gridContainer.classList.remove('hidden');
         if (pedestalRow) pedestalRow.classList.remove('hidden');
+        if (engStartPanel) engStartPanel.classList.remove('hidden');
         if (ofpContainer) ofpContainer.classList.add('hidden');
         if (metarContainer) metarContainer.classList.add('hidden');
         if (ofpCameraButtonsEl) ofpCameraButtonsEl.classList.add('hidden');
-        if (flightStick) flightStick.classList.remove('hidden');
         if (leftBrakeContainer) leftBrakeContainer.classList.add('hidden');
         if (leftColumn) leftColumn.classList.remove('ofp-mode');
         setNavActive(camBtn);
@@ -912,47 +910,6 @@ document.addEventListener('DOMContentLoaded', () => {
         send({ type: 'throttle', value: 0, reverse: isReverse });
     };
 
-    const rSlider = document.getElementById('rSlider');
-    rSlider.oninput = function() {
-        if (!rudderResetting) {
-            const response = getControlResponse();
-            let val = parseFloat(this.value);
-            if (response !== 1) {
-                val = applyControlResponse(val);
-            } else {
-                const sensitivity = getControlSensitivity();
-                val = 0.5 + (val - 0.5) * sensitivity;
-            }
-            send({ type: 'rudder', value: val });
-        }
-    };
-    const resetRudder = () => {
-        rudderResetting = true;
-        const start = parseFloat(rSlider.value), startTime = performance.now();
-        const anim = (t) => {
-            const prog = Math.min((t - startTime) / 250, 1);
-            const cur = start + (0.5 - start) * (1 - Math.pow(1 - prog, 3));
-            rSlider.value = cur; 
-            const response = getControlResponse();
-            let val = cur;
-            if (response !== 1) {
-                val = applyControlResponse(val);
-            } else {
-                const sensitivity = getControlSensitivity();
-                val = 0.5 + (val - 0.5) * sensitivity;
-            }
-            send({ type: 'rudder', value: val });
-            if (prog < 1) requestAnimationFrame(anim);
-            else rudderResetting = false;
-        };
-        requestAnimationFrame(anim);
-    };
-    rSlider.onmouseup = rSlider.ontouchend = resetRudder;
-
-    const joyZone = document.getElementById('joyZone');
-    const puck = document.getElementById('joyPuck');
-    let isTouchingJoy = false;
-
     const gearLever = document.getElementById('gearHandle');
     if (gearLever) {
         gearIsDown = true;
@@ -1043,21 +1000,154 @@ document.addEventListener('DOMContentLoaded', () => {
         pbBtnLeft.onclick = parkingBrakeHandler;
     }
 
+    const setOvhdLvar = (key, value) => {};
+
+    const initFlipDrag = (el, lvarKey, positions) => {
+        const is3 = positions === 3;
+        const LEVER_H = 18;
+        const TRACK_H = is3 ? 78 : 52;
+        const PAD = 2;
+        const MAX = TRACK_H - LEVER_H - PAD;
+        const snaps = is3 ? [PAD, Math.round((TRACK_H - LEVER_H) / 2), MAX] : [PAD, MAX];
+
+        const getPos = () => is3
+            ? (parseInt(el.dataset.pos) || 0)
+            : (el.classList.contains('on') ? 0 : 1);
+
+        const applyPos = (pos) => {
+            if (is3) {
+                el.dataset.pos = String(pos);
+            } else {
+                el.classList.toggle('on', pos === 0);
+            }
+            const v = !is3 && lvarKey === 'wing_scan' ? (pos === 0 ? 1 : 0) : pos;
+            setOvhdLvar(lvarKey, v);
+        };
+
+        let active = false;
+        let startY = 0;
+        let startTop = 0;
+        let lever = null;
+
+        el.addEventListener('pointerdown', (e) => {
+            lever = el.querySelector(is3 ? '.flip3-lever' : '.flip-lever');
+            if (!lever) return;
+            active = true;
+            startY = e.clientY;
+            startTop = snaps[getPos()];
+            lever.style.cssText = `transition:none; top:${startTop}px`;
+            el.setPointerCapture(e.pointerId);
+            e.preventDefault();
+        }, { passive: false });
+
+        el.addEventListener('pointermove', (e) => {
+            if (!active || !lever) return;
+            const newTop = Math.max(PAD, Math.min(MAX, startTop + (e.clientY - startY)));
+            lever.style.top = newTop + 'px';
+        });
+
+        const endDrag = () => {
+            if (!active || !lever) return;
+            active = false;
+            const cur = parseFloat(lever.style.top);
+            let closest = 0;
+            snaps.forEach((s, i) => {
+                if (Math.abs(cur - s) < Math.abs(cur - snaps[closest])) closest = i;
+            });
+            lever.style.transition = 'top 0.18s cubic-bezier(0.4,0,0.2,1)';
+            lever.style.top = snaps[closest] + 'px';
+            applyPos(closest);
+            setTimeout(() => {
+                if (lever) {
+                    lever.style.removeProperty('top');
+                    lever.style.removeProperty('transition');
+                }
+                lever = null;
+            }, 220);
+        };
+
+        el.addEventListener('pointerup', endDrag);
+        el.addEventListener('pointercancel', endDrag);
+    };
+
+    [
+        ['swBeacon',   'beacon',      2],
+        ['swNavLogo',  'nav_logo',    2],
+        ['swWingScan', 'wing_scan',   2],
+        ['swLandL',    'land_left',   2],
+        ['swLandR',    'land_right',  2],
+        ['swRwyTo',    'rwy_turnoff', 2],
+        ['swStrobe',   'strobe',      3],
+        ['swNose',     'nose_light',  3],
+    ].forEach(([id, lvarKey, positions]) => {
+        const el = document.getElementById(id);
+        if (el) initFlipDrag(el, lvarKey, positions);
+    });
+
+    const toggleOvhdBtn = (id, lvarKey) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.addEventListener('click', function() {
+            const on = this.classList.toggle('on');
+            setOvhdLvar(lvarKey, on ? 1 : 0);
+        });
+    };
+
+    ['btnPack1', 'btnPack2'].forEach((id, i) => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        let busy = false;
+        btn.addEventListener('click', function() {
+            if (busy) return;
+            busy = true;
+            const goingOff = !this.classList.contains('off');
+            const animClass = goingOff ? 'pack-anim-release' : 'pack-anim-press';
+            this.classList.add(animClass);
+            this.addEventListener('animationend', () => {
+                this.classList.remove(animClass);
+                this.classList.toggle('off', goingOff);
+                setOvhdLvar(i === 0 ? 'pack1' : 'pack2', goingOff ? 0 : 1);
+                busy = false;
+            }, { once: true });
+        });
+    });
+
+    toggleOvhdBtn('btnApuMaster', 'apu_master');
+    toggleOvhdBtn('btnApuBleed',  'apu_bleed');
+    toggleOvhdBtn('btnEng1',      'eng1_master');
+    toggleOvhdBtn('btnEng2',      'eng2_master');
+
+    const btnApuStart = document.getElementById('btnApuStart');
+    if (btnApuStart) {
+        btnApuStart.addEventListener('click', function() {
+            this.classList.add('on');
+            setTimeout(() => this.classList.remove('on'), 300);
+            setOvhdLvar('apu_start', 1);
+        });
+    }
+
+    document.querySelectorAll('.eng-mode-pos').forEach(pos => {
+        pos.addEventListener('click', () => {
+            document.querySelectorAll('.eng-mode-pos').forEach(p => p.classList.remove('selected'));
+            pos.classList.add('selected');
+            setOvhdLvar('eng_mode', parseInt(pos.dataset.mode));
+        });
+    });
+
     const STATE_KEY = 'virtual_cockpit_state';
-    const DEFAULT_STATE = { flaps: 0, throttle: 0, spoilers: 0, brake: 0, rudder: 0.5 };
-    const isDefaultState = (s) => s && Math.abs(parseFloat(s.flaps) - DEFAULT_STATE.flaps) < 1e-5 && Math.abs(parseFloat(s.throttle) - DEFAULT_STATE.throttle) < 1e-5 && Math.abs(parseFloat(s.spoilers) - DEFAULT_STATE.spoilers) < 1e-5 && Math.abs(parseFloat(s.brake) - DEFAULT_STATE.brake) < 1e-5 && Math.abs(parseFloat(s.rudder) - DEFAULT_STATE.rudder) < 1e-5;
+    const DEFAULT_STATE = { flaps: 0, throttle: 0, spoilers: 0, brake: 0 };
+    const isDefaultState = (s) => s && Math.abs(parseFloat(s.flaps) - DEFAULT_STATE.flaps) < 1e-5 && Math.abs(parseFloat(s.throttle) - DEFAULT_STATE.throttle) < 1e-5 && Math.abs(parseFloat(s.spoilers) - DEFAULT_STATE.spoilers) < 1e-5 && Math.abs(parseFloat(s.brake) - DEFAULT_STATE.brake) < 1e-5;
     const saveState = () => {
         const profileName = window.PROFILE?.name;
         const f = document.getElementById('fSlider');
         const b = document.getElementById('bSlider');
-        if (!profileName || !f || !tSlider || !sSlider || !b || !rSlider) return;
+        if (!profileName || !f || !tSlider || !sSlider || !b) return;
         const state = {
             profile: profileName,
             flaps: parseFloat(f.value),
             throttle: parseFloat(tSlider.value),
             spoilers: parseFloat(sSlider.value),
-            brake: parseFloat(b.value),
-            rudder: parseFloat(rSlider.value)
+            brake: parseFloat(b.value)
         };
         try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) {}
     };
@@ -1076,7 +1166,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (sSlider) { sSlider.value = state.spoilers; send({ type: 'spoilers', value: state.spoilers }); }
             if (b) { b.value = state.brake; send({ type: 'brakes', value: state.brake }); }
             if (bSliderLeft) { bSliderLeft.value = state.brake; }
-            if (rSlider) { rSlider.value = state.rudder; send({ type: 'rudder', value: state.rudder }); }
         } catch (e) {}
     };
     setInterval(saveState, 60000);

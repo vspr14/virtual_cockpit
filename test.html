@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumorphic Switch Prototype</title>
+    <style>
+        :root {
+            /* The color must be identical across the UI to create the Neumorphic effect */
+            --bg-color: #e0e5ec;
+            --shadow-dark: #a3b1c6;
+            --shadow-light: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Helvetica Neue', sans-serif;
+        }
+
+        /* The Faceplate */
+        .plate {
+            width: 160px;
+            height: 280px;
+            background: var(--bg-color);
+            border-radius: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            /* Light/Dark shadow pairing as seen in the video */
+            box-shadow: 9px 9px 16px var(--shadow-dark), 
+                        -9px -9px 16px var(--shadow-light);
+        }
+
+        /* The Switch Housing (Recessed Area) */
+        .switch-area {
+            width: 80px;
+            height: 160px;
+            background: var(--bg-color);
+            border-radius: 20px;
+            /* Inset shadows make the area look carved out */
+            box-shadow: inset 6px 6px 12px var(--shadow-dark), 
+                        inset -6px -6px 12px var(--shadow-light);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            cursor: pointer;
+        }
+
+        /* The Moving Switch Button */
+        .btn-toggle {
+            width: 70px;
+            height: 75px;
+            background: var(--bg-color);
+            margin: 5px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px;
+            font-weight: 800;
+            color: #7f8c8d;
+            /* Transition timing from the video */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Raised shadow for the 'floating' button */
+            box-shadow: 5px 5px 10px var(--shadow-dark), 
+                        -5px -5px 10px var(--shadow-light);
+        }
+
+        /* OFF State (Positioned at bottom) */
+        .pos-off {
+            transform: translateY(75px);
+            color: #ff3b30; /* Red "OFF" indicator from video */
+        }
+
+        /* ON State (Positioned at top) */
+        .pos-on {
+            transform: translateY(0px);
+            color: #34c759; /* Green "ON" indicator from video */
+        }
+
+        /* Screw details for realism */
+        .screw {
+            width: 10px;
+            height: 10px;
+            background: #cbd5e0;
+            border-radius: 50%;
+            margin: 20px 0;
+            box-shadow: inset 1px 1px 2px #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="plate">
+        <div class="screw"></div>
+        <div class="switch-area" onclick="toggle()">
+            <div id="btn" class="btn-toggle pos-off">OFF</div>
+        </div>
+        <div class="screw"></div>
+    </div>
+
+    <script>
+        let isOn = false;
+        const btn = document.getElementById('btn');
+
+        function toggle() {
+            isOn = !isOn;
+            btn.innerText = isOn ? "ON" : "OFF";
+            
+            // Toggle the positions
+            btn.classList.toggle('pos-on', isOn);
+            btn.classList.toggle('pos-off', !isOn);
+            
+            // Log for simulation logic
+            console.log("Switch Event: " + (isOn ? "ON" : "OFF"));
+        }
+    </script>
+</body>
+</html>
