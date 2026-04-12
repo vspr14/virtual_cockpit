@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <script type="importmap">
     {
@@ -16,17 +19,10 @@
     </script>
 </head>
 <body>
-    <div class="screen-layout">
+    <div class="screen-layout fenix-a320-layout">
         <div class="left-column fenix-ovhd-dense">
             <div class="tod-panel">
                 <div id="utcClock" class="utc-clock">--:--Z</div>
-                <div class="tod-input-row">
-                    <input id="todHour" class="tod-input" type="number" min="0" max="23" placeholder="HH">
-                    <span class="tod-separator">:</span>
-                    <input id="todMinute" class="tod-input" type="number" min="0" max="59" placeholder="MM">
-                    <button id="todSetBtn" class="tod-btn">SET TD</button>
-                </div>
-                <div id="todStatus" class="tod-status"></div>
             </div>
 
             <div id="leftBrakeContainer" class="left-brake-container hidden">
@@ -173,7 +169,7 @@
                     </div>
                 </div>
                 <div class="ovhd-section apu-oh-stack ovhd-flush">
-                    <div class="apu-oh-row">
+                    <div class="apu-oh-row apu-master-row">
                         <div class="pack-btn-wrap">
                             <span class="pack-label">MASTER SW</span>
                             <div class="pack-housing pack-apu-housing">
@@ -183,8 +179,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="apu-oh-row">
-                        <div class="pack-btn-wrap">
+                    <div class="apu-oh-row apu-start-only-row">
+                        <div class="pack-btn-wrap apu-start-wrap">
                             <span class="pack-label">START</span>
                             <div class="pack-housing">
                                 <button type="button" id="btnApuStartOh" class="pack-btn pack-apu-start off">
@@ -195,10 +191,25 @@
                             </div>
                         </div>
                     </div>
-                    <div class="apu-oh-row eng-mode-oh-row">
-                        <div class="eng-mode-horiz" id="engModeOhRoot" data-pos="1">
-                            <div class="eng-mode-3d-host">
-                                <div class="eng-mode-3d-viewport" id="engMode3dViewport" tabindex="0" role="region" aria-label="Engine mode"></div>
+                    <div class="apu-oh-row eng-master-engine-row">
+                        <div class="eng-master-panel-col">
+                            <span class="eng-master-panel-label">MASTER 1</span>
+                            <div class="eng-master-switch-housing">
+                                <div class="eng-master-3d-viewport" id="engMaster3dViewport" tabindex="-1" role="img" aria-label="Engine 1 master"></div>
+                            </div>
+                        </div>
+                        <div class="eng-mode-inline-wrap">
+                            <span class="eng-mode-panel-label">MODE SEL</span>
+                            <div class="eng-mode-horiz" id="engModeOhRoot" data-pos="1">
+                                <div class="eng-mode-3d-host">
+                                    <div class="eng-mode-3d-viewport" id="engMode3dViewport" tabindex="0" role="region" aria-label="Engine mode"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eng-master-panel-col">
+                            <span class="eng-master-panel-label">MASTER 2</span>
+                            <div class="eng-master-switch-housing">
+                                <div class="eng-master-3d-viewport" id="engMaster3dViewport2" tabindex="-1" role="img" aria-label="Engine 2 master"></div>
                             </div>
                         </div>
                     </div>
@@ -224,11 +235,117 @@
             <div id="ofpCameraButtons" class="ofp-camera-buttons hidden"></div>
 
             <div class="pedestal-row hidden">
+                <!--
                 <div class="b777-gear-container">
                     <span class="label">GEAR</span>
                     <div class="b777-gear-track">
                         <div id="gearHandle" class="b777-gear-arm gear-up">
                             <div class="b777-gear-knob"></div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <div class="gear-pedestal-column">
+                    <div class="gear-pedestal-section-title">AUTO BRK</div>
+                    <div class="ovhd-pbpair-row gear-ldg-row">
+                        <div class="gear-ldg-push-row">
+                            <div class="ovhd-pbpair-btns gear-ldg-pair">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">LO</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="gearPb1" class="pack-btn pack-apu-start off">
+                                            <div class="apu-start-avail">DECEL</div>
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-apu-start-on">ON</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">MED</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="gearPb2" class="pack-btn pack-apu-start off">
+                                            <div class="apu-start-avail">DECEL</div>
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-apu-start-on">ON</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="gear-pedestal-divider" aria-hidden="true"></div>
+                            <div class="ovhd-pbpair-btns gear-ldg-single">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">HI</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="gearPb3" class="pack-btn pack-apu-start off">
+                                            <div class="apu-start-avail">DECEL</div>
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-apu-start-on">ON</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gear-pedestal-h-rule" aria-hidden="true"></div>
+                    <div class="gear-pedestal-section-title">GEAR</div>
+                    <div id="gear-3d-mount" class="gear-3d-mount"></div>
+                    <div class="gear-pedestal-h-rule" aria-hidden="true"></div>
+                    <div class="gear-pedestal-section-title">CLOCK</div>
+                    <div id="pedestalClockHost" class="gear-clock-host">
+                        <div class="pedestal-clock-bezel">
+                            <div class="pedestal-clock-housing">
+                                <div class="pedestal-clock-panel-row">
+                                    <div class="pedestal-clock-title-above">T/D</div>
+                                    <div class="pedestal-clock-picker-wrap" data-pc="picker-wrap">
+                                        <div class="pedestal-clock-glass">
+                                            <div class="pedestal-clock-td-inner">
+                                                <div class="pedestal-clock-td-display" data-pc="td-display">--:--</div>
+                                            </div>
+                                            <div class="pedestal-clock-sub-row">
+                                                <span class="pedestal-clock-sub">HR</span>
+                                                <span class="pedestal-clock-sub">MIN</span>
+                                            </div>
+                                            <button type="button" class="pedestal-clock-set-btn" data-pc="set-btn">SET</button>
+                                        </div>
+                                        <div class="pedestal-clock-picker-drop" data-pc="picker-drop">
+                                            <input type="time" value="00:00" data-pc="td-input">
+                                            <button type="button" class="pedestal-clock-confirm-btn" data-pc="confirm-btn">CONFIRM</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pedestal-clock-panel-row">
+                                    <div class="pedestal-clock-title-above">UTC</div>
+                                    <div class="pedestal-clock-glass">
+                                        <div class="pedestal-clock-digit-row">
+                                            <span class="pedestal-clock-d" data-pc="uh1">0</span><span class="pedestal-clock-d" data-pc="uh2">0</span>
+                                            <span class="pedestal-clock-sep pedestal-clock-blink">:</span>
+                                            <span class="pedestal-clock-d" data-pc="um1">0</span><span class="pedestal-clock-d" data-pc="um2">0</span>
+                                            <span class="pedestal-clock-sep pedestal-clock-blink">:</span>
+                                            <span class="pedestal-clock-d" data-pc="us1">0</span><span class="pedestal-clock-d" data-pc="us2">0</span>
+                                        </div>
+                                        <div class="pedestal-clock-sub-row">
+                                            <span class="pedestal-clock-sub">HR</span>
+                                            <span class="pedestal-clock-sub">MIN</span>
+                                            <span class="pedestal-clock-sub">SEC</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pedestal-clock-panel-row">
+                                    <div class="pedestal-clock-glass">
+                                        <div class="pedestal-clock-digit-row">
+                                            <span class="pedestal-clock-d" data-pc="es">&thinsp;</span>
+                                            <span class="pedestal-clock-d" data-pc="eh1">-</span><span class="pedestal-clock-d" data-pc="eh2">-</span>
+                                            <span class="pedestal-clock-sep">:</span>
+                                            <span class="pedestal-clock-d" data-pc="em1">-</span><span class="pedestal-clock-d" data-pc="em2">-</span>
+                                        </div>
+                                        <div class="pedestal-clock-sub-row">
+                                            <span class="pedestal-clock-sub">HR</span>
+                                            <span class="pedestal-clock-sub">MIN</span>
+                                        </div>
+                                    </div>
+                                    <div class="pedestal-clock-title-below">ET</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -259,6 +376,7 @@
                 </div>
 
                 <div class="ap-btn-wrap">
+                    <button type="button" id="refreshPageBtn" class="refresh-site-btn" title="Reload page">↻</button>
                     <button id="apBtn" class="ap-btn">
                         <div id="apIndicator" class="ap-indicator"></div>
                         A/P

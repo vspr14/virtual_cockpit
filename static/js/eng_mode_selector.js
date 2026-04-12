@@ -38,13 +38,13 @@ function syncEngModeHidden(p) {
     });
 }
 
-function makeEngLabelPlane(text, { w = 480, h = 144, fontPx = 66 } = {}) {
+function makeEngLabelPlane(text, { w = 480, h = 144, fontPx = 65 } = {}) {
     const c = document.createElement('canvas');
     c.width = w;
     c.height = h;
     const g = c.getContext('2d');
     g.clearRect(0, 0, w, h);
-    g.font = `600 ${fontPx}px Barlow Condensed, "Arial Narrow", Arial, sans-serif`;
+    g.font = `500 ${fontPx}px Barlow Condensed, "Arial Narrow", Arial, sans-serif`;
     g.textAlign = 'center';
     g.textBaseline = 'middle';
     g.fillStyle = 'rgba(248,250,252,0.98)';
@@ -71,13 +71,13 @@ function makeEngLabelPlane(text, { w = 480, h = 144, fontPx = 66 } = {}) {
     return { mesh, tex, w, h, fontPx };
 }
 
-function makeEngLabelStack(lines, { w = 420, h = 198, fontPx = 54, lineGap = 1.42 } = {}) {
+function makeEngLabelStack(lines, { w = 420, h = 198, fontPx = 53, lineGap = 1.42 } = {}) {
     const c = document.createElement('canvas');
     c.width = w;
     c.height = h;
     const g = c.getContext('2d');
     g.clearRect(0, 0, w, h);
-    g.font = `600 ${fontPx}px Barlow Condensed, "Arial Narrow", Arial, sans-serif`;
+    g.font = `500 ${fontPx}px Barlow Condensed, "Arial Narrow", Arial, sans-serif`;
     g.textAlign = 'center';
     g.textBaseline = 'middle';
     g.fillStyle = 'rgba(248,250,252,0.98)';
@@ -232,17 +232,18 @@ function attachDullEngMode(viewportEl, rootEl, { emit }) {
 
         let L;
         if (i === 0) {
-            L = makeEngLabelPlane('CRANK', { w: 450, h: 132, fontPx: 60 });
+            L = makeEngLabelPlane('CRANK', { w: 450, h: 132, fontPx: 59 });
         } else if (i === 1) {
-            L = makeEngLabelStack(['NORM'], { w: 390, h: 192, fontPx: 51 });
+            L = makeEngLabelStack(['NORM'], { w: 390, h: 192, fontPx: 50 });
         } else {
-            L = makeEngLabelStack(['IGN', 'START'], { w: 390, h: 195, fontPx: 51 });
+            L = makeEngLabelStack(['IGN/', 'START'], { w: 390, h: 195, fontPx: 50 });
         }
-        const labelR = arcRadius + tickLen + 0.34;
+        const labelR = arcRadius + tickLen + 0.3;
         const lx = Math.cos(phi) * labelR;
         const ly = Math.sin(phi) * labelR;
         const lift = 0.2 + Math.sin(phi) * 0.04;
-        L.mesh.position.set(lx, ly + lift, zArc + 0.018);
+        const ignStartLift = i === 2 ? 0.3 : 0;
+        L.mesh.position.set(lx, ly + lift + ignStartLift, zArc + 0.018);
         focusRoot.add(L.mesh);
         labelMeshes.push(L);
     }

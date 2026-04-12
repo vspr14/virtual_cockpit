@@ -51,7 +51,10 @@ html, body {
     touch-action: pan-x pan-y;
 }
 
-/* LEFT COLUMN — sits on the Airbus gray panel background */
+.screen-layout.fenix-a320-layout {
+    grid-template-columns: minmax(400px, min(650px, max(590px, 46vw))) 1fr 218px;
+}
+
 .left-column {
     display: flex;
     flex-direction: column;
@@ -67,7 +70,7 @@ html, body {
 
 .left-column.fenix-ovhd-dense {
     gap: 4px;
-    padding: 4px 14px 6px 8px;
+    padding: 4px 10px 6px 8px;
 }
 
 .left-column.fenix-ovhd-dense .tod-panel {
@@ -85,6 +88,8 @@ html, body {
 
 .left-column.fenix-ovhd-dense .fuel-pumps-row {
     padding: 2px 6px 6px;
+    gap: 8px 10px;
+    margin-bottom: 4px;
 }
 
 .left-column.fenix-ovhd-dense .ovhd-pbpair-row {
@@ -103,6 +108,19 @@ html, body {
     padding-bottom: 66%;
 }
 
+.left-column.fenix-ovhd-dense .eng-master-panel-col {
+    width: 142px;
+}
+
+.left-column.fenix-ovhd-dense .eng-mode-inline-wrap {
+    max-width: 280px;
+    padding: 0 2px 1px;
+}
+
+.left-column.fenix-ovhd-dense .eng-mode-inline-wrap .eng-mode-horiz {
+    max-width: 260px;
+}
+
 .tod-panel {
     display: flex;
     flex-direction: column;
@@ -116,48 +134,6 @@ html, body {
     font-size: 1.2em;
     font-weight: 700;
     color: var(--airbus-label);
-}
-
-.tod-input-row {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.tod-input {
-    width: 52px;
-    padding: 6px 8px;
-    border-radius: 4px;
-    border: 1px solid #2e3540;
-    background: var(--airbus-indicator);
-    color: var(--airbus-label);
-    text-align: center;
-    font-size: 0.9em;
-    font-family: 'B612 Mono', monospace;
-}
-
-.tod-separator {
-    color: var(--airbus-label);
-    font-size: 0.9em;
-}
-
-.tod-btn {
-    background: var(--airbus-btn);
-    border: 1px solid #2e3540;
-    color: var(--airbus-text);
-    border-radius: 3px;
-    padding: 6px 10px;
-    font-size: 0.8em;
-    font-weight: 700;
-    font-family: 'B612', monospace;
-    letter-spacing: 0.06em;
-    cursor: pointer;
-}
-
-.tod-status {
-    min-height: 1.2em;
-    font-size: 0.8em;
-    color: #6ed890;
 }
 
 .left-column.ofp-mode {
@@ -271,7 +247,6 @@ html, body {
     margin-left: 10px;
 }
 
-/* OUTSIDE FLAP LABELS */
 .flap-labels-container {
     position: relative; height: 28vh; width: 60px; left: -75px;
     pointer-events: none; z-index: 10; margin-right: 10px;
@@ -534,7 +509,6 @@ html, body {
 
 
 /* REDUCED SLIDER HEIGHTS TO PREVENT OVERFLOW */
-.flap-labels-container { height: 28vh; }
 #fSlider, #sSlider, #bSlider { width: 32vh; }
 
 button {
@@ -542,6 +516,295 @@ button {
     /* Prevents long-press context menus (right click menu) */
     -webkit-touch-callout: none;
 }
+.gear-pedestal-column {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    flex: 0 0 auto;
+    align-self: stretch;
+    min-width: min(230px, 46vw);
+    max-width: min(276px, 56vw);
+    height: 100%;
+    min-height: 0;
+    box-sizing: border-box;
+    background: var(--airbus-panel);
+    border-radius: 8px;
+    padding: 6px 8px 8px;
+}
+.gear-pedestal-section-title,
+.gear-autobrk-header {
+    flex-shrink: 0;
+    padding: 10px 6px 2px;
+    font-family: 'B612', 'B612 Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    color: var(--airbus-label);
+    text-align: center;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    user-select: none;
+}
+.gear-pedestal-h-rule {
+    flex-shrink: 0;
+    height: 1px;
+    margin: 15px 0 7.5px 0;
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 1px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
+}
+.gear-ldg-push-row {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+}
+.gear-pedestal-column .gear-ldg-pair,
+.gear-pedestal-column .gear-ldg-single {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 6px;
+}
+.gear-pedestal-divider {
+    width: 2px;
+    height: 58px;
+    flex-shrink: 0;
+    margin: 0 4px;
+    align-self: flex-end;
+    background: rgba(255, 255, 255, 0.35);
+    border-radius: 1px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
+}
+.gear-pedestal-column .gear-ldg-row {
+    flex-shrink: 0;
+    padding: 2px 0 0;
+}
+.gear-3d-mount {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 168px;
+    min-height: 96px;
+    max-height: 22vh;
+    margin: 0 auto;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    background: transparent;
+}
+.gear-3d-mount canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
+}
+
+#pedestalClockHost.gear-clock-host {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    margin-top: 2px;
+}
+.pedestal-clock-bezel {
+    width: 100%;
+    max-width: 228px;
+    margin: 0 auto;
+    background: #4a5560;
+    border-radius: 6px;
+    padding: 8px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.4), 0 6px 24px rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
+}
+.pedestal-clock-housing {
+    background: #2c3238;
+    border-radius: 3px;
+    padding: 8px 6px;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.pedestal-clock-panel-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+.pedestal-clock-title-above,
+.pedestal-clock-title-below {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: #c8d4dc;
+    text-transform: uppercase;
+}
+.pedestal-clock-title-below {
+    margin-top: 1px;
+}
+.pedestal-clock-glass {
+    background: #000000;
+    border-radius: 8px;
+    padding: 6px 7px 4px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+.pedestal-clock-td-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 0;
+    position: relative;
+    z-index: 2;
+}
+.pedestal-clock-digit-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+.pedestal-clock-d {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+.pedestal-clock-sep {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #ffffff;
+    line-height: 1;
+    margin: 0 1px;
+    position: relative;
+    top: -1px;
+}
+.pedestal-clock-sep.pedestal-clock-blink {
+    animation: pedestal-clock-blink 1s step-end infinite;
+}
+@keyframes pedestal-clock-blink {
+    0%,
+    100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.15;
+    }
+}
+.pedestal-clock-neg {
+    color: #e85050;
+}
+.pedestal-clock-sub-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1px 1px 0;
+    position: relative;
+    z-index: 2;
+}
+.pedestal-clock-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: #3a9fc8;
+    text-transform: uppercase;
+}
+.pedestal-clock-set-btn {
+    position: absolute;
+    right: 5px;
+    bottom: 4px;
+    z-index: 10;
+    background: #111;
+    border: 1px solid #2a4050;
+    color: #3a9fc8;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 2px 4px;
+    border-radius: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.pedestal-clock-set-btn:hover {
+    border-color: #3a9fc8;
+    background: #0a1a24;
+}
+.pedestal-clock-picker-wrap {
+    position: relative;
+    width: 100%;
+}
+.pedestal-clock-picker-drop {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    background: #1a2028;
+    border: 1px solid #2a3a48;
+    border-radius: 3px;
+    padding: 8px;
+    z-index: 200;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+}
+.pedestal-clock-picker-drop.pedestal-clock-picker-open {
+    display: block;
+}
+.pedestal-clock-picker-drop input[type='time'] {
+    width: 100%;
+    box-sizing: border-box;
+    background: #000;
+    border: 1px solid #2a3a48;
+    color: #ffffff;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    padding: 6px;
+    border-radius: 2px;
+    outline: none;
+    text-align: center;
+    letter-spacing: 2px;
+}
+.pedestal-clock-picker-drop input[type='time']::-webkit-calendar-picker-indicator {
+    filter: invert(0.6) sepia(1) saturate(3) hue-rotate(170deg);
+    cursor: pointer;
+}
+.pedestal-clock-confirm-btn {
+    width: 100%;
+    margin-top: 6px;
+    background: #0a1820;
+    border: 1px solid #3a9fc8;
+    color: #3a9fc8;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    padding: 5px;
+    border-radius: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+.pedestal-clock-confirm-btn:hover {
+    background: #102030;
+}
+.pedestal-clock-td-display {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -1px;
+    position: relative;
+    z-index: 2;
+    padding: 2px 0;
+}
+
 .b777-gear-container {
     display: flex;
     flex-direction: column;
@@ -598,6 +861,27 @@ button {
     justify-content: center;
     width: 70px;
     gap: 10px;
+}
+
+.refresh-site-btn {
+    width: 56px;
+    height: 34px;
+    padding: 0;
+    border: 2px solid #3a3a3c;
+    border-radius: 4px;
+    background: #2c2c2e;
+    color: #c8d0dc;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.refresh-site-btn:active {
+    background: #3a3c42;
 }
 
 .ap-btn {
@@ -691,7 +975,7 @@ button {
     min-width: 0;
     box-sizing: border-box;
     padding: 2px 6px 10px;
-    gap: 12px 16px;
+    gap: 10px 12px;
 }
 
 .fuel-pumps-group {
@@ -709,28 +993,33 @@ button {
     gap: 5px;
 }
 
-.left-column .pack-housing {
+.left-column .pack-housing,
+.gear-pedestal-column .pack-housing {
     width: 60px;
     height: 58px;
 }
 
-.left-column .pack-btn {
+.left-column .pack-btn,
+.gear-pedestal-column .pack-btn {
     width: 50px;
     height: 51px;
     padding: 3px 2px 3px;
 }
 
-.left-column .pack-label {
+.left-column .pack-label,
+.gear-pedestal-column .pack-label {
     font-size: 9px;
     letter-spacing: 0.06em;
 }
 
-.left-column .pack-fault {
+.left-column .pack-fault,
+.gear-pedestal-column .pack-fault {
     padding-top: 9px;
     font-size: 7.5px;
 }
 
-.left-column .pack-off-ind {
+.left-column .pack-off-ind,
+.gear-pedestal-column .pack-off-ind {
     font-size: 9px;
     padding: 2px 0;
 }
@@ -754,15 +1043,67 @@ button {
     padding: 2px 0;
 }
 
+.gear-pedestal-column .pack-btn.pack-apu-start .apu-start-avail {
+    padding-top: 12px;
+    font-size: 6.5px;
+}
+
+.gear-pedestal-column .pack-btn.pack-apu-start .pack-fault {
+    padding-top: 16px;
+}
+
+.gear-pedestal-column .pack-btn.pack-apu-start .pack-apu-start-on {
+    font-size: 9px;
+    padding: 2px 0;
+}
+
 .fuel-pumps-group-title {
     font-family: 'Barlow Condensed', 'B612', sans-serif;
-    font-size: 9px;
+    font-size: 8px;
     font-weight: 600;
     color: #a8b4c4;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     user-select: none;
     line-height: 1;
+}
+
+.fuel-pumps-row .fuel-pumps-group {
+    gap: 3px;
+}
+
+.fuel-pumps-row .fuel-pumps-group-btns {
+    gap: 4px;
+}
+
+.fuel-pumps-row .pack-btn-wrap {
+    gap: 3px;
+}
+
+.fuel-pumps-row .pack-housing {
+    width: 52px;
+    height: 50px;
+}
+
+.fuel-pumps-row .pack-btn {
+    width: 42px;
+    height: 42px;
+    padding: 2px 2px 2px;
+}
+
+.fuel-pumps-row .pack-label {
+    font-size: 8px;
+    letter-spacing: 0.05em;
+}
+
+.fuel-pumps-row .pack-fault {
+    padding-top: 7px;
+    font-size: 6.5px;
+}
+
+.fuel-pumps-row .pack-off-ind {
+    font-size: 8px;
+    padding: 1px 0;
 }
 
 .ovhd-pbpair-row {
@@ -916,7 +1257,10 @@ button {
     border-radius: 4px;
     overflow: hidden;
     background: #0d1118;
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.75);
+    border: 1px solid rgba(255,255,255,0.42);
+    box-shadow:
+        inset 0 2px 8px rgba(0, 0, 0, 0.75),
+        0 0 0 1px rgba(255,255,255,0.07);
     flex-shrink: 0;
     position: relative;
     z-index: 3;
@@ -956,10 +1300,11 @@ button {
     width: 22px;
     height: 52px;
     background: #131620;
-    border: 1px solid #0c0e16;
+    border: 1px solid rgba(255,255,255,0.4);
     border-radius: 4px;
     position: relative;
     box-shadow:
+        0 0 0 1px rgba(0,0,0,0.5),
         inset 0 4px 9px rgba(0,0,0,0.88),
         inset 0 -1px 4px rgba(0,0,0,0.5);
 }
@@ -973,7 +1318,7 @@ button {
     border: 1px solid #606870;
     border-radius: 3px;
     box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.7),
+        inset 0 2px 0 rgba(255,255,255,0.45),
         inset 0 -1px 0 rgba(0,0,0,0.2),
         0 3px 5px rgba(0,0,0,0.65);
     transition: top 0.18s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1040,10 +1385,11 @@ button {
     width: 22px;
     height: 78px;
     background: #131620;
-    border: 1px solid #0c0e16;
+    border: 1px solid rgba(255,255,255,0.4);
     border-radius: 4px;
     position: relative;
     box-shadow:
+        0 0 0 1px rgba(0,0,0,0.5),
         inset 0 4px 9px rgba(0,0,0,0.88),
         inset 0 -1px 4px rgba(0,0,0,0.5);
 }
@@ -1057,7 +1403,7 @@ button {
     border: 1px solid #606870;
     border-radius: 3px;
     box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.7),
+        inset 0 2px 0 rgba(255,255,255,0.45),
         inset 0 -1px 0 rgba(0,0,0,0.2),
         0 3px 5px rgba(0,0,0,0.65);
     transition: top 0.18s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1139,6 +1485,7 @@ button {
     width: 100%;
     height: 100%;
     display: block;
+    background: transparent;
 }
 
 .packs-stack {
@@ -1202,6 +1549,11 @@ button {
     box-sizing: border-box;
 }
 
+.apu-master-row {
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+}
+
 .apu-oh-row {
     display: flex;
     flex-direction: row;
@@ -1210,9 +1562,102 @@ button {
     width: 100%;
 }
 
-.eng-mode-oh-row {
+.apu-start-only-row {
+    justify-content: center;
+    align-items: flex-end;
+    width: 100%;
+    margin-bottom: 4px;
+    padding-bottom: 0;
+}
+
+.eng-master-engine-row {
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 6px;
+    margin-top: 4px;
+    padding: 2px 2px 0;
+    width: 100%;
+}
+
+.eng-master-panel-col {
+    flex: 0 0 auto;
+    width: 136px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
     align-items: center;
-    padding-top: 4px;
+    gap: 3px;
+    transform: translateY(6px);
+}
+
+.eng-master-panel-label,
+.eng-mode-panel-label {
+    font-family: 'Barlow Condensed', 'B612', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    color: #e8eef6;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    user-select: none;
+    -webkit-user-select: none;
+    text-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
+}
+
+.eng-master-switch-housing {
+    width: 100%;
+    border-radius: 5px;
+    padding: 1px;
+    box-sizing: border-box;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.28),
+        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.12);
+}
+
+.eng-mode-inline-wrap {
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: 260px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    align-self: stretch;
+    gap: 5px;
+    padding: 0 4px 1px;
+    box-shadow: none;
+}
+
+.eng-mode-inline-wrap .eng-mode-horiz {
+    width: 100%;
+    max-width: 240px;
+    margin: 0;
+}
+
+.eng-master-3d-viewport {
+    width: 100%;
+    height: 0;
+    min-height: 0;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    background: var(--airbus-panel);
+    touch-action: none;
+    -webkit-touch-callout: none;
+    padding-bottom: 100%;
+}
+
+.eng-master-3d-viewport canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.apu-start-wrap {
+    flex: 0 0 auto;
 }
 
 .eng-mode-horiz {
@@ -1226,6 +1671,9 @@ button {
 .eng-mode-3d-host {
     width: 100%;
     position: relative;
+    border: none;
+    outline: none;
+    box-shadow: none;
 }
 
 .eng-mode-3d-viewport {
@@ -1235,6 +1683,9 @@ button {
     position: relative;
     overflow: hidden;
     border-radius: 0;
+    border: none;
+    outline: none;
+    box-shadow: none;
     background: var(--airbus-panel);
     touch-action: none;
     -webkit-touch-callout: none;
@@ -1327,7 +1778,7 @@ button {
     width: 71px;
     height: 68px;
     background: #030406;
-    border: 2px solid rgba(255,255,255,0.75);
+    border: 2px solid rgba(255,255,255,0.55);
     border-radius: 4px;
     display: flex;
     align-items: center;
@@ -1335,7 +1786,7 @@ button {
     overflow: visible;
     box-shadow:
         inset 0 2px 6px rgba(0,0,0,0.8),
-        0 0 0 1px rgba(255,255,255,0.12);
+        0 0 0 1px rgba(255,255,255,0.1);
 }
 
 /* Button: ON (default) = pressed/receded into housing (Z-axis back) */
@@ -1464,11 +1915,11 @@ button {
 
 /* Pack OFF — indicator illuminates white */
 .pack-btn.off .pack-off-ind {
-    border-color: rgba(255,255,255,0.86);
+    border-color: rgba(255,255,255,0.52);
     color: #ffffff;
     box-shadow:
-        0 0 9px rgba(255,255,255,0.38),
-        inset 0 0 4px rgba(255,255,255,0.1);
+        0 0 9px rgba(255,255,255,0.24),
+        inset 0 0 4px rgba(255,255,255,0.06);
 }
 
 /* APU PANEL */

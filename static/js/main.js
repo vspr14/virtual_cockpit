@@ -148,17 +148,17 @@ const initUI = () => {
     }
 
     const fLabels = document.getElementById('flapLabels');
-    fLabels.innerHTML = '';
-    (window.PROFILE?.ui?.flap_detents || window.PROFILE?.flap_detents || []).forEach((d, i) => {
-        const row = document.createElement('div');
-        row.className = 'flap-detent-row';
-        if (i === 0) row.classList.add('active');
-        
-        row.style.top = (d.val * 100) + "%"; 
-        
-        row.innerHTML = `<span>${d.label}</span><div class="indicator-dot"></div>`;
-        fLabels.appendChild(row);
-    });
+    if (fLabels) {
+        fLabels.innerHTML = '';
+        (window.PROFILE?.ui?.flap_detents || window.PROFILE?.flap_detents || []).forEach((d, i) => {
+            const row = document.createElement('div');
+            row.className = 'flap-detent-row';
+            if (i === 0) row.classList.add('active');
+            row.style.top = (d.val * 100) + '%';
+            row.innerHTML = `<span>${d.label}</span><div class="indicator-dot"></div>`;
+            fLabels.appendChild(row);
+        });
+    }
 };
 
 const updateFlapUI = (index) => {
@@ -574,10 +574,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const utcClockEl = document.getElementById('utcClock');
-    const todHourInput = document.getElementById('todHour');
-    const todMinuteInput = document.getElementById('todMinute');
-    const todSetBtn = document.getElementById('todSetBtn');
-    const todStatusEl = document.getElementById('todStatus');
     if (utcClockEl) {
         const updateUtcClock = () => {
             const now = new Date();
@@ -587,108 +583,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         updateUtcClock();
         setInterval(updateUtcClock, 1000);
-    }
-    const TOD_KEY = 'virtual_cockpit_tod';
-    let todAudioCtx = null;
-    let todAudioGain = null;
-    const loadTodState = () => {
-        try {
-            const raw = localStorage.getItem(TOD_KEY);
-            if (!raw) return null;
-            return JSON.parse(raw);
-        } catch (e) {
-            return null;
-        }
-    };
-    const saveTodState = (timestamp, fired) => {
-        const profileName = window.PROFILE?.name;
-        if (!profileName || !timestamp) return;
-        const state = { profile: profileName, timestamp, fired: !!fired };
-        try {
-            localStorage.setItem(TOD_KEY, JSON.stringify(state));
-        } catch (e) {
-        }
-    };
-    const triggerTodAlarm = () => {
-        if (triggerTodAlarm.active) return;
-        triggerTodAlarm.active = true;
-        if (todStatusEl) {
-            todStatusEl.textContent = 'TD reached';
-        }
-        if (todAudioCtx) {
-            try {
-                const osc = todAudioCtx.createOscillator();
-                osc.type = 'sine';
-                osc.frequency.value = 880;
-                if (todAudioGain) {
-                    osc.connect(todAudioGain);
-                } else {
-                    osc.connect(todAudioCtx.destination);
-                }
-                osc.start();
-                setTimeout(() => {
-                    osc.stop();
-                }, 5000);
-            } catch (e) {
-            }
-        }
-        alert('TD');
-        triggerTodAlarm.active = false;
-    };
-    const isFenixA320Profile = () => window.PROFILE?.name === 'Fenix A320';
-    if (todSetBtn && todHourInput && todMinuteInput && isFenixA320Profile()) {
-        bindButtonTouch(todSetBtn);
-        todSetBtn.onclick = () => {
-            const h = parseInt(todHourInput.value, 10);
-            const m = parseInt(todMinuteInput.value, 10);
-            if (Number.isNaN(h) || Number.isNaN(m) || h < 0 || h > 23 || m < 0 || m > 59) return;
-            if (!todAudioCtx) {
-                try {
-                    const AudioContextCtor = window.AudioContext || window.webkitAudioContext;
-                    if (AudioContextCtor) {
-                        todAudioCtx = new AudioContextCtor();
-                        todAudioGain = todAudioCtx.createGain();
-                        todAudioGain.gain.value = 0.2;
-                        todAudioGain.connect(todAudioCtx.destination);
-                    }
-                } catch (e) {
-                }
-            }
-            if (todAudioCtx && todAudioCtx.state === 'suspended') {
-                try {
-                    todAudioCtx.resume();
-                } catch (e) {
-                }
-            }
-            const now = new Date();
-            let target = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), h, m, 0, 0));
-            if (target.getTime() <= now.getTime()) {
-                target = new Date(target.getTime() + 24 * 60 * 60 * 1000);
-            }
-            saveTodState(target.getTime(), false);
-            if (todStatusEl) {
-                const hhText = String(h).padStart(2, '0');
-                const mmText = String(m).padStart(2, '0');
-                todStatusEl.textContent = 'TD alarm set for ' + hhText + ':' + mmText + 'Z';
-                setTimeout(() => {
-                    todStatusEl.textContent = '';
-                }, 4000);
-            }
-        };
-        const existing = loadTodState();
-        if (existing && existing.timestamp && existing.profile === window.PROFILE.name) {
-            const dt = new Date(existing.timestamp);
-            todHourInput.value = String(dt.getUTCHours()).padStart(2, '0');
-            todMinuteInput.value = String(dt.getUTCMinutes()).padStart(2, '0');
-        }
-        setInterval(() => {
-            const state = loadTodState();
-            if (!state || !state.timestamp || state.fired || state.profile !== window.PROFILE.name) return;
-            if (Date.now() >= state.timestamp) {
-                triggerTodAlarm();
-                saveTodState(state.timestamp, true);
-            }
-        }, 1000);
     }
 
     if (camBtn) camBtn.onclick = showCams;
@@ -740,20 +634,30 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
     }
-    
-    document.getElementById('fSlider').oninput = function() {
-        const visualVal = parseFloat(this.value); 
-        let closestIndex = 0;
-        const flapDetents = window.PROFILE?.ui?.flap_detents || window.PROFILE?.flap_detents || [];
-        const closest = flapDetents.reduce((prev, curr, index) => {
-            const isCloser = Math.abs(curr.val - visualVal) < Math.abs(prev.val - visualVal);
-            if (isCloser) closestIndex = index;
-            return isCloser ? curr : prev;
-        });
-        this.value = closest.val;
-        updateFlapUI(closestIndex);
-        send({ type: 'flaps_axis', value: closest.val });
-    };
+
+    const refreshPageBtn = document.getElementById('refreshPageBtn');
+    if (refreshPageBtn) {
+        bindButtonTouch(refreshPageBtn);
+        refreshPageBtn.onclick = () => location.reload();
+    }
+
+    const fSliderEl = document.getElementById('fSlider');
+    if (fSliderEl) {
+        fSliderEl.oninput = function () {
+            const visualVal = parseFloat(this.value);
+            let closestIndex = 0;
+            const flapDetents = window.PROFILE?.ui?.flap_detents || window.PROFILE?.flap_detents || [];
+            if (!flapDetents.length) return;
+            flapDetents.reduce((prev, curr, index) => {
+                const isCloser = Math.abs(curr.val - visualVal) < Math.abs(prev.val - visualVal);
+                if (isCloser) closestIndex = index;
+                return isCloser ? curr : prev;
+            });
+            this.value = flapDetents[closestIndex].val;
+            updateFlapUI(closestIndex);
+            send({ type: 'flaps_axis', value: flapDetents[closestIndex].val });
+        };
+    }
 
     const sSlider = document.getElementById('sSlider');
     const armBtn = document.getElementById('armBtn');
@@ -908,6 +812,7 @@ document.addEventListener('DOMContentLoaded', () => {
         send({ type: 'throttle', value: 0, reverse: isReverse });
     };
 
+    /*
     const gearLever = document.getElementById('gearHandle');
     if (gearLever) {
         gearIsDown = true;
@@ -915,8 +820,6 @@ document.addEventListener('DOMContentLoaded', () => {
         gearLever.classList.add('gear-down');
         gearLever.addEventListener('pointerdown', function() {
             gearIsDown = !gearIsDown;
-            
-            // Forced class update
             if (gearIsDown) {
                 this.classList.remove('gear-up');
                 this.classList.add('gear-down');
@@ -924,9 +827,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 this.classList.remove('gear-down');
                 this.classList.add('gear-up');
             }
-            
             send({ type: 'gear_command', state: gearIsDown ? 'DOWN' : 'UP' });
         });
+    }
+    */
+    const gear3dMount = document.getElementById('gear-3d-mount');
+    if (gear3dMount) {
+        gearIsDown = true;
+        import('/static/js/gear_lever_3d.js')
+            .then(function (mod) {
+                mod.initGearLever3D(gear3dMount, {
+                    onCommit: function (isDown) {
+                        gearIsDown = isDown;
+                        send({ type: 'gear_command', state: isDown ? 'DOWN' : 'UP' });
+                    }
+                });
+            })
+            .catch(function () {});
+    }
+
+    const pedestalClockHost = document.getElementById('pedestalClockHost');
+    if (pedestalClockHost) {
+        import('/static/js/pedestal_clock.js')
+            .then(function (mod) {
+                mod.initPedestalClock(pedestalClockHost);
+            })
+            .catch(function () {});
     }
 
     if (idleBtn) {
@@ -1140,6 +1066,9 @@ document.addEventListener('DOMContentLoaded', () => {
     bindPackStyleToggle('btnApuBleed', 'apu_bleed');
     bindPackStyleToggle('btnBat1');
     bindPackStyleToggle('btnBat2');
+    bindPackStyleToggle('gearPb1');
+    bindPackStyleToggle('gearPb2');
+    bindPackStyleToggle('gearPb3');
     bindPackStyleToggle('btnApuMasterOh', 'apu_master');
     bindPackStyleToggle('btnApuStartOh', 'apu_start');
     [
@@ -1150,6 +1079,20 @@ document.addEventListener('DOMContentLoaded', () => {
         ['btnFuelRt1', 'fuel_rt1'],
         ['btnFuelRt2', 'fuel_rt2'],
     ].forEach(([id, key]) => bindPackStyleToggle(id, key));
+
+    const attachEngMasterIfPresent = (elementId, opts) => {
+        const el = document.getElementById(elementId);
+        if (!el) return;
+        import('/static/js/eng_master_switch.js')
+            .then((mod) => {
+                if (typeof mod.attachEngMasterSwitch === 'function') {
+                    mod.attachEngMasterSwitch(el, opts);
+                }
+            })
+            .catch(() => {});
+    };
+    attachEngMasterIfPresent('engMaster3dViewport', { labelSecondRow: '1' });
+    attachEngMasterIfPresent('engMaster3dViewport2', { labelSecondRow: '2' });
 
     const engModeOhRoot = document.getElementById('engModeOhRoot');
     if (engModeOhRoot) {
@@ -1192,7 +1135,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (state.profile !== profileName || isDefaultState(state)) return;
             const f = document.getElementById('fSlider');
             const b = document.getElementById('bSlider');
-            if (f) { f.value = state.flaps; updateFlapUI(Math.min(4, Math.round(state.flaps * 4))); send({ type: 'flaps_axis', value: state.flaps }); }
+            if (f) {
+                f.value = state.flaps;
+                updateFlapUI(Math.min(4, Math.round(state.flaps * 4)));
+                send({ type: 'flaps_axis', value: state.flaps });
+            }
             if (tSlider) { tSlider.value = state.throttle; updateThrottleUI(state.throttle, false); send({ type: 'throttle', value: state.throttle, reverse: false }); }
             if (sSlider) { sSlider.value = state.spoilers; send({ type: 'spoilers', value: state.spoilers }); }
             if (b) { b.value = state.brake; send({ type: 'brakes', value: state.brake }); }

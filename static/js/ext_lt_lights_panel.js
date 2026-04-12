@@ -25,13 +25,13 @@ function resolveExtLtPanelColor(viewportEl) {
             }
         }
     } catch (e) {}
-    const css = readPanelBgCss();
+    const fb = readPanelBgCss().trim() || '#384a5f';
     try {
-        c.setStyle(css);
+        c.setStyle(fb);
     } catch (e2) {
         c.setStyle('#384a5f');
     }
-    return { color: c, css };
+    return { color: c, css: fb };
 }
 
 function legendPlaneFromCanvas(cw, ch, targetPh, maxPw) {
@@ -139,10 +139,10 @@ function extLtPlaceSwitchCaptions(panelRoot, x, y, swScale, plateW, plateH, reci
 function extLtAddLandPairCenterLabels(panelRoot, xc, rowY, swScale) {
     const hp = 1.48 * 0.5 * swScale;
     const fp = EXT_LT_LABEL_FONT_PX;
-    const offBelowY = rowY - hp - EXT_LT_OFF_BELOW_PLATE;
+    const offBetweenY = rowY + 0.04;
     extLtAddLegendPlane(panelRoot, ['ON'], fp, xc, rowY + hp + 0.14, 0.2, 0.52);
-    extLtAddLegendPlane(panelRoot, ['OFF'], fp, xc, offBelowY, 0.22, 0.55);
-    extLtAddLegendPlane(panelRoot, ['RETRACT'], fp, xc, offBelowY - 0.28, 0.2, 1.35);
+    extLtAddLegendPlane(panelRoot, ['OFF'], fp, xc, offBetweenY, 0.22, 0.55);
+    extLtAddLegendPlane(panelRoot, ['RETRACT'], fp, xc, offBetweenY - 0.36, 0.2, 1.35);
 }
 
 function addLandBracketLegend(panelRoot, xc, rowY) {
@@ -225,6 +225,7 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
     let h = 320;
     let resizeDoneOnce = false;
 
+    viewportEl.innerHTML = '';
     const bgResolved = resolveExtLtPanelColor(viewportEl);
     const bgColor = bgResolved.color;
 
@@ -233,7 +234,12 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
     const camera = new THREE.PerspectiveCamera(42, w / h, 0.05, 120);
 
     const dpr = Math.min(window.devicePixelRatio || 1, 3);
-    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+    const renderer = new THREE.WebGLRenderer({
+        antialias: false,
+        alpha: true,
+        premultipliedAlpha: false,
+        powerPreference: 'high-performance'
+    });
     renderer.setPixelRatio(dpr);
     renderer.setSize(w, h, false);
     renderer.setClearColor(0x000000, 0);
@@ -243,13 +249,9 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
     renderer.domElement.style.touchAction = 'none';
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.background = 'transparent';
-    renderer.toneMapping = THREE.ReinhardToneMapping;
-    renderer.toneMappingExposure = 1.38;
+    renderer.toneMapping = THREE.NoToneMapping;
+    renderer.toneMappingExposure = 1;
 
-    viewportEl.innerHTML = '';
-    try {
-        viewportEl.style.backgroundColor = bgResolved.css;
-    } catch (e) {}
     viewportEl.appendChild(renderer.domElement);
 
     scene.add(new THREE.AmbientLight(0xffffff, 0.38));
@@ -301,11 +303,6 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
 
     const backMat = new THREE.MeshBasicMaterial({ color: bgColor.clone() });
     if ('toneMapped' in backMat) backMat.toneMapped = false;
-    const back = new THREE.Mesh(new THREE.BoxGeometry(3.55, 2.28, 0.05), backMat);
-    back.position.set(0, 0, -0.028);
-    back.name = 'extlt_back';
-    back.userData.skipPick = true;
-    panelRoot.add(back);
 
     const swScale = 0.38;
     const col4 = [-1.46, -0.485, 0.485, 1.46];
