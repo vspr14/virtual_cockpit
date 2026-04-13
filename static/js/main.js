@@ -1,20 +1,18 @@
 let isReverse = false, throttleBlocked = false, pbState = true, isArmed = false, gearIsDown = false;
+let flapLeverApplyAxis = null;
+let pendingFlapRestore = null;
+let spoilerLeverApplyAxis = null;
+let pendingSpoilerRestore = null;
+let parkingBrake3dMain = null;
+let parkingBrake3dLeft = null;
+let brakePedalsMain = null;
 let selectedCamId = null;
-let apMasterOn = false;
 
 const setLvar = (key, value) => {
     fetch('/lvars', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ key, value })
-    });
-};
-
-const stepLvar = (key, delta) => {
-    fetch('/lvars/step', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key, delta })
     });
 };
 
@@ -148,7 +146,7 @@ const initUI = () => {
     }
 
     const fLabels = document.getElementById('flapLabels');
-    if (fLabels) {
+    if (fLabels && !document.getElementById('flap-3d-mount')) {
         fLabels.innerHTML = '';
         (window.PROFILE?.ui?.flap_detents || window.PROFILE?.flap_detents || []).forEach((d, i) => {
             const row = document.createElement('div');
@@ -609,32 +607,6 @@ document.addEventListener('DOMContentLoaded', () => {
         showCams();
     })();
 
-    const apBtn = document.getElementById('apBtn');
-    const apIndicator = document.getElementById('apIndicator');
-    const isFenixA320 = () => window.PROFILE?.name === 'Fenix A320';
-    if (apBtn) {
-        bindButtonTouch(apBtn);
-        apBtn.onclick = function() {
-            if (isFenixA320()) {
-                if (!apMasterOn) {
-                    stepLvar('ap_engage', 1);
-                    apMasterOn = true;
-                    if (apIndicator) apIndicator.classList.add('on');
-                } else {
-                    setLvar('ap_disconnect', 1);
-                    setTimeout(() => {
-                        setLvar('ap_disconnect', 0);
-                        setTimeout(() => setLvar('ap_state_off', 0), 50);
-                    }, 50);
-                    apMasterOn = false;
-                    if (apIndicator) apIndicator.classList.remove('on');
-                }
-            } else {
-                send({ type: 'vjoy_button', button: getVjoyMapping('AUTOPILOT') });
-            }
-        };
-    }
-
     const refreshPageBtn = document.getElementById('refreshPageBtn');
     if (refreshPageBtn) {
         bindButtonTouch(refreshPageBtn);
@@ -642,7 +614,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const fSliderEl = document.getElementById('fSlider');
-    if (fSliderEl) {
+    const flap3dMount = document.getElementById('flap-3d-mount');
+    const flapPosEl = document.getElementById('flap-pos');
+    if (flap3dMount && fSliderEl) {
+        const flapDetents = window.PROFILE?.ui?.flap_detents || window.PROFILE?.flap_detents || [];
+        if (flapDetents.length >= 2) {
+            import('/static/js/flap_lever_3d.js')
+                .then(function (mod) {
+                    if (typeof mod.initFlapLever3D !== 'function') return;
+                    return mod.initFlapLever3D(flap3dMount, {
+                        posEl: flapPosEl || null,
+                        detents: flapDetents,
+                        hiddenInput: fSliderEl,
+                        onCommit: function (idx, val) {
+                            updateFlapUI(idx);
+                            send({ type: 'flaps_axis', value: val });
+                        },
+                    });
+                })
+                .then(function (api) {
+                    if (!api || typeof api.applyAxisValue !== 'function') return;
+                    flapLeverApplyAxis = api.applyAxisValue;
+                    if (pendingFlapRestore !== null) {
+                        flapLeverApplyAxis(pendingFlapRestore);
+                        pendingFlapRestore = null;
+                    }
+                })
+                .catch(function () {});
+        }
+    } else if (fSliderEl && fSliderEl.type === 'range') {
         fSliderEl.oninput = function () {
             const visualVal = parseFloat(this.value);
             let closestIndex = 0;
@@ -660,8 +660,73 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const sSlider = document.getElementById('sSlider');
+    const spoil3dMount = document.getElementById('spoiler-3d-mount');
     const armBtn = document.getElementById('armBtn');
-    if (armBtn) {
+
+    if (spoil3dMount && sSlider) {
+        import('/static/js/spoiler_lever_3d.js')
+            .then(function (mod) {
+                if (typeof mod.initSpoilerLever3D !== 'function') return;
+                return mod.initSpoilerLever3D(spoil3dMount, {
+                    hiddenInput: sSlider,
+                    onAxis: function (val) {
+                        if (isArmed && val > 0.05) {
+                            isArmed = false;
+                            if (armBtn) armBtn.classList.remove('active');
+                        }
+                        send({ type: 'spoilers', value: val });
+                    },
+                    onArmChange: function (armed) {
+                        isArmed = armed;
+                        if (armBtn) armBtn.classList.toggle('active', armed);
+                        const armButtonOnly = window.PROFILE?.ui?.arm_spoilers_button;
+                        if (armed) {
+                            sSlider.value = '0';
+                            if (!spoil3dMount) {
+                                if (typeof spoilerLeverApplyAxis === 'function') spoilerLeverApplyAxis(0);
+                                else if (sSlider.type === 'range') animateSliderToZero(sSlider);
+                            }
+                            if (armButtonOnly) {
+                                const sliderVal = parseFloat(sSlider.value);
+                                if (sliderVal > 0) {
+                                    sSlider.value = 0;
+                                    if (typeof spoilerLeverApplyAxis === 'function') spoilerLeverApplyAxis(0);
+                                    send({ type: 'spoilers', value: 0 });
+                                    setTimeout(function () {
+                                        send({ type: 'vjoy_button', button: getVjoyMapping('ARM_SPOILERS') });
+                                    }, 300);
+                                } else {
+                                    sSlider.value = 0;
+                                    send({ type: 'vjoy_button', button: getVjoyMapping('ARM_SPOILERS') });
+                                }
+                            } else {
+                                send({ type: 'arm_spoilers', value: 0 });
+                            }
+                        } else {
+                            if (armButtonOnly) {
+                                send({ type: 'vjoy_button', button: getVjoyMapping('ARM_SPOILERS') });
+                            } else {
+                                const sv = parseFloat(sSlider.value);
+                                if (sv <= 0.05) {
+                                    send({ type: 'spoilers', value: 0 });
+                                }
+                            }
+                        }
+                    },
+                });
+            })
+            .then(function (api) {
+                if (!api || typeof api.applyAxisValue !== 'function') return;
+                spoilerLeverApplyAxis = api.applyAxisValue;
+                if (pendingSpoilerRestore !== null) {
+                    spoilerLeverApplyAxis(pendingSpoilerRestore);
+                    pendingSpoilerRestore = null;
+                }
+            })
+            .catch(function () {});
+    }
+
+    if (armBtn && sSlider) {
         bindButtonTouch(armBtn);
         armBtn.onclick = function() {
             const armButtonOnly = window.PROFILE?.ui?.arm_spoilers_button;
@@ -673,6 +738,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isArmed) {
                     if (sliderVal > 0) {
                         sSlider.value = 0;
+                        if (typeof spoilerLeverApplyAxis === 'function') spoilerLeverApplyAxis(0);
                         send({ type: 'spoilers', value: 0 });
                         setTimeout(() => {
                             send({ type: 'vjoy_button', button: getVjoyMapping('ARM_SPOILERS') });
@@ -688,7 +754,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             if (isArmed) {
                 sSlider.value = 0;
-                animateSliderToZero(sSlider);
+                if (typeof spoilerLeverApplyAxis === 'function') {
+                    spoilerLeverApplyAxis(0);
+                } else if (sSlider.type === 'range') {
+                    animateSliderToZero(sSlider);
+                }
                 send({ type: 'arm_spoilers', value: 0 });
             } else {
                 send({ type: 'spoilers', value: 0 });
@@ -696,23 +766,14 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // Ensure moving the slider manually disarms the spoilers
-    sSlider.oninput = function() {
-        if (isArmed && parseFloat(this.value) > 0.05) {
-            isArmed = false;
-            if (armBtn) armBtn.classList.remove('active');
-        }
-        send({ type: 'spoilers', value: parseFloat(this.value) });
-    };
-
-    const brakeSliderHandler = function() {
-        send({ type: 'brakes', value: parseFloat(this.value) });
-    };
-    
-    document.getElementById('bSlider').oninput = brakeSliderHandler;
-    const bSliderLeft = document.getElementById('bSliderLeft');
-    if (bSliderLeft) {
-        bSliderLeft.oninput = brakeSliderHandler;
+    if (sSlider && sSlider.type === 'range') {
+        sSlider.oninput = function () {
+            if (isArmed && parseFloat(this.value) > 0.05) {
+                isArmed = false;
+                if (armBtn) armBtn.classList.remove('active');
+            }
+            send({ type: 'spoilers', value: parseFloat(this.value) });
+        };
     }
 
     const tSlider = document.getElementById('tSlider');
@@ -909,19 +970,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const pbBtn = document.getElementById('pbBtn');
     const pbBtnLeft = document.getElementById('pbBtnLeft');
-    const parkingBrakeHandler = function() {
-        pbState = !pbState;
+    const pbMount = document.getElementById('pb-3d-mount');
+    const pbLeftMount = document.getElementById('pb-left-3d-mount');
+    function parkingBrakeCommitFrom3d(source, newState) {
+        pbState = !!newState;
+        send({ type: 'vjoy_button', button: getVjoyMapping('PARKING_BRAKE') });
+        if (source !== 'main' && parkingBrake3dMain && typeof parkingBrake3dMain.applyVisualState === 'function') {
+            parkingBrake3dMain.applyVisualState(pbState);
+        }
+        if (source !== 'left' && parkingBrake3dLeft && typeof parkingBrake3dLeft.applyVisualState === 'function') {
+            parkingBrake3dLeft.applyVisualState(pbState);
+        }
         if (pbBtn) pbBtn.classList.toggle('active', pbState);
         if (pbBtnLeft) pbBtnLeft.classList.toggle('active', pbState);
-        send({ type: 'vjoy_button', button: getVjoyMapping('PARKING_BRAKE') });
-    };
-    bindButtonTouch(pbBtn);
-    pbBtn.classList.toggle('active', pbState);
-    pbBtn.onclick = parkingBrakeHandler;
-    if (pbBtnLeft) {
-        bindButtonTouch(pbBtnLeft);
-        pbBtnLeft.classList.toggle('active', pbState);
-        pbBtnLeft.onclick = parkingBrakeHandler;
+    }
+    if (pbMount) {
+        import('/static/js/parking_brake_3d.js')
+            .then(function (mod) {
+                if (typeof mod.initParkingBrake3D !== 'function') return;
+                parkingBrake3dMain = mod.initParkingBrake3D(pbMount, {
+                    sourceTag: 'main',
+                    initialOn: pbState,
+                    onToggle: function (tag, newState) { parkingBrakeCommitFrom3d(tag, newState); },
+                });
+            })
+            .catch(function () {});
+    }
+    if (pbLeftMount) {
+        import('/static/js/parking_brake_3d.js')
+            .then(function (mod) {
+                if (typeof mod.initParkingBrake3D !== 'function') return;
+                parkingBrake3dLeft = mod.initParkingBrake3D(pbLeftMount, {
+                    sourceTag: 'left',
+                    initialOn: pbState,
+                    onToggle: function (tag, newState) { parkingBrakeCommitFrom3d(tag, newState); },
+                });
+            })
+            .catch(function () {});
+    }
+    const brakePedalsMount = document.getElementById('brake-pedals-main-mount');
+    if (brakePedalsMount) {
+        import('/static/js/brake_pedals_test.js')
+            .then(function (mod) {
+                if (typeof mod.initBrakePedalsTest !== 'function') return;
+                brakePedalsMain = mod.initBrakePedalsTest(brakePedalsMount, {
+                    initialValue: 0,
+                    onBrakeInput: function (v) {
+                        send({ type: 'brakes', value: v });
+                    },
+                });
+            })
+            .catch(function () {});
+    }
+    if (!pbMount && pbBtn) {
+        const parkingBrakeHandler = function () {
+            pbState = !pbState;
+            if (pbBtn) pbBtn.classList.toggle('active', pbState);
+            if (pbBtnLeft) pbBtnLeft.classList.toggle('active', pbState);
+            send({ type: 'vjoy_button', button: getVjoyMapping('PARKING_BRAKE') });
+        };
+        bindButtonTouch(pbBtn);
+        pbBtn.classList.toggle('active', pbState);
+        pbBtn.onclick = parkingBrakeHandler;
+        if (pbBtnLeft) {
+            bindButtonTouch(pbBtnLeft);
+            pbBtnLeft.classList.toggle('active', pbState);
+            pbBtnLeft.onclick = parkingBrakeHandler;
+        }
     }
 
     const setOvhdLvar = (key, value) => {
@@ -1109,19 +1224,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const STATE_KEY = 'virtual_cockpit_state';
-    const DEFAULT_STATE = { flaps: 0, throttle: 0, spoilers: 0, brake: 0 };
-    const isDefaultState = (s) => s && Math.abs(parseFloat(s.flaps) - DEFAULT_STATE.flaps) < 1e-5 && Math.abs(parseFloat(s.throttle) - DEFAULT_STATE.throttle) < 1e-5 && Math.abs(parseFloat(s.spoilers) - DEFAULT_STATE.spoilers) < 1e-5 && Math.abs(parseFloat(s.brake) - DEFAULT_STATE.brake) < 1e-5;
+    const DEFAULT_STATE = { flaps: 0, throttle: 0, spoilers: 0 };
+    const isDefaultState = (s) => s && Math.abs(parseFloat(s.flaps) - DEFAULT_STATE.flaps) < 1e-5 && Math.abs(parseFloat(s.throttle) - DEFAULT_STATE.throttle) < 1e-5 && Math.abs(parseFloat(s.spoilers) - DEFAULT_STATE.spoilers) < 1e-5;
     const saveState = () => {
         const profileName = window.PROFILE?.name;
         const f = document.getElementById('fSlider');
-        const b = document.getElementById('bSlider');
-        if (!profileName || !f || !tSlider || !sSlider || !b) return;
+        if (!profileName || !f || !tSlider || !sSlider) return;
         const state = {
             profile: profileName,
             flaps: parseFloat(f.value),
             throttle: parseFloat(tSlider.value),
-            spoilers: parseFloat(sSlider.value),
-            brake: parseFloat(b.value)
+            spoilers: parseFloat(sSlider.value)
         };
         try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch (e) {}
     };
@@ -1134,16 +1247,27 @@ document.addEventListener('DOMContentLoaded', () => {
             const state = JSON.parse(raw);
             if (state.profile !== profileName || isDefaultState(state)) return;
             const f = document.getElementById('fSlider');
-            const b = document.getElementById('bSlider');
             if (f) {
                 f.value = state.flaps;
-                updateFlapUI(Math.min(4, Math.round(state.flaps * 4)));
+                const fv = parseFloat(state.flaps);
+                if (document.getElementById('flap-3d-mount')) {
+                    if (typeof flapLeverApplyAxis === 'function') flapLeverApplyAxis(fv);
+                    else pendingFlapRestore = fv;
+                } else {
+                    updateFlapUI(Math.min(4, Math.round(state.flaps * 4)));
+                }
                 send({ type: 'flaps_axis', value: state.flaps });
             }
             if (tSlider) { tSlider.value = state.throttle; updateThrottleUI(state.throttle, false); send({ type: 'throttle', value: state.throttle, reverse: false }); }
-            if (sSlider) { sSlider.value = state.spoilers; send({ type: 'spoilers', value: state.spoilers }); }
-            if (b) { b.value = state.brake; send({ type: 'brakes', value: state.brake }); }
-            if (bSliderLeft) { bSliderLeft.value = state.brake; }
+            if (sSlider) {
+                sSlider.value = state.spoilers;
+                const sv = parseFloat(state.spoilers);
+                if (document.getElementById('spoiler-3d-mount')) {
+                    if (typeof spoilerLeverApplyAxis === 'function') spoilerLeverApplyAxis(sv);
+                    else pendingSpoilerRestore = sv;
+                }
+                send({ type: 'spoilers', value: sv });
+            }
         } catch (e) {}
     };
     setInterval(saveState, 60000);

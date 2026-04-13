@@ -1,30 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=B612+Mono&family=B612:wght@400;700&family=Barlow+Condensed:wght@400;600;700&family=Lato:wght@400;700;900&display=swap');
 
 :root {
-    --bg: #050505; --card: #161618; --blue: #007aff;
-    --orange: #ff9500; --red: #ff3b30; --text: #ffffff;
+    --bg: #050505;
+    --card: #161618;
+    --blue: #007aff;
+    --orange: #ff9500;
+    --red: #ff3b30;
+    --text: #ffffff;
 
-    --airbus-panel:   #384a5f;
-    --airbus-subpanel:#2f3f52;
-    --airbus-btn:     #1e2535;
-    --airbus-btn-on:  #161d2c;
-    --airbus-text:    #d8dce6;
-    --airbus-label:   #c8cdd8;
-    --airbus-indicator:#08090e;
-    --led-green:      #18d050;
-    --led-amber:      #ffaa00;
-    --led-blue:       #00aaff;
-    --led-red:        #ff3b30;
+    --airbus-panel: #384a5f;
+    --airbus-subpanel: #2f3f52;
+    --airbus-pedestal-bezel: #4a5560;
+    --airbus-pedestal-housing: #2c3238;
+    --airbus-btn: #1e2535;
+    --airbus-btn-on: #161d2c;
+    --airbus-text: #d8dce6;
+    --airbus-label: #c8cdd8;
+    --airbus-indicator: #08090e;
+    --led-green: #18d050;
+    --led-amber: #ffaa00;
+    --led-blue: #00aaff;
+    --led-red: #ff3b30;
 }
 
-html, body { 
+html,
+body {
     position: fixed;
     overflow: hidden;
-    width: 100vw; 
+    width: 100vw;
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100);
-    margin: 0; padding: 0; background: var(--bg); color: var(--text);
-    font-family: -apple-system, sans-serif; 
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     touch-action: pan-x pan-y;
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
@@ -38,12 +48,12 @@ html, body {
 }
 
 .screen-layout {
-    display: grid; 
+    display: grid;
     grid-template-columns: minmax(252px, min(520px, max(440px, 38vw))) 1fr 218px;
     height: 100vh;
     height: calc(var(--vh, 1vh) * 100);
-    width: 100vw; 
-    box-sizing: border-box; 
+    width: 100vw;
+    box-sizing: border-box;
     padding: 10px 10px 5px 10px;
     gap: 15px;
     overflow-x: visible;
@@ -52,7 +62,174 @@ html, body {
 }
 
 .screen-layout.fenix-a320-layout {
-    grid-template-columns: minmax(400px, min(650px, max(590px, 46vw))) 1fr 218px;
+    grid-template-columns: minmax(320px, min(500px, max(420px, 34vw))) 1fr 218px;
+    gap: 10px;
+    padding: 8px 10px 6px 10px;
+}
+
+body.fenix-a320-body {
+    background: var(--airbus-subpanel);
+}
+
+.screen-layout.fenix-a320-layout>.left-column {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.28);
+}
+
+.screen-layout.fenix-a320-layout > .left-column.fenix-ovhd-dense {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.screen-layout.fenix-a320-layout .eng-master-engine-row {
+    flex-shrink: 0;
+}
+
+.screen-layout.fenix-a320-layout>.center-zone {
+    background: var(--airbus-panel);
+    border-radius: 8px;
+    padding: 8px 10px 10px;
+    box-sizing: border-box;
+    min-height: 0;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.28);
+}
+
+.screen-layout.fenix-a320-layout .airbus-center-display {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex-shrink: 0;
+    background: var(--airbus-subpanel);
+    border-radius: 6px;
+    padding: 8px 10px 10px;
+    box-sizing: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    box-shadow:
+        inset 0 2px 10px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.screen-layout.fenix-a320-layout .airbus-center-display .grid-container {
+    margin-bottom: 0;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-row {
+    flex: 1 1 auto;
+    min-height: 0;
+    gap: 0;
+    align-items: stretch;
+    justify-content: center;
+}
+
+
+.screen-layout.fenix-a320-layout .layout-v-divider {
+    flex: 0 0 auto;
+    width: 2px;
+    align-self: stretch;
+    min-height: 80px;
+    margin: 6px 4px;
+    background: rgba(255, 255, 255, 0.38);
+    border-radius: 1px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+.screen-layout.fenix-a320-layout .pedestal-row .gear-pedestal-column {
+    background: var(--airbus-subpanel);
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    box-shadow:
+        inset 0 2px 10px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.screen-layout.fenix-a320-layout .pedestal-row>.v-group {
+    background: var(--airbus-subpanel);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    box-shadow:
+        inset 0 2px 8px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    margin-left: 0;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-row>.ap-btn-wrap {
+    background: var(--airbus-subpanel);
+    border-radius: 8px;
+    padding: 10px 8px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    box-shadow:
+        inset 0 2px 8px rgba(0, 0, 0, 0.32),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    box-sizing: border-box;
+}
+
+.screen-layout.fenix-a320-layout>.throttle-zone {
+    background: var(--airbus-panel);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.06),
+        inset 0 -2px 10px rgba(0, 0, 0, 0.28);
+}
+
+.screen-layout.fenix-a320-layout .label {
+    color: var(--airbus-label);
+}
+
+.screen-layout.fenix-a320-layout .metar-content {
+    color: var(--airbus-label);
+}
+
+.screen-layout.fenix-a320-layout .ofp-container {
+    background: var(--airbus-subpanel);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.screen-layout.fenix-a320-layout .nav-bar .nav-btn {
+    background: var(--airbus-btn);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: var(--airbus-text);
+}
+
+.screen-layout.fenix-a320-layout .nav-btn.active {
+    background: var(--airbus-subpanel);
+    border-color: var(--blue);
+}
+
+.screen-layout.fenix-a320-layout .cam-btn {
+    background: var(--airbus-btn);
+    border-color: rgba(255, 255, 255, 0.15);
+    color: var(--airbus-text);
+}
+
+.screen-layout.fenix-a320-layout .cam-btn.active {
+    background: var(--airbus-subpanel);
+}
+
+.screen-layout.fenix-a320-layout .metar-refresh-btn,
+.screen-layout.fenix-a320-layout .refresh-site-btn {
+    background: var(--airbus-btn);
+    border-color: rgba(255, 255, 255, 0.18);
+    color: var(--airbus-label);
+}
+
+.screen-layout.fenix-a320-layout .btn-rev {
+    background: var(--airbus-btn);
+    color: var(--airbus-text);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.screen-layout.fenix-a320-layout .flap-detent-row,
+.screen-layout.fenix-a320-layout .throttle-detent-row {
+    color: rgba(200, 210, 220, 0.4);
 }
 
 .left-column {
@@ -150,7 +327,19 @@ html, body {
 
 .left-brake-container .v-group {
     margin-left: 0;
-    height: 50vh;
+    min-height: 58vh;
+    height: auto;
+}
+
+.left-brake-container .parking-brake-mount {
+    margin-top: -14px;
+}
+
+.left-brake-container .v-group>.label {
+    align-self: stretch;
+    text-align: center;
+    padding-left: 0;
+    box-sizing: border-box;
 }
 
 
@@ -172,14 +361,27 @@ html, body {
 
 
 /* CENTER PANEL */
-.center-zone { display: flex; flex-direction: column; gap: 12px; height: 100%; }
-.nav-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 45px; flex-shrink: 0; }
-.nav-btn { 
-    background: #2c2c2e; 
-    border: 2px solid #3a3a3c; 
-    color: white; 
-    border-radius: 10px; 
-    font-weight: bold; 
+.center-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    height: 100%;
+}
+
+.nav-bar {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    height: 45px;
+    flex-shrink: 0;
+}
+
+.nav-btn {
+    background: #2c2c2e;
+    border: 2px solid #3a3a3c;
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
@@ -189,23 +391,40 @@ html, body {
     position: relative;
     z-index: 1000;
 }
+
 .nav-btn:active {
     transform: translateY(2px) scale(0.98);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
+
 .nav-btn.clicking {
     transform: translateY(1px) scale(0.96);
     box-shadow: 0 2px 4px rgba(0, 122, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
     border-color: var(--blue);
 }
-.nav-btn.active { border-color: var(--blue); background: #1c1c1e; }
-.camera-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; height: 100px; flex-shrink: 0; position: relative; z-index: 1000; pointer-events: auto; }
-.cam-btn { 
-    background: #2c2c2e; 
-    border: 1px solid #3a3a3c; 
-    color: white; 
-    border-radius: 8px; 
-    font-size: 0.65em; 
+
+.nav-btn.active {
+    border-color: var(--blue);
+    background: #1c1c1e;
+}
+
+.camera-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    height: 100px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1000;
+    pointer-events: auto;
+}
+
+.cam-btn {
+    background: #2c2c2e;
+    border: 1px solid #3a3a3c;
+    color: white;
+    border-radius: 8px;
+    font-size: 0.65em;
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
@@ -215,72 +434,398 @@ html, body {
     position: relative;
     z-index: 1000;
 }
+
 .cam-btn:active {
     transform: translateY(2px) scale(0.98);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
-.cam-btn.active { 
-    border-color: var(--blue); 
+
+.cam-btn.active {
+    border-color: var(--blue);
     background: #1c1c1e;
     box-shadow: 0 4px 8px rgba(0, 122, 255, 0.3), 0 2px 4px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     transform: translateY(-1px);
 }
+
 .cam-btn.clicking {
     transform: translateY(1px) scale(0.96);
     box-shadow: 0 2px 4px rgba(0, 122, 255, 0.5), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
+
 .cam-btn.active.clicking {
     transform: translateY(0px) scale(0.96);
     box-shadow: 0 3px 6px rgba(0, 122, 255, 0.5), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* PEDESTAL ALIGNMENT */
-.pedestal-row { 
-    display: flex; gap: 20px; flex-grow: 1; justify-content: center; 
-    align-items: stretch; min-height: 0; 
+.pedestal-row {
+    display: flex;
+    gap: 20px;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: stretch;
+    min-height: 0;
 }
 
 .v-group {
-    background: var(--card); border-radius: 20px; width: 150px;
-    display: flex; flex-direction: column; align-items: center; 
-    justify-content: space-between; padding: 20px 10px; position: relative;
+    background: var(--card);
+    border-radius: 20px;
+    width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 10px;
+    position: relative;
     margin-left: 10px;
 }
 
 .flap-labels-container {
-    position: relative; height: 28vh; width: 60px; left: -75px;
-    pointer-events: none; z-index: 10; margin-right: 10px;
+    position: relative;
+    height: 28vh;
+    width: 60px;
+    left: -75px;
+    pointer-events: none;
+    z-index: 10;
+    margin-right: 10px;
 }
-.flap-detent-row {
-    position: absolute; right: 0; transform: translateY(-50%);
-    display: flex; align-items: center; gap: 8px; color: #444; font-weight: bold; font-size: 1.1em;
-}
-.flap-detent-row.active { color: var(--blue); }
-.indicator-dot { width: 6px; height: 6px; border-radius: 50%; background: transparent; }
-.flap-detent-row.active .indicator-dot { background: var(--blue); box-shadow: 0 0 8px var(--blue); }
 
-.center-v-wrap { position: relative; height: 32vh; width: 100%; display: flex; align-items: center; justify-content: center; margin-top: 15px; }
+.flap-detent-row {
+    position: absolute;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #444;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+.flap-detent-row.active {
+    color: var(--blue);
+}
+
+.indicator-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: transparent;
+}
+
+.flap-detent-row.active .indicator-dot {
+    background: var(--blue);
+    box-shadow: 0 0 8px var(--blue);
+}
+
+.flap-lever-mount {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex: 0 1 auto;
+    align-self: stretch;
+    min-height: 0;
+    width: 100%;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-flaps-vgroup {
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-flaps-vgroup,
+.screen-layout.fenix-a320-layout .pedestal-spoil-vgroup {
+    padding: 10px 0 0;
+    box-sizing: border-box;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-flaps-vgroup>.label {
+    display: block;
+    width: 100%;
+    line-height: 1.15;
+    margin: 0;
+    text-align: center;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-flaps-vgroup .spacer-btn {
+    margin-top: auto;
+}
+
+.flap-3d-mount {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: clamp(240px, 44vh, min(72vh, 720px));
+    margin: 0 auto;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    background: transparent;
+}
+
+.flap-3d-mount canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.spoiler-lever-mount {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex: 0 1 auto;
+    align-self: stretch;
+    min-height: 0;
+    width: 100%;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-spoil-vgroup {
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-spoil-vgroup>.label {
+    display: block;
+    width: 100%;
+    line-height: 1.15;
+    margin: 0;
+    text-align: center;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-spoil-vgroup .spacer-btn {
+    margin-top: auto;
+    min-height: 1px;
+}
+
+.spoiler-3d-mount {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: clamp(240px, 44vh, min(72vh, 720px));
+    margin: 0 auto;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    background: transparent;
+}
+
+.spoiler-3d-mount canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-brake-vgroup {
+    justify-content: flex-start;
+    align-items: stretch;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    padding: 10px 4px 12px;
+    box-sizing: border-box;
+    width: 186px;
+    min-width: 186px;
+    max-width: 186px;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-brake-vgroup>.label {
+    display: block;
+    width: 100%;
+    line-height: 1.15;
+    margin: 0;
+    text-align: center;
+}
+
+.brake-pedals-mount {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    flex: 0 0 auto;
+    align-self: stretch;
+    width: 100%;
+    margin: 0 0 4px 0;
+}
+
+.brake-pedals-test-mount {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: clamp(240px, 44vh, min(72vh, 720px));
+    margin: 0 auto;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--airbus-subpanel);
+}
+
+.screen-layout.fenix-a320-layout .pedestal-brake-vgroup .brake-pedals-test-mount {
+    height: clamp(210px, 34vh, min(52vh, 460px));
+}
+
+.screen-layout.fenix-a320-layout .pedestal-brake-vgroup .parking-brake-3d-mount {
+    height: clamp(168px, 24vh, min(34vh, 320px));
+}
+
+.brake-pedals-test-mount canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-brake-vgroup .parking-brake-mount {
+    padding-top: 4px;
+    margin-top: 0;
+    flex: 0 0 auto;
+}
+
+.parking-brake-mount {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    margin-top: 0;
+}
+
+.parking-brake-3d-mount {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: clamp(420px, 66vh, min(93vh, 840px));
+    margin: 0 auto;
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    background: transparent;
+}
+
+.parking-brake-mount--compact .parking-brake-3d-mount {
+    height: clamp(330px, 54vh, min(78vh, 720px));
+}
+
+.parking-brake-3d-mount canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.flap-pos-label {
+    font-family: 'Barlow Condensed', 'B612', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #ffffff;
+    text-transform: uppercase;
+    text-align: center;
+    min-height: 1.2em;
+    line-height: 1.2;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.center-v-wrap {
+    position: relative;
+    height: 32vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
 
 /* ROTATION FIX: 90deg = 0 at top. -90deg = 0 at bottom */
-#fSlider, #sSlider {
-    -webkit-appearance: none; appearance: none; width: 32vh; height: 40px; background: #000; 
-    border-radius: 20px; position: absolute; transform: rotate(90deg); outline: none;
-}
-#bSlider, #bSliderLeft {
-    -webkit-appearance: none; appearance: none; width: 32vh; height: 40px; background: #000; 
-    border-radius: 20px; position: absolute; transform: rotate(-90deg); outline: none;
+#fSlider:not([type='hidden']),
+#sSlider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 32vh;
+    height: 40px;
+    background: #000;
+    border-radius: 20px;
+    position: absolute;
+    transform: rotate(90deg);
+    outline: none;
 }
 
 .center-v-slider::-webkit-slider-thumb {
-    -webkit-appearance: none; width: 55px; height: 75px; background: #eee; border-radius: 10px; border: 3px solid #444;
+    -webkit-appearance: none;
+    width: 55px;
+    height: 75px;
+    background: #eee;
+    border-radius: 10px;
+    border: 3px solid #444;
 }
 
 
 /* THROTTLE */
-.throttle-zone { background: var(--card); border-radius: 20px; height: 100%; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 15px 10px; box-sizing: border-box; position: relative; }
-.t-v-wrap { position: relative; flex-grow: 1; width: 70px; display: flex; align-items: center; justify-content: center; overflow: visible; }
-.t-slider { -webkit-appearance: none; appearance: none; width: 55vh; height: 54px; background: #000; border-radius: 27px; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-90deg); outline: none; }
-.t-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 65px; height: 85px; background: #eee; border-radius: 12px; border: 4px solid #444; }
+.throttle-zone {
+    background: var(--card);
+    border-radius: 20px;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 15px 10px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.t-v-wrap {
+    position: relative;
+    flex-grow: 1;
+    width: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: visible;
+}
+
+.t-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 55vh;
+    height: 54px;
+    background: #000;
+    border-radius: 27px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-90deg);
+    outline: none;
+}
+
+.t-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 65px;
+    height: 85px;
+    background: #eee;
+    border-radius: 12px;
+    border: 4px solid #444;
+}
 
 .throttle-labels-container {
     position: absolute;
@@ -301,6 +846,7 @@ html, body {
 .throttle-zone.a320 .throttle-labels-container {
     left: 33px;
 }
+
 .throttle-detent-row {
     position: absolute;
     right: 0;
@@ -312,64 +858,112 @@ html, body {
     font-weight: bold;
     font-size: 1.1em;
 }
-.throttle-detent-row.active { color: var(--blue); }
+
+.throttle-detent-row.active {
+    color: var(--blue);
+}
 
 
 
-.btn-rev { 
-    width: 90%; 
-    padding: 12px 0; 
-    border-radius: 10px; 
-    background: #2c2c2e; 
-    color: white; 
-    border: none; 
+.btn-rev {
+    width: 90%;
+    padding: 12px 0;
+    border-radius: 10px;
+    background: #2c2c2e;
+    color: white;
+    border: none;
     font-weight: bold;
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
     transform: translateY(0);
     cursor: pointer;
 }
+
 .btn-rev:active {
     transform: translateY(2px) scale(0.98);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
+
 .btn-rev.clicking {
     transform: translateY(1px) scale(0.96);
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
 }
+
 .btn-rev.pressed {
     background: white !important;
     color: #000 !important;
     transition: background 0.05s ease, color 0.05s ease;
 }
+
 .btn-rev.clicking {
     opacity: 1 !important;
 }
+
 .btn-rev:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
 }
+
 .btn-rev:disabled.clicking {
     opacity: 1 !important;
     pointer-events: none;
 }
-.btn-rev.active { background: var(--orange); color: black; }
 
-.label { font-size: 0.65em; font-weight: bold; color: #888; text-transform: uppercase; }
-.sub-btn { width: 85%; padding: 15px 0; border-radius: 10px; font-weight: bold; font-size: 0.9em; border: 2px solid transparent; background-color: transparent;}
-.spacer-btn { height: 45px; } /* Aligns Flaps card height with others */
-.blue-btn { border-color: var(--blue); color: var(--blue); }
-.blue-btn.active { background: var(--blue); color: white; }
-.red-btn { border-color: var(--red); color: var(--red); }
-.red-btn.active { background: var(--red); color: white; }
-.hidden { 
-    display: none !important; 
+.btn-rev.active {
+    background: var(--orange);
+    color: black;
+}
+
+.label {
+    font-size: 0.65em;
+    font-weight: bold;
+    color: #888;
+    text-transform: uppercase;
+}
+
+.sub-btn {
+    width: 85%;
+    padding: 15px 0;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 0.9em;
+    border: 2px solid transparent;
+    background-color: transparent;
+}
+
+.spacer-btn {
+    height: 45px;
+}
+
+/* Aligns Flaps card height with others */
+.blue-btn {
+    border-color: var(--blue);
+    color: var(--blue);
+}
+
+.blue-btn.active {
+    background: var(--blue);
+    color: white;
+}
+
+.red-btn {
+    border-color: var(--red);
+    color: var(--red);
+}
+
+.red-btn.active {
+    background: var(--red);
+    color: white;
+}
+
+.hidden {
+    display: none !important;
 }
 
 
 .grid-container {
-    position: relative; 
+    position: relative;
     height: 160px;
     margin-bottom: 15px;
     flex-shrink: 0;
@@ -496,10 +1090,12 @@ html, body {
     transform: translateY(0);
     cursor: pointer;
 }
+
 .cam-btn:active {
     transform: translateY(2px) scale(0.98);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
+
 .cam-btn.active {
     border-color: var(--blue);
     background: #1c1c1e;
@@ -509,13 +1105,17 @@ html, body {
 
 
 /* REDUCED SLIDER HEIGHTS TO PREVENT OVERFLOW */
-#fSlider, #sSlider, #bSlider { width: 32vh; }
+#fSlider:not([type='hidden']),
+#sSlider {
+    width: 32vh;
+}
 
 button {
     touch-action: manipulation;
     /* Prevents long-press context menus (right click menu) */
     -webkit-touch-callout: none;
 }
+
 .gear-pedestal-column {
     display: flex;
     flex-direction: column;
@@ -532,6 +1132,7 @@ button {
     border-radius: 8px;
     padding: 6px 8px 8px;
 }
+
 .gear-pedestal-section-title,
 .gear-autobrk-header {
     flex-shrink: 0;
@@ -546,6 +1147,7 @@ button {
     margin-bottom: 10px;
     user-select: none;
 }
+
 .gear-pedestal-h-rule {
     flex-shrink: 0;
     height: 1px;
@@ -554,6 +1156,7 @@ button {
     border-radius: 1px;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
 }
+
 .gear-ldg-push-row {
     display: flex;
     flex-direction: row;
@@ -562,6 +1165,7 @@ button {
     gap: 4px;
     width: 100%;
 }
+
 .gear-pedestal-column .gear-ldg-pair,
 .gear-pedestal-column .gear-ldg-single {
     display: flex;
@@ -569,6 +1173,7 @@ button {
     align-items: flex-end;
     gap: 6px;
 }
+
 .gear-pedestal-divider {
     width: 2px;
     height: 58px;
@@ -579,10 +1184,12 @@ button {
     border-radius: 1px;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.35);
 }
+
 .gear-pedestal-column .gear-ldg-row {
     flex-shrink: 0;
     padding: 2px 0 0;
 }
+
 .gear-3d-mount {
     flex: 0 1 auto;
     width: 100%;
@@ -595,11 +1202,14 @@ button {
     overflow: hidden;
     background: transparent;
 }
+
 .gear-3d-mount canvas {
     display: block;
     width: 100% !important;
     height: 100% !important;
     touch-action: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 #pedestalClockHost.gear-clock-host {
@@ -608,18 +1218,38 @@ button {
     max-width: 100%;
     margin-top: 2px;
 }
+
+.gear-pedestal-column .pedestal-refresh-wrap {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    box-sizing: border-box;
+}
+
+.gear-pedestal-column .pedestal-refresh-wrap .refresh-site-btn {
+    width: 100%;
+    max-width: 200px;
+    height: 38px;
+}
+
 .pedestal-clock-bezel {
     width: 100%;
     max-width: 228px;
     margin: 0 auto;
-    background: #4a5560;
+    background: var(--airbus-pedestal-bezel);
     border-radius: 6px;
     padding: 8px;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.4), 0 6px 24px rgba(0, 0, 0, 0.8);
     box-sizing: border-box;
 }
+
 .pedestal-clock-housing {
-    background: #2c3238;
+    background: var(--airbus-pedestal-housing);
     border-radius: 3px;
     padding: 8px 6px;
     box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(0, 0, 0, 0.5);
@@ -627,12 +1257,14 @@ button {
     flex-direction: column;
     gap: 6px;
 }
+
 .pedestal-clock-panel-row {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 3px;
 }
+
 .pedestal-clock-title-above,
 .pedestal-clock-title-below {
     font-family: 'Rajdhani', sans-serif;
@@ -642,9 +1274,11 @@ button {
     color: #c8d4dc;
     text-transform: uppercase;
 }
+
 .pedestal-clock-title-below {
     margin-top: 1px;
 }
+
 .pedestal-clock-glass {
     background: #000000;
     border-radius: 8px;
@@ -653,6 +1287,7 @@ button {
     width: 100%;
     box-sizing: border-box;
 }
+
 .pedestal-clock-td-inner {
     display: flex;
     align-items: center;
@@ -661,6 +1296,7 @@ button {
     position: relative;
     z-index: 2;
 }
+
 .pedestal-clock-digit-row {
     display: flex;
     align-items: center;
@@ -668,6 +1304,7 @@ button {
     position: relative;
     z-index: 2;
 }
+
 .pedestal-clock-d {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 28px;
@@ -676,6 +1313,7 @@ button {
     line-height: 1;
     letter-spacing: -1px;
 }
+
 .pedestal-clock-sep {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 24px;
@@ -686,21 +1324,27 @@ button {
     position: relative;
     top: -1px;
 }
+
 .pedestal-clock-sep.pedestal-clock-blink {
     animation: pedestal-clock-blink 1s step-end infinite;
 }
+
 @keyframes pedestal-clock-blink {
+
     0%,
     100% {
         opacity: 1;
     }
+
     50% {
         opacity: 0.15;
     }
 }
+
 .pedestal-clock-neg {
     color: #e85050;
 }
+
 .pedestal-clock-sub-row {
     display: flex;
     justify-content: space-between;
@@ -708,6 +1352,7 @@ button {
     position: relative;
     z-index: 2;
 }
+
 .pedestal-clock-sub {
     font-family: 'Rajdhani', sans-serif;
     font-size: 7px;
@@ -716,6 +1361,7 @@ button {
     color: #3a9fc8;
     text-transform: uppercase;
 }
+
 .pedestal-clock-set-btn {
     position: absolute;
     right: 5px;
@@ -733,14 +1379,17 @@ button {
     cursor: pointer;
     text-transform: uppercase;
 }
+
 .pedestal-clock-set-btn:hover {
     border-color: #3a9fc8;
     background: #0a1a24;
 }
+
 .pedestal-clock-picker-wrap {
     position: relative;
     width: 100%;
 }
+
 .pedestal-clock-picker-drop {
     display: none;
     position: absolute;
@@ -754,9 +1403,11 @@ button {
     z-index: 200;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
 }
+
 .pedestal-clock-picker-drop.pedestal-clock-picker-open {
     display: block;
 }
+
 .pedestal-clock-picker-drop input[type='time'] {
     width: 100%;
     box-sizing: border-box;
@@ -771,10 +1422,12 @@ button {
     text-align: center;
     letter-spacing: 2px;
 }
+
 .pedestal-clock-picker-drop input[type='time']::-webkit-calendar-picker-indicator {
     filter: invert(0.6) sepia(1) saturate(3) hue-rotate(170deg);
     cursor: pointer;
 }
+
 .pedestal-clock-confirm-btn {
     width: 100%;
     margin-top: 6px;
@@ -790,9 +1443,11 @@ button {
     cursor: pointer;
     text-transform: uppercase;
 }
+
 .pedestal-clock-confirm-btn:hover {
     background: #102030;
 }
+
 .pedestal-clock-td-display {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: 28px;
@@ -809,7 +1464,8 @@ button {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center; /* Centered in pedestal */
+    justify-content: center;
+    /* Centered in pedestal */
     width: 80px;
     height: 100%;
 }
@@ -833,12 +1489,18 @@ button {
     background: linear-gradient(90deg, #444, #888, #444);
     transition: top 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
     z-index: 10;
-    pointer-events: auto; /* Ensures it can be clicked */
+    pointer-events: auto;
+    /* Ensures it can be clicked */
 }
 
 /* Position states */
-.b777-gear-arm.gear-up { top: 0px; }
-.b777-gear-arm.gear-down { top: 105px; }
+.b777-gear-arm.gear-up {
+    top: 0px;
+}
+
+.b777-gear-arm.gear-down {
+    top: 105px;
+}
 
 /* The White "Tire" Knob */
 .b777-gear-knob {
@@ -851,7 +1513,7 @@ button {
     background: radial-gradient(circle at 50% 40%, #ffffff 0%, #dcdcdc 100%);
     border: 3px solid #1a1a1a;
     border-radius: 6px;
-    box-shadow: 0 5px 10px rgba(0,0,0,0.8);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
 }
 
 .ap-btn-wrap {
@@ -884,36 +1546,6 @@ button {
     background: #3a3c42;
 }
 
-.ap-btn {
-    width: 60px;
-    height: 60px;
-    border-radius: 0px;
-    border: 2px solid #3a3a3c;
-    background: #2c2c2e;
-    color: white;
-    font-weight: bold;
-    font-size: 0.8em;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 0px;
-}
-
-.ap-indicator {
-    width: 36px;
-    height: 5px;
-    border-radius: 3px;
-    background: var(--card);
-    margin-bottom: 2px;
-}
-
-.ap-indicator.on {
-    background: #34c759;
-}
-
 /* OVERHEAD PANEL DESIGN SYSTEM */
 
 .ovhd-section {
@@ -923,9 +1555,9 @@ button {
     border-radius: 4px;
     padding: 7px;
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        inset 0 -1px 0 rgba(0,0,0,0.3),
-        0 1px 3px rgba(0,0,0,0.5);
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+        0 1px 3px rgba(0, 0, 0, 0.5);
     flex-shrink: 0;
 }
 
@@ -1030,8 +1662,11 @@ button {
 }
 
 .left-column .pack-btn.pack-apu-start .apu-start-avail {
-    padding-top: 12px;
-    font-size: 6.5px;
+    padding-top: 10px;
+    font-family: 'Lato', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
 }
 
 .left-column .pack-btn.pack-apu-start .pack-fault {
@@ -1039,13 +1674,29 @@ button {
 }
 
 .left-column .pack-btn.pack-apu-start .pack-apu-start-on {
-    font-size: 9px;
+    font-family: 'Lato', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
     padding: 2px 0;
 }
 
 .gear-pedestal-column .pack-btn.pack-apu-start .apu-start-avail {
-    padding-top: 12px;
-    font-size: 6.5px;
+    padding-top: 10px;
+    font-family: 'Lato', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+}
+
+.gear-pedestal-column .pack-btn.pack-apu-start.gear-autobrk-pb .apu-start-avail {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-top: 10px;
+}
+
+.pack-btn.pack-apu-start.gear-autobrk-pb .pack-fault {
+    display: none;
 }
 
 .gear-pedestal-column .pack-btn.pack-apu-start .pack-fault {
@@ -1053,7 +1704,9 @@ button {
 }
 
 .gear-pedestal-column .pack-btn.pack-apu-start .pack-apu-start-on {
-    font-size: 9px;
+    font-family: 'Lato', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
     padding: 2px 0;
 }
 
@@ -1142,11 +1795,11 @@ button {
     cursor: pointer;
     overflow: hidden;
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.1),
-        inset 0 -1px 0 rgba(0,0,0,0.5),
-        inset -1px 0 0 rgba(0,0,0,0.3),
-        0 3px 8px rgba(0,0,0,0.7),
-        0 1px 2px rgba(0,0,0,0.5);
+        inset 0 1px 0 rgba(255, 255, 255, 0.1),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.5),
+        inset -1px 0 0 rgba(0, 0, 0, 0.3),
+        0 3px 8px rgba(0, 0, 0, 0.7),
+        0 1px 2px rgba(0, 0, 0, 0.5);
     touch-action: manipulation;
     -webkit-touch-callout: none;
     transition: box-shadow 0.08s, filter 0.08s;
@@ -1198,15 +1851,15 @@ button {
     text-transform: uppercase;
     transition: background 0.14s, box-shadow 0.14s, color 0.14s;
     pointer-events: none;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.7);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 /* Button depressed */
 .ovhd-btn:active {
     background: linear-gradient(180deg, #111828 0%, #0d1420 100%);
     box-shadow:
-        inset 0 3px 7px rgba(0,0,0,0.6),
-        0 1px 2px rgba(0,0,0,0.4);
+        inset 0 3px 7px rgba(0, 0, 0, 0.6),
+        0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Button ON — same face, LED strip lights */
@@ -1228,8 +1881,8 @@ button {
 .ovhd-btn.selected {
     background: linear-gradient(180deg, #2e3848 0%, #22303f 55%, #182030 100%);
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.12),
-        0 2px 5px rgba(0,0,0,0.5);
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 2px 5px rgba(0, 0, 0, 0.5);
 }
 
 .ovhd-btn.selected .btn-led {
@@ -1257,10 +1910,10 @@ button {
     border-radius: 4px;
     overflow: hidden;
     background: #0d1118;
-    border: 1px solid rgba(255,255,255,0.42);
+    border: 1px solid rgba(255, 255, 255, 0.42);
     box-shadow:
         inset 0 2px 8px rgba(0, 0, 0, 0.75),
-        0 0 0 1px rgba(255,255,255,0.07);
+        0 0 0 1px rgba(255, 255, 255, 0.07);
     flex-shrink: 0;
     position: relative;
     z-index: 3;
@@ -1300,13 +1953,13 @@ button {
     width: 22px;
     height: 52px;
     background: #131620;
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 4px;
     position: relative;
     box-shadow:
-        0 0 0 1px rgba(0,0,0,0.5),
-        inset 0 4px 9px rgba(0,0,0,0.88),
-        inset 0 -1px 4px rgba(0,0,0,0.5);
+        0 0 0 1px rgba(0, 0, 0, 0.5),
+        inset 0 4px 9px rgba(0, 0, 0, 0.88),
+        inset 0 -1px 4px rgba(0, 0, 0, 0.5);
 }
 
 .flip-lever {
@@ -1318,15 +1971,17 @@ button {
     border: 1px solid #606870;
     border-radius: 3px;
     box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.45),
-        inset 0 -1px 0 rgba(0,0,0,0.2),
-        0 3px 5px rgba(0,0,0,0.65);
+        inset 0 2px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+        0 3px 5px rgba(0, 0, 0, 0.65);
     transition: top 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-    top: 30px; /* OFF = down  (52 − 18 − 2 = 32, using 30 for small gap) */
+    top: 30px;
+    /* OFF = down  (52 − 18 − 2 = 32, using 30 for small gap) */
 }
 
 .flip-sw.on .flip-lever {
-    top: 2px; /* ON = up */
+    top: 2px;
+    /* ON = up */
 }
 
 .flip-name {
@@ -1385,13 +2040,13 @@ button {
     width: 22px;
     height: 78px;
     background: #131620;
-    border: 1px solid rgba(255,255,255,0.4);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 4px;
     position: relative;
     box-shadow:
-        0 0 0 1px rgba(0,0,0,0.5),
-        inset 0 4px 9px rgba(0,0,0,0.88),
-        inset 0 -1px 4px rgba(0,0,0,0.5);
+        0 0 0 1px rgba(0, 0, 0, 0.5),
+        inset 0 4px 9px rgba(0, 0, 0, 0.88),
+        inset 0 -1px 4px rgba(0, 0, 0, 0.5);
 }
 
 .flip3-lever {
@@ -1403,17 +2058,25 @@ button {
     border: 1px solid #606870;
     border-radius: 3px;
     box-shadow:
-        inset 0 2px 0 rgba(255,255,255,0.45),
-        inset 0 -1px 0 rgba(0,0,0,0.2),
-        0 3px 5px rgba(0,0,0,0.65);
+        inset 0 2px 0 rgba(255, 255, 255, 0.45),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+        0 3px 5px rgba(0, 0, 0, 0.65);
     transition: top 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* pos 0 = top (ON / TAXI), pos 1 = middle (AUTO / T.O), pos 2 = bottom (OFF)
    track 78px − lever 18px − pad 2px = 58px max, middle = (78−18)/2 = 30   */
-.flip-sw-3[data-pos="0"] .flip3-lever { top: 2px; }
-.flip-sw-3[data-pos="1"] .flip3-lever { top: 30px; }
-.flip-sw-3[data-pos="2"] .flip3-lever { top: 58px; }
+.flip-sw-3[data-pos="0"] .flip3-lever {
+    top: 2px;
+}
+
+.flip-sw-3[data-pos="1"] .flip3-lever {
+    top: 30px;
+}
+
+.flip-sw-3[data-pos="2"] .flip3-lever {
+    top: 58px;
+}
 
 /* LIGHTS PANEL */
 .lights-grid {
@@ -1581,7 +2244,7 @@ button {
 
 .eng-master-panel-col {
     flex: 0 0 auto;
-    width: 136px;
+    width: 104px;
     min-width: 0;
     display: flex;
     flex-direction: column;
@@ -1617,7 +2280,7 @@ button {
 .eng-mode-inline-wrap {
     flex: 1 1 0;
     min-width: 0;
-    max-width: 260px;
+    max-width: 380px;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -1630,7 +2293,7 @@ button {
 
 .eng-mode-inline-wrap .eng-mode-horiz {
     width: 100%;
-    max-width: 240px;
+    max-width: none;
     margin: 0;
 }
 
@@ -1644,7 +2307,18 @@ button {
     background: var(--airbus-panel);
     touch-action: none;
     -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
     padding-bottom: 100%;
+    outline: none;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.eng-master-3d-viewport:focus,
+.eng-master-3d-viewport:focus-visible,
+.eng-master-3d-viewport:active {
+    outline: none;
+    box-shadow: none;
 }
 
 .eng-master-3d-viewport canvas {
@@ -1654,6 +2328,16 @@ button {
     width: 100%;
     height: 100%;
     display: block;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.eng-master-3d-viewport canvas:focus,
+.eng-master-3d-viewport canvas:focus-visible,
+.eng-master-3d-viewport canvas:active {
+    outline: none;
 }
 
 .apu-start-wrap {
@@ -1662,7 +2346,7 @@ button {
 
 .eng-mode-horiz {
     width: 100%;
-    max-width: 240px;
+    max-width: 380px;
     margin: 0 auto;
     user-select: none;
     -webkit-user-select: none;
@@ -1689,7 +2373,8 @@ button {
     background: var(--airbus-panel);
     touch-action: none;
     -webkit-touch-callout: none;
-    padding-bottom: 46%;
+    -webkit-tap-highlight-color: transparent;
+    padding-bottom: 58%;
 }
 
 .eng-mode-3d-viewport canvas {
@@ -1699,6 +2384,8 @@ button {
     width: 100%;
     height: 100%;
     display: block;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .pack-btn.pack-apu-start {
@@ -1711,11 +2398,11 @@ button {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    padding-top: 14px;
-    font-family: 'B612', 'B612 Mono', monospace;
-    font-size: 7.5px;
-    font-weight: 700;
-    letter-spacing: 0.14em;
+    padding-top: 12px;
+    font-family: 'Lato', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
     color: rgba(24, 208, 80, 0.22);
     text-transform: uppercase;
     line-height: 1;
@@ -1745,10 +2432,10 @@ button {
     padding: 3px 0;
     margin-top: auto;
     text-align: center;
-    font-family: 'Barlow Condensed', 'B612', sans-serif;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.22em;
+    font-family: 'Lato', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
     color: rgba(200, 212, 228, 0.38);
     box-shadow: none;
     text-shadow: none;
@@ -1778,15 +2465,15 @@ button {
     width: 71px;
     height: 68px;
     background: #030406;
-    border: 2px solid rgba(255,255,255,0.55);
+    border: 2px solid rgba(255, 255, 255, 0.55);
     border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: visible;
     box-shadow:
-        inset 0 2px 6px rgba(0,0,0,0.8),
-        0 0 0 1px rgba(255,255,255,0.1);
+        inset 0 2px 6px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 /* Button: ON (default) = pressed/receded into housing (Z-axis back) */
@@ -1852,10 +2539,12 @@ button {
         transform: perspective(120px) translateZ(-4px) scale(0.97);
         animation-timing-function: cubic-bezier(0.55, 0, 1, 0.6);
     }
+
     30% {
         transform: perspective(120px) translateZ(-12px) scale(0.91);
         animation-timing-function: cubic-bezier(0, 0, 0.35, 1);
     }
+
     100% {
         transform: perspective(120px) translateZ(5px) scale(1.02);
     }
@@ -1866,10 +2555,12 @@ button {
         transform: perspective(120px) translateZ(5px) scale(1.02);
         animation-timing-function: cubic-bezier(0.55, 0, 1, 0.6);
     }
+
     35% {
         transform: perspective(120px) translateZ(-12px) scale(0.91);
         animation-timing-function: cubic-bezier(0, 0, 0.35, 1);
     }
+
     100% {
         transform: perspective(120px) translateZ(-4px) scale(0.97);
     }
@@ -1899,7 +2590,7 @@ button {
     position: relative;
     z-index: 1;
     width: calc(100% - 4px);
-    border: 1.5px solid rgba(200,212,228,0.38);
+    border: 1.5px solid rgba(200, 212, 228, 0.38);
     border-radius: 4px;
     padding: 3px 0;
     text-align: center;
@@ -1907,7 +2598,7 @@ button {
     font-size: 10px;
     font-weight: 700;
     letter-spacing: 0.18em;
-    color: rgba(200,212,228,0.38);
+    color: rgba(200, 212, 228, 0.38);
     transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
     pointer-events: none;
     user-select: none;
@@ -1915,11 +2606,11 @@ button {
 
 /* Pack OFF — indicator illuminates white */
 .pack-btn.off .pack-off-ind {
-    border-color: rgba(255,255,255,0.52);
+    border-color: rgba(255, 255, 255, 0.52);
     color: #ffffff;
     box-shadow:
-        0 0 9px rgba(255,255,255,0.24),
-        inset 0 0 4px rgba(255,255,255,0.06);
+        0 0 9px rgba(255, 255, 255, 0.24),
+        inset 0 0 4px rgba(255, 255, 255, 0.06);
 }
 
 /* APU PANEL */
@@ -1942,4 +2633,3 @@ button {
     margin-top: 8px;
     flex-shrink: 0;
 }
-

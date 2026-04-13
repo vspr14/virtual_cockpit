@@ -5,7 +5,7 @@ import socket
 import struct
 import json as json_lib
 import urllib.request
-from flask import Flask, render_template, request, jsonify, session, redirect, url_for
+from flask import Flask, render_template, request, jsonify, session, redirect, url_for, send_file, abort
 import pyvjoy
 import time
 import threading
@@ -29,7 +29,6 @@ logging.getLogger('werkzeug').setLevel(logging.ERROR)
 device_1 = None
 device_2 = None
 aq = None
-current_wheel_brake = 0
 PIN = '1234'
 PROFILE_JSON_DATA = {
     'fenix_a320': {
@@ -80,7 +79,6 @@ PROFILE_JSON_DATA = {
                 'ARM_SPOILERS': 35,
                 'GEAR_UP': 4,
                 'GEAR_DOWN': 4,
-                'AUTOPILOT': 5,
                 'CAM_MOVE_MODE': 8,
                 'CAM_BASE': 10
             }
@@ -134,7 +132,6 @@ PROFILE_JSON_DATA = {
                 'ARM_SPOILERS': 35,
                 'GEAR_UP': 4,
                 'GEAR_DOWN': 4,
-                'AUTOPILOT': 5,
                 'CAM_MOVE_MODE': 8,
                 'CAM_BASE': 10
             }
@@ -172,7 +169,6 @@ PROFILE_JSON_DATA = {
                 'IDLE_BUTTON': 3,
                 'GEAR_UP': 4,
                 'GEAR_DOWN': 4,
-                'AUTOPILOT': 5,
                 'CAM_UP': 6,
                 'CAM_DOWN': 7,
                 'CAM_MOVE_MODE': 8,
@@ -212,7 +208,6 @@ PROFILE_JSON_DATA = {
                 'IDLE_BUTTON': 3,
                 'GEAR_UP': 4,
                 'GEAR_DOWN': 4,
-                'AUTOPILOT': 5,
                 'CAM_UP': 6,
                 'CAM_DOWN': 7,
                 'CAM_MOVE_MODE': 8,
@@ -224,6 +219,10 @@ PROFILE_JSON_DATA = {
 
 @app.before_request
 def require_pin():
+    if request.endpoint == 'static':
+        return
+    if request.path == '/test.html':
+        return
     allowed = {'index', 'verify_pin', 'set_session'}
     if request.endpoint in allowed:
         return
@@ -410,6 +409,13 @@ def serve_profile_json(profile_name):
         return '', 404
     return jsonify(data)
 
+@app.route('/test.html')
+def serve_test_html():
+    path = os.path.join(BASE_DIR, 'test.html')
+    if not os.path.isfile(path):
+        abort(404)
+    return send_file(path, mimetype='text/html')
+
 @app.route('/<page>.html')
 def serve_page(page):
     allowed = {'index', 'fenix_a320', 'fenix_a350', 'pmdg_737', 'pmdg_777'}
@@ -422,7 +428,7 @@ def serve_page(page):
 
 @app.route('/update_sim', methods=['POST'])
 def update_sim():
-    global device_1, device_2, current_wheel_brake
+    global device_1, device_2
     if device_1 is None:
         return jsonify({"error": "No vJoy"}), 500
     data = request.json or {}
@@ -436,7 +442,7 @@ def update_sim():
     try:
         handler = profile.get('handlers', {}).get(t)
         if handler:
-            result = handler(data, device_1, device_2, current_wheel_brake, aq)
+            result = handler(data, device_1, device_2, 0, aq)
             if isinstance(result, tuple):
                 return result
             if isinstance(result, dict):
@@ -451,8 +457,7 @@ def update_sim():
             device_1.set_axis(pyvjoy.HID_USAGE_RX, int(val * 32767))
 
         elif t == 'brakes':
-            current_wheel_brake = val
-            device_1.set_axis(pyvjoy.HID_USAGE_X, int(val * 32767))
+            device_1.set_axis(pyvjoy.HID_USAGE_SL1, int(val * 32767))
 
         elif t == 'spoilers':
             f = profile['backend']['spoiler_formula'](val)

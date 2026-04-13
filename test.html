@@ -1,180 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
 
-<h2 class="sr-only">Interactive 3D render of Korry MSC489 knob built from spec sheet dimensions</h2>
-<div id="wrap" style="width:100%;height:520px;background:#1a1c1e;border-radius:8px;overflow:hidden;position:relative;touch-action:none">
-  <div id="lbl" style="position:absolute;top:14px;left:50%;transform:translateX(-50%);color:#3a5560;font:10px/1 'Courier New',monospace;letter-spacing:.22em;white-space:nowrap;z-index:2">KORRY MSC 489 — 12-FLUTE KNOB</div>
-  <div id="ang" style="position:absolute;top:32px;left:50%;transform:translateX(-50%);color:#e09020;font:11px/1 'Courier New',monospace;letter-spacing:.18em;z-index:2">0°</div>
-  <div style="position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:2">
-    <button onclick="snap(-45)" style="background:#1e2428;border:1px solid #354045;color:#7a9fa8;font:10px/1 'Courier New',monospace;letter-spacing:.1em;padding:6px 12px;border-radius:2px;cursor:pointer">-45°</button>
-    <button onclick="snap(0)"   style="background:#1e2428;border:1px solid #354045;color:#7a9fa8;font:10px/1 'Courier New',monospace;letter-spacing:.1em;padding:6px 12px;border-radius:2px;cursor:pointer">0°</button>
-    <button onclick="snap(45)"  style="background:#1e2428;border:1px solid #354045;color:#7a9fa8;font:10px/1 'Courier New',monospace;letter-spacing:.1em;padding:6px 12px;border-radius:2px;cursor:pointer">+45°</button>
-    <button onclick="snap(90)"  style="background:#1e2428;border:1px solid #354045;color:#7a9fa8;font:10px/1 'Courier New',monospace;letter-spacing:.1em;padding:6px 12px;border-radius:2px;cursor:pointer">+90°</button>
+<head>
+  <meta charset="UTF-8">
+  <title>WX Toggle Switches</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box
+    }
+
+    body {
+      background: #2e3845;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 10px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      overflow: hidden
+    }
+
+    #states {
+      color: #fff;
+      font: 600 10px/1 "Helvetica Neue", sans-serif;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      background: rgba(0, 0, 0, .45);
+      padding: 5px 14px;
+      border-radius: 8px;
+      display: flex;
+      gap: 16px
+    }
+
+    #hint {
+      color: rgba(255, 255, 255, .22);
+      font: 9px/1 "Helvetica Neue", sans-serif;
+      letter-spacing: .1em
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="c"></canvas>
+  <div id="states">
+    <span id="s-sys">SYS: OFF</span>
+    <span id="s-pws">PWS: OFF</span>
   </div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-(function(){
-const wrap=document.getElementById('wrap');
-const W=wrap.clientWidth,H=wrap.clientHeight;
-const renderer=new THREE.WebGLRenderer({antialias:true,alpha:false});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));
-renderer.setSize(W,H);
-renderer.shadowMap.enabled=true;
-renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-renderer.outputEncoding=THREE.sRGBEncoding;
-renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.2;
-wrap.appendChild(renderer.domElement);
-renderer.domElement.style.cssText='position:absolute;top:0;left:0;width:100%;height:100%';
+  <div id="hint">click switch · right-drag = orbit · scroll = zoom</div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script>
+    const W = 500, H = 360;
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('c'), antialias: true });
+    renderer.setSize(W, H); renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
+    renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-const scene=new THREE.Scene();
-scene.background=new THREE.Color(0x1a1c1e);
-const cam=new THREE.PerspectiveCamera(36,W/H,0.01,100);
+    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x2e3845);
+    const cam = new THREE.PerspectiveCamera(36, W / H, 0.1, 2000);
+    cam.position.set(0, 30, 220); cam.lookAt(0, 0, 0);
 
-scene.add(new THREE.AmbientLight(0x303840,1.2));
-const key=new THREE.SpotLight(0xfff5e8,3.5,30,Math.PI/7,0.3,1.5);
-key.position.set(2.5,4,3);key.castShadow=true;key.shadow.mapSize.set(2048,2048);scene.add(key);
-const fl=new THREE.DirectionalLight(0x304860,0.7);fl.position.set(-3,2,1);scene.add(fl);
-const rl=new THREE.DirectionalLight(0x1a2830,0.4);rl.position.set(0,-2,-3);scene.add(rl);
+    scene.add(new THREE.AmbientLight(0x303c48, 1.15));
+    const key = new THREE.SpotLight(0xfff8f0, 2.6, 600, Math.PI / 7, 0.28, 1.2);
+    key.position.set(80, 160, 180); key.castShadow = true; key.shadow.mapSize.set(2048, 2048); scene.add(key);
+    const fill = new THREE.DirectionalLight(0x405878, 0.5); fill.position.set(-80, 40, 80); scene.add(fill);
+    const back = new THREE.DirectionalLight(0x101820, 0.2); back.position.set(0, -60, -40); scene.add(back);
 
-const matBody=new THREE.MeshStandardMaterial({color:0x1c1e20,roughness:0.45,metalness:0.05});
-const matInd=new THREE.MeshStandardMaterial({color:0xffffff,roughness:0.5,metalness:0,emissive:0xffffff,emissiveIntensity:0.2});
-const matInsert=new THREE.MeshStandardMaterial({color:0xb0b4b8,roughness:0.3,metalness:0.8});
-const matPanel=new THREE.MeshStandardMaterial({color:0x1e2224,roughness:0.88,metalness:0.1});
+    const matPanel = new THREE.MeshStandardMaterial({ color: 0x5a6878, roughness: 0.72, metalness: 0.38 });
+    const matPanelFace = new THREE.MeshStandardMaterial({ color: 0x4e5e6e, roughness: 0.78, metalness: 0.32 });
+    const matSwBody = new THREE.MeshStandardMaterial({ color: 0x909aa4, roughness: 0.18, metalness: 0.95 });
+    const matSwShiny = new THREE.MeshStandardMaterial({ color: 0xb8c4ce, roughness: 0.08, metalness: 0.98 });
+    const matBushing = new THREE.MeshStandardMaterial({ color: 0x303840, roughness: 0.5, metalness: 0.7 });
+    const matHole = new THREE.MeshBasicMaterial({ color: 0x050809, toneMapped: false });
+    const trimMat = new THREE.MeshStandardMaterial({ color: 0x283038, roughness: 0.55, metalness: 0.6 });
 
-const S=2.5,R=0.50*S,H2=0.84*S,Hr=0.06*S,skH=0.16*S,skR=0.52*S;
-const knob=new THREE.Group();
+    // ── PANEL ──
+    const PW = 200, PH = 120, PD = 10;
+    const panel = new THREE.Mesh(new THREE.BoxGeometry(PW, PH, PD), matPanel);
+    panel.receiveShadow = true; scene.add(panel);
+    const face = new THREE.Mesh(new THREE.BoxGeometry(PW - 6, PH - 6, 1.2), matPanelFace);
+    face.position.z = PD / 2 + 0.5; scene.add(face);
+    [[0, PH / 2 + 2, new THREE.BoxGeometry(PW + 8, 4, PD + 2)],
+    [0, -PH / 2 - 2, new THREE.BoxGeometry(PW + 8, 4, PD + 2)],
+    [PW / 2 + 2, 0, new THREE.BoxGeometry(4, PH, PD + 2)],
+    [-PW / 2 - 2, 0, new THREE.BoxGeometry(4, PH, PD + 2)]
+    ].forEach(([x, y, geo]) => {
+      const m = new THREE.Mesh(geo, trimMat); m.position.set(x, y, 0); scene.add(m);
+    });
+    // Corner holes
+    [[-PW / 2 + 8, -PH / 2 + 8], [PW / 2 - 8, -PH / 2 + 8], [-PW / 2 + 8, PH / 2 - 8], [PW / 2 - 8, PH / 2 - 8]].forEach(([x, y]) => {
+      const h = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 1.5, 16), matBushing);
+      h.rotation.x = Math.PI / 2; h.position.set(x, y, PD / 2 + 0.6); scene.add(h);
+      const i = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 2, 12), matHole);
+      i.rotation.x = Math.PI / 2; i.position.set(x, y, PD / 2 + 0.8); scene.add(i);
+    });
 
-// lathe body
-const pts=[];
-pts.push(new THREE.Vector2(0,0));
-pts.push(new THREE.Vector2(skR,0));
-pts.push(new THREE.Vector2(skR,skH*0.6));
-pts.push(new THREE.Vector2(R,skH));
-pts.push(new THREE.Vector2(R,H2-Hr));
-for(let i=0;i<=8;i++){
-  const a=-Math.PI/2+(Math.PI/2)*(i/8);
-  pts.push(new THREE.Vector2(R-Hr+Hr*Math.cos(a),H2-Hr+Hr*Math.sin(a)));
-}
-pts.push(new THREE.Vector2(0,H2));
-const body=new THREE.Mesh(new THREE.LatheGeometry(pts,64),matBody);
-body.castShadow=true;body.receiveShadow=true;
-knob.add(body);
+    // ── LABEL HELPER ──
+    function makeLabel(txt, size = 26, color = '#c8d4de') {
+      const cv = document.createElement('canvas'); cv.width = 256; cv.height = 72;
+      const ctx = cv.getContext('2d'); ctx.clearRect(0, 0, 256, 72);
+      ctx.font = `bold ${size}px "Helvetica Neue",Helvetica,Arial,sans-serif`;
+      ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(txt, 128, 36);
+      const t = new THREE.CanvasTexture(cv); t.minFilter = THREE.LinearFilter; return t;
+    }
+    function addLabel(txt, x, y, z, w, h, size, color) {
+      const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h),
+        new THREE.MeshBasicMaterial({ map: makeLabel(txt, size, color), transparent: true, depthWrite: false, toneMapped: false, side: THREE.DoubleSide }));
+      m.position.set(x, y, z); m.renderOrder = 8; scene.add(m);
+    }
 
-// 12 flutes
-const FD=0.045*S,FW=0.075*S;
-const fH=H2-skH-Hr*2;
-const fluteMat=new THREE.MeshStandardMaterial({color:0x080a0c,roughness:0.9,metalness:0});
-const ridgeMat=new THREE.MeshStandardMaterial({color:0x2e3236,roughness:0.4,metalness:0.1});
-for(let i=0;i<12;i++){
-  const ang=(i/12)*Math.PI*2;
-  const fx=Math.sin(ang)*(R-FD*0.3),fz=Math.cos(ang)*(R-FD*0.3);
-  const fl2=new THREE.Mesh(new THREE.BoxGeometry(FW,fH,FD*2),fluteMat);
-  fl2.position.set(fx,skH+fH/2+Hr,fz);fl2.rotation.y=-ang;
-  knob.add(fl2);
-  [-1,1].forEach(side=>{
-    const ra=ang+side*(Math.PI*2/12)*0.45;
-    const rg=new THREE.Mesh(new THREE.BoxGeometry(0.012*S,fH,0.012*S),ridgeMat);
-    rg.position.set(Math.sin(ra)*(R+0.001),skH+fH/2+Hr,Math.cos(ra)*(R+0.001));
-    knob.add(rg);
-  });
-}
+    // ── U-SHAPED TIP using TubeGeometry ──
+    function makeUTip() {
+      // A half-circle arc (the U shape that caps the shaft)
+      const R = 3.8;
+      class UPath extends THREE.Curve {
+        getPoint(t) {
+          const a = Math.PI * t; // 0 → PI = half circle
+          return new THREE.Vector3(Math.sin(a) * R, Math.cos(a) * R, 0);
+        }
+      }
+      const geo = new THREE.TubeGeometry(new UPath(), 24, 1.2, 10, false);
+      return geo;
+    }
 
-// top face
-const topF=new THREE.Mesh(new THREE.CircleGeometry(R-Hr,64),matBody);
-topF.rotation.x=-Math.PI/2;topF.position.y=H2;knob.add(topF);
+    // ── BUILD TOGGLE SWITCH ──
+    // axis: 'z' = tilts left/right (rotation.z), 'x' = tilts fwd/back (rotation.x)
+    function buildToggle(xPos, positions, axis, labelBelow, posLabels) {
+      const SHAFT_R = 2.0, SHAFT_LEN = 20;
+      const PIVOT_Z = PD / 2; // pivot at panel surface
 
-// indicator line top
-const iTop=new THREE.Mesh(new THREE.BoxGeometry(0.06*S,0.012,(R-Hr)*0.75),matInd);
-iTop.position.set(0,H2+0.006,-(R-Hr)*0.375);knob.add(iTop);
+      // Panel hole — flush, switch sits in it
+      const hole = new THREE.Mesh(new THREE.CylinderGeometry(SHAFT_R + 2.5, SHAFT_R + 2.5, PD + 2, 20), matHole);
+      hole.rotation.x = Math.PI / 2; hole.position.set(xPos, 0, 0); hole.renderOrder = 2; scene.add(hole);
 
-// indicator line side
-const iSide=new THREE.Mesh(new THREE.BoxGeometry(0.04*S,fH,0.008*S),matInd);
-iSide.position.set(0,skH+fH/2+Hr,-(R+0.002));knob.add(iSide);
+      // O-ring / retaining nut — sits FLUSH with panel face, not raised
+      // Thin flat disc at panel surface level
+      const oRing = new THREE.Mesh(
+        new THREE.RingGeometry(SHAFT_R + 1, SHAFT_R + 4.5, 24),
+        new THREE.MeshStandardMaterial({ color: 0x404850, roughness: 0.45, metalness: 0.75 })
+      );
+      oRing.position.set(xPos, 0, PD / 2 + 0.2); // right at panel face
+      oRing.renderOrder = 3;
+      scene.add(oRing);
+      // Thin collar ring (just slightly proud of panel, like a flush nut)
+      const collarGeo = new THREE.CylinderGeometry(SHAFT_R + 4.5, SHAFT_R + 4.5, 1.5, 24);
+      const collar = new THREE.Mesh(collarGeo, matBushing);
+      collar.rotation.x = Math.PI / 2; collar.position.set(xPos, 0, PD / 2 + 0.5);
+      scene.add(collar);
 
-// brass insert
-const ins=new THREE.Mesh(new THREE.CylinderGeometry(0.14*S,0.14*S,0.30*S,24),matInsert);
-ins.position.y=0.15*S;knob.add(ins);
-const shaft=new THREE.Mesh(new THREE.CylinderGeometry(0.064*S,0.064*S,0.35*S,20),
-  new THREE.MeshStandardMaterial({color:0x000000,roughness:0.9}));
-shaft.position.y=0.14*S;knob.add(shaft);
+      // Pivot group
+      const pivotGroup = new THREE.Group();
+      pivotGroup.position.set(xPos, 0, PIVOT_Z);
+      scene.add(pivotGroup);
 
-scene.add(knob);
+      // Shaft — smooth cylinder
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(SHAFT_R, SHAFT_R, SHAFT_LEN, 18), matSwBody);
+      shaft.rotation.x = Math.PI / 2; shaft.position.set(0, 0, SHAFT_LEN / 2);
+      shaft.castShadow = true; pivotGroup.add(shaft);
 
-// panel
-const panel=new THREE.Mesh(new THREE.PlaneGeometry(8,8),matPanel);
-panel.rotation.x=-Math.PI/2;panel.position.y=-0.01;panel.receiveShadow=true;
-scene.add(panel);
+      // Knurled grip rings near base
+      [3, 5, 7, 9, 11].forEach(z => {
+        const ring = new THREE.Mesh(
+          new THREE.TorusGeometry(SHAFT_R + 0.4, 0.45, 6, 18),
+          new THREE.MeshStandardMaterial({ color: 0x6a7480, roughness: 0.4, metalness: 0.85 })
+        );
+        ring.position.set(0, 0, z); pivotGroup.add(ring);
+      });
 
-// camera
-const sph=new THREE.Spherical(3.8,Math.PI/3.5,0);
-function updateCam(){
-  cam.position.setFromSpherical(sph);cam.lookAt(0,0.4,0);
-}
-updateCam();
+      // U-shaped tip at top of shaft
+      const uGeo = makeUTip();
+      const uTip = new THREE.Mesh(uGeo, matSwShiny);
+      // U is in XY plane, opening facing -Y. Rotate so opening faces away from pivot.
+      // We want the arc to cap the shaft end — rotate 90° around X so the U faces forward
+      uTip.rotation.x = -Math.PI / 2;
+      uTip.position.set(0, 0, SHAFT_LEN);
+      uTip.castShadow = true;
+      pivotGroup.add(uTip);
 
-let tgt=0,cur=0;
-window.snap=function(deg){
-  tgt=deg*Math.PI/180;
-  document.getElementById('ang').textContent=deg+'°';
-};
+      // Position labels — close to switch
+      const lz = PD / 2 + 1.5;
+      posLabels.forEach(({ text, dx, dy }) => {
+        addLabel(text, xPos + dx, dy, lz, 13, 5.5, 28, '#b8c8d4');
+      });
+      // Bottom label
+      addLabel(labelBelow, xPos, -PH / 2 + 11, lz, 24, 6.5, 26, '#c8d4de');
 
-let drag=false,px=0,py=0,mx=0,my=0;
-wrap.addEventListener('mousedown',e=>{drag=true;px=e.clientX;py=e.clientY;mx=e.clientX;my=e.clientY});
-window.addEventListener('mouseup',e=>{
-  if(drag&&Math.abs(e.clientX-mx)<3&&Math.abs(e.clientY-my)<3){
-    const steps=[0,45,90,135,180,-135,-90,-45];
-    const c=Math.round(cur*180/Math.PI);
-    const idx=steps.findIndex(s=>s===c);
-    const nxt=steps[(idx+1)%steps.length];
-    window.snap(nxt);
-  }
-  drag=false;
-});
-window.addEventListener('mousemove',e=>{
-  if(!drag)return;
-  sph.theta-=(e.clientX-px)*0.009;
-  sph.phi=Math.max(0.15,Math.min(1.8,sph.phi+(e.clientY-py)*0.007));
-  updateCam();px=e.clientX;py=e.clientY;
-});
-wrap.addEventListener('wheel',e=>{
-  e.preventDefault();
-  sph.radius=Math.max(1.5,Math.min(10,sph.radius+e.deltaY*0.005));
-  updateCam();
-},{passive:false});
+      let cur = 0;
+      const N = positions.length;
+      let curAngle = positions[0];
+      let targetAngle = positions[0];
 
-// touch
-let lt=0;
-wrap.addEventListener('touchstart',e=>{
-  if(e.touches.length===1){drag=true;px=e.touches[0].clientX;py=e.touches[0].clientY;mx=px;my=py;}
-  if(e.touches.length===2){lt=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);}
-},{passive:true});
-wrap.addEventListener('touchend',()=>drag=false,{passive:true});
-wrap.addEventListener('touchmove',e=>{
-  e.preventDefault();
-  if(e.touches.length===1&&drag){
-    sph.theta-=(e.touches[0].clientX-px)*0.012;
-    sph.phi=Math.max(0.15,Math.min(1.8,sph.phi+(e.touches[0].clientY-py)*0.01));
-    updateCam();px=e.touches[0].clientX;py=e.touches[0].clientY;
-  }
-  if(e.touches.length===2){
-    const nd=Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
-    sph.radius=Math.max(1.5,Math.min(10,sph.radius-(nd-lt)*0.01));
-    updateCam();lt=nd;
-  }
-},{passive:false});
+      if (axis === 'z') pivotGroup.rotation.z = curAngle;
+      else pivotGroup.rotation.x = curAngle;
 
-window.addEventListener('resize',()=>{
-  const nw=wrap.clientWidth,nh=wrap.clientHeight;
-  cam.aspect=nw/nh;cam.updateProjectionMatrix();
-  renderer.setSize(nw,nh);
-});
+      function setState(i) {
+        cur = ((i % N) + N) % N;
+        targetAngle = positions[cur];
+      }
 
-function animate(){
-  requestAnimationFrame(animate);
-  cur+=(tgt-cur)*0.10;
-  knob.rotation.y=cur;
-  renderer.render(scene,cam);
-}
-animate();
-})();
-</script>
+      return {
+        pivotGroup,
+        getState: () => cur,
+        getN: () => N,
+        cycleState: () => setState(cur + 1),
+        update() {
+          curAngle += (targetAngle - curAngle) * 0.13;
+          if (Math.abs(targetAngle - curAngle) < 0.001) curAngle = targetAngle;
+          if (axis === 'z') pivotGroup.rotation.z = curAngle;
+          else pivotGroup.rotation.x = curAngle;
+        }
+      };
+    }
+
+    // ── SYS: 3-position LEFT / CENTER / RIGHT (rotation around Z axis) ──
+    // Left = sys 1, Center = OFF, Right = sys 2
+    const TILT = 0.52;
+    const sysSwitch = buildToggle(-55,
+      [TILT, 0, -TILT],  // left, center, right
+      'z',
+      'SYS',
+      [
+        { text: '1', dx: -14, dy: 8 },
+        { text: 'OFF', dx: 0, dy: 18 },
+        { text: '2', dx: 14, dy: 8 },
+      ]
+    );
+
+    // ── PWS: 2-position LEFT / RIGHT (rotation around Z axis) ──
+    const pwsSwitch = buildToggle(55,
+      [TILT, -TILT],  // left=OFF, right=AUTO
+      'z',
+      'PWS',
+      [
+        { text: 'OFF', dx: -14, dy: 8 },
+        { text: 'AUTO', dx: 14, dy: 8 },
+      ]
+    );
+
+    const sysNames = ['1', 'OFF', '2'];
+    const pwsNames = ['OFF', 'AUTO'];
+
+    function updateUI() {
+      document.getElementById('s-sys').textContent = `SYS: ${sysNames[sysSwitch.getState()]}`;
+      document.getElementById('s-pws').textContent = `PWS: ${pwsNames[pwsSwitch.getState()]}`;
+    }
+    updateUI();
+
+    // ── CLICK DETECTION ──
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+    const cv = document.getElementById('c');
+    let downX = 0, downY = 0;
+    cv.addEventListener('pointerdown', e => { downX = e.clientX; downY = e.clientY; });
+    cv.addEventListener('pointerup', e => {
+      if (e.button !== 0) return;
+      if (Math.abs(e.clientX - downX) > 6 || Math.abs(e.clientY - downY) > 6) return;
+      const rect = cv.getBoundingClientRect();
+      mouse.x = ((e.clientX - rect.left) / W) * 2 - 1;
+      mouse.y = -((e.clientY - rect.top) / H) * 2 + 1;
+      raycaster.setFromCamera(mouse, cam);
+      if (raycaster.intersectObjects([sysSwitch.pivotGroup], true).length > 0) {
+        sysSwitch.cycleState(); updateUI();
+      } else if (raycaster.intersectObjects([pwsSwitch.pivotGroup], true).length > 0) {
+        pwsSwitch.cycleState(); updateUI();
+      }
+    });
+
+    // ── ORBIT ──
+    let orbitDrag = false, px = 0, py = 0;
+    const lookAt = new THREE.Vector3(0, 0, 0);
+    const sph = new THREE.Spherical().setFromVector3(cam.position.clone().sub(lookAt));
+    cv.addEventListener('contextmenu', e => e.preventDefault());
+    cv.addEventListener('pointerdown', e => {
+      if (e.button === 2 || e.shiftKey) { orbitDrag = true; px = e.clientX; py = e.clientY; cv.setPointerCapture(e.pointerId); }
+    });
+    window.addEventListener('pointerup', () => orbitDrag = false);
+    window.addEventListener('mousemove', e => {
+      if (!orbitDrag) return;
+      sph.theta -= (e.clientX - px) * 0.009;
+      sph.phi = Math.max(0.2, Math.min(1.8, sph.phi + (e.clientY - py) * 0.007));
+      cam.position.copy(new THREE.Vector3().setFromSpherical(sph).add(lookAt));
+      cam.lookAt(lookAt); px = e.clientX; py = e.clientY;
+    });
+    cv.addEventListener('wheel', e => {
+      e.preventDefault();
+      sph.radius = Math.max(80, Math.min(500, sph.radius + e.deltaY * 0.3));
+      cam.position.copy(new THREE.Vector3().setFromSpherical(sph).add(lookAt));
+      cam.lookAt(lookAt);
+    }, { passive: false });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      sysSwitch.update(); pwsSwitch.update();
+      renderer.render(scene, cam);
+    }
+    animate();
+  </script>
+</body>
+
+</html>

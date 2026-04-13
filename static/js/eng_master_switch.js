@@ -124,6 +124,8 @@ export function attachEngMasterSwitch(viewportEl, options = {}) {
     renderer.domElement.style.display = 'block';
     renderer.domElement.style.touchAction = 'none';
     renderer.domElement.style.background = 'transparent';
+    renderer.domElement.style.outline = 'none';
+    renderer.domElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
 
     viewportEl.innerHTML = '';
     try {
@@ -331,7 +333,7 @@ export function attachEngMasterSwitch(viewportEl, options = {}) {
         startY = e.clientY;
         startX = e.clientX;
         movedPx = 0;
-        viewportEl.setPointerCapture(e.pointerId);
+        canvas.setPointerCapture(e.pointerId);
         e.preventDefault();
     };
 
@@ -355,8 +357,8 @@ export function attachEngMasterSwitch(viewportEl, options = {}) {
     };
 
     const onPointerUp = (e) => {
-        if (dragFromHit && isDragging && viewportEl.hasPointerCapture(e.pointerId)) {
-            viewportEl.releasePointerCapture(e.pointerId);
+        if (dragFromHit && isDragging && canvas.hasPointerCapture(e.pointerId)) {
+            canvas.releasePointerCapture(e.pointerId);
             if (movedPx < clickMoveMax) {
                 state = state === 0 ? 1 : 0;
                 emitState();
@@ -364,12 +366,15 @@ export function attachEngMasterSwitch(viewportEl, options = {}) {
         }
         isDragging = false;
         dragFromHit = false;
+        try {
+            if (document.activeElement === canvas) canvas.blur();
+        } catch (e) {}
     };
 
-    viewportEl.addEventListener('pointerdown', onPointerDown, { passive: false });
-    viewportEl.addEventListener('pointermove', onPointerMove, { passive: false });
-    viewportEl.addEventListener('pointerup', onPointerUp);
-    viewportEl.addEventListener('pointercancel', onPointerUp);
+    canvas.addEventListener('pointerdown', onPointerDown, { passive: false });
+    canvas.addEventListener('pointermove', onPointerMove, { passive: false });
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', onPointerUp);
 
     const setupCamera = () => {
         root.updateMatrixWorld(true);
@@ -459,10 +464,10 @@ export function attachEngMasterSwitch(viewportEl, options = {}) {
         },
         dispose() {
             cancelAnimationFrame(raf);
-            viewportEl.removeEventListener('pointerdown', onPointerDown);
-            viewportEl.removeEventListener('pointermove', onPointerMove);
-            viewportEl.removeEventListener('pointerup', onPointerUp);
-            viewportEl.removeEventListener('pointercancel', onPointerUp);
+            canvas.removeEventListener('pointerdown', onPointerDown);
+            canvas.removeEventListener('pointermove', onPointerMove);
+            canvas.removeEventListener('pointerup', onPointerUp);
+            canvas.removeEventListener('pointercancel', onPointerUp);
             ro.disconnect();
             window.removeEventListener('resize', onWin);
             geo.dispose();

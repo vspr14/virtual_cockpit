@@ -1,12 +1,27 @@
 import * as THREE from 'three';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const GEAR_LEVER_LERP = 0.22;
 
 function readCssColor(prop, fallbackHex) {
     try {
         const v = getComputedStyle(document.documentElement).getPropertyValue(prop).trim();
         if (v) return new THREE.Color().setStyle(v);
-    } catch (e) {}
+    } catch (e) { }
     return new THREE.Color().setStyle(fallbackHex);
+}
+
+function resolveMountSurfaceColor(mount) {
+    let el = mount;
+    while (el) {
+        try {
+            const bc = getComputedStyle(el).backgroundColor;
+            if (bc && bc !== 'rgba(0, 0, 0, 0)' && bc !== 'transparent') {
+                return new THREE.Color().setStyle(bc);
+            }
+        } catch (e) { }
+        el = el.parentElement;
+    }
+    return readCssColor('--airbus-subpanel', '#2f3f52');
 }
 
 function basicFromColor(col) {
@@ -16,7 +31,7 @@ function basicFromColor(col) {
 }
 
 export function initGearLever3D(mount, options) {
-    const onCommit = options && typeof options.onCommit === 'function' ? options.onCommit : function () {};
+    const onCommit = options && typeof options.onCommit === 'function' ? options.onCommit : function () { };
     if (!mount) return;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 1000);
@@ -24,23 +39,17 @@ export function initGearLever3D(mount, options) {
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     renderer.toneMapping = THREE.ReinhardToneMapping;
+    const surfaceCol = resolveMountSurfaceColor(mount);
+    scene.background = surfaceCol.clone();
+    renderer.domElement.style.outline = 'none';
+    renderer.domElement.style.setProperty('-webkit-tap-highlight-color', 'transparent');
     mount.appendChild(renderer.domElement);
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 0, 0);
-    controls.enableDamping = true;
-    controls.enableRotate = false;
-    controls.enablePan = false;
-    controls.enableZoom = true;
-    controls.minDistance = 16;
-    controls.maxDistance = 20;
-    controls.update();
     scene.add(new THREE.AmbientLight(0xffffff, 0.6));
     const sun = new THREE.DirectionalLight(0xffffff, 1.5);
     sun.position.set(5, 5, 10);
     scene.add(sun);
-    const panelCol = readCssColor('--airbus-panel', '#384a5f');
     const subCol = readCssColor('--airbus-subpanel', '#2f3f52');
-    const airbusBlue = basicFromColor(panelCol);
+    const airbusBlue = basicFromColor(surfaceCol.clone());
     const slotMat = new THREE.MeshStandardMaterial({ color: 0x010101, roughness: 1 });
     const darkAirbusBlue = new THREE.MeshStandardMaterial({ color: subCol.clone(), roughness: 0.8 });
     if ('toneMapped' in darkAirbusBlue) darkAirbusBlue.toneMapped = false;
@@ -105,21 +114,19 @@ export function initGearLever3D(mount, options) {
         if (!hitWheel(e)) return;
         isDragging = true;
         startY = e.clientY;
-        controls.enabled = false;
         renderer.domElement.setPointerCapture(e.pointerId);
     });
     renderer.domElement.addEventListener('pointermove', function (e) {
         if (!isDragging) return;
-        const diff = (startY - e.clientY) / 400;
+        const diff = (startY - e.clientY) / 300;
         targetProgress = Math.max(0, Math.min(1, targetProgress + diff));
         startY = e.clientY;
     });
     renderer.domElement.addEventListener('pointerup', function (e) {
         if (!isDragging) return;
         isDragging = false;
-        try { renderer.domElement.releasePointerCapture(e.pointerId); } catch (_) {}
+        try { renderer.domElement.releasePointerCapture(e.pointerId); } catch (_) { }
         targetProgress = targetProgress > 0.5 ? 1 : 0;
-        controls.enabled = true;
         const down = targetProgress <= 0.5;
         if (down !== lastCommittedDown) {
             lastCommittedDown = down;
@@ -128,10 +135,9 @@ export function initGearLever3D(mount, options) {
     });
     renderer.domElement.addEventListener('pointercancel', function (e) {
         if (isDragging) {
-            try { renderer.domElement.releasePointerCapture(e.pointerId); } catch (_) {}
+            try { renderer.domElement.releasePointerCapture(e.pointerId); } catch (_) { }
         }
         isDragging = false;
-        controls.enabled = true;
     });
     function frameCameraToRoot() {
         root.updateMatrixWorld(true);
@@ -149,15 +155,11 @@ export function initGearLever3D(mount, options) {
         const distX = (size.x * margin) / (2 * Math.tan(hFov / 2));
         let dist = Math.max(distX, distY, 11);
         dist *= 1.02;
-        controls.target.copy(center);
         camera.position.set(center.x, center.y - dist * 0.1, center.z + dist);
         camera.lookAt(center);
         camera.near = Math.max(0.05, dist * 0.008);
         camera.far = dist * 80;
         camera.updateProjectionMatrix();
-        controls.minDistance = dist * 0.52;
-        controls.maxDistance = dist * 1.12;
-        controls.update();
     }
     function syncSize() {
         const w = Math.max(80, Math.floor(mount.clientWidth));
@@ -168,15 +170,15 @@ export function initGearLever3D(mount, options) {
         frameCameraToRoot();
     }
     syncSize();
+    requestAnimationFrame(syncSize);
     if (typeof ResizeObserver !== 'undefined') {
         new ResizeObserver(syncSize).observe(mount);
     }
     window.addEventListener('resize', syncSize);
     function animate() {
         requestAnimationFrame(animate);
-        currentProgress = THREE.MathUtils.lerp(currentProgress, targetProgress, 0.12);
+        currentProgress = THREE.MathUtils.lerp(currentProgress, targetProgress, GEAR_LEVER_LERP);
         leverArm.rotation.x = THREE.MathUtils.lerp(0.45, -0.65, currentProgress);
-        controls.update();
         renderer.render(scene, camera);
     }
     animate();
