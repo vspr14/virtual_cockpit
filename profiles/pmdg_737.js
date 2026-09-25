@@ -1,3 +1,4 @@
+window.__lvarProfile = "pmdg_737";
 window.PROFILE = {
     name: "PMDG 737",
     ui: {

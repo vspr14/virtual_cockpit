@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MSFS Glass Cockpit</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    {% include 'partials/pwa_head.html' %}
+    <script>
+        (function () {
+            var ua = navigator.userAgent || '';
+            var isIPad = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            if (!isIPad) return;
+            var m = document.querySelector('meta[name="viewport"]');
+            if (!m) return;
+            m.setAttribute('content', 'width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tcas_xpdr_embed.css') }}">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+            "pako": "https://esm.sh/pako@2.1.0"
+        }
+    }
+    </script>
+</head>
+
+{% set body_class = 'fenix-a320-body' %}
+{% set layout_class = 'fenix-a320-layout' %}
+<body class="{{ body_class }}">
+{% include 'partials/plane_back_nav.html' %}
+{% include 'partials/fenix_cockpit_body.html' %}
+
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script src="{{ url_for('serve_profile', profile_name=profile_name + '.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tcas_xpdr_panel.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/page_ini_a350.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pwa_standalone_boot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main_core.js') }}"></script>
+</body>
+
+</html>

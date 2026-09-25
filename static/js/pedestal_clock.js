@@ -5,6 +5,8 @@ export function initPedestalClock(host) {
     }
     let tdH = null;
     let tdM = null;
+    let tdDeadlineMs = null;
+    let tdNotified = false;
     let pickerOpen = false;
     const pickerDrop = q('picker-drop');
     const pickerWrap = q('picker-wrap');
@@ -15,6 +17,40 @@ export function initPedestalClock(host) {
     if (!pickerDrop || !pickerWrap || !setBtn || !confirmBtn || !tdInput || !tdDisplay) return;
     function pad2(n) {
         return String(n).padStart(2, '0');
+    }
+    function computeTdDeadlineMs() {
+        if (tdH === null || tdM === null) return null;
+        const now = Date.now();
+        const d = new Date(now);
+        let t = Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate(), tdH, tdM, 0);
+        while (t <= now) {
+            t += 86400000;
+        }
+        return t;
+    }
+    function requestTdNotifyPermission() {
+        try {
+            if (typeof Notification === 'undefined') return;
+            if (Notification.permission === 'default') {
+                Notification.requestPermission();
+            }
+        } catch (e) {}
+    }
+    function showTdReachedNotification() {
+        try {
+            if (typeof Notification === 'undefined') return;
+            if (Notification.permission === 'granted') {
+                new Notification('Virtual Cockpit', { body: 'T/D reached. Time to desced!' });
+            }
+        } catch (e) {}
+    }
+    function resetTdToInitial() {
+        tdH = null;
+        tdM = null;
+        tdDeadlineMs = null;
+        tdNotified = false;
+        tdDisplay.textContent = '--:--';
+        tdInput.value = '00:00';
     }
     function togglePicker(e) {
         e.stopPropagation();
@@ -41,6 +77,9 @@ export function initPedestalClock(host) {
         tdDisplay.textContent = pad2(tdH) + ':' + pad2(tdM);
         pickerOpen = false;
         pickerDrop.classList.remove('pedestal-clock-picker-open');
+        tdDeadlineMs = computeTdDeadlineMs();
+        tdNotified = false;
+        requestTdNotifyPermission();
     }
     function setD(id, val) {
         const el = q(id);
@@ -57,6 +96,11 @@ export function initPedestalClock(host) {
         setD('um2', String(m % 10));
         setD('us1', String(Math.floor(s / 10)));
         setD('us2', String(s % 10));
+        if (tdH !== null && tdDeadlineMs !== null && !tdNotified && Date.now() >= tdDeadlineMs) {
+            tdNotified = true;
+            showTdReachedNotification();
+            resetTdToInitial();
+        }
         if (tdH === null) {
             ['eh1', 'eh2', 'em1', 'em2'].forEach(function (id) {
                 setD(id, '-');

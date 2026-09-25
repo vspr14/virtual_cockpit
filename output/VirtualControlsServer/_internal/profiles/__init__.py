@@ -22,7 +22,8 @@ PROFILES = {
         'backend': {
             'spoiler_formula': lambda val: val,
             'flap_axis_mapping': lambda val: (1 - val) * 32767,
-            'arm_spoiler_value': 0.11
+            'arm_spoiler_value': 0.11,
+            'brake_invert': True,
         },
         'handlers': {}
     },
@@ -31,7 +32,21 @@ PROFILES = {
         'backend': {
             'spoiler_formula': lambda val: val,
             'flap_axis_mapping': lambda val: (1 - val) * 32767,
-            'arm_spoiler_value': 0.11
+            'arm_spoiler_value': 0.11,
+            'brake_invert': True,
+        },
+        'handlers': {}
+    },
+    'ini_a350': {
+        'name': 'iniBuilds A350',
+        'backend': {
+            'spoiler_formula': lambda val: val,
+            'flap_axis_mapping': lambda val: (1 - val) * 32767,
+            'arm_spoiler_value': 0.11,
+            'brake_axes': ('X',),
+            'brake_deadzone': 0.04,
+            'brake_gamma': 1.28,
+            'brake_axis_max': 0.93,
         },
         'handlers': {}
     }

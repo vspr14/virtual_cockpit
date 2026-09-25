@@ -3,17 +3,20 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    {% include 'partials/pwa_head.html' %}
     <title>PMDG 737</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>body{background:#050505;color:#fff;font-family:Arial,helvetica,sans-serif;padding:24px} a{color:#7fc1ff}</style>
 </head>
 <body>
+{% include 'partials/plane_back_nav.html' %}
     <h1>PMDG 737</h1>
-    <p>Placeholder page for PMDG 737. <a href="index.html">Back</a></p>
+    <p>Placeholder page for PMDG 737.</p>
     <script>window.DEBUG_UI = {{ 'true' if debug_ui else 'false' }};</script>
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
     <script src="{{ url_for('serve_profile', profile_name=profile_name + '.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/page_pmdg_737.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pwa_standalone_boot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main_core.js') }}"></script>
 </body>
 </html>

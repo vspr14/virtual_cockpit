@@ -1,5 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=B612+Mono&family=B612:wght@400;700&family=Barlow+Condensed:wght@400;600;700&family=Lato:wght@400;700;900&display=swap');
 
+/* Fixed control: return to aircraft selection (all cockpit pages) */
+.vc-plane-back {
+    position: fixed;
+    top: max(8px, env(safe-area-inset-top, 0px));
+    right: max(8px, env(safe-area-inset-right, 0px));
+    z-index: 10000;
+    padding: 10px 14px;
+    border-radius: 10px;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: var(--text);
+    background: rgba(22, 22, 24, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.vc-plane-back:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+}
+
 :root {
     --bg: #050505;
     --card: #161618;
@@ -8,10 +34,11 @@
     --red: #ff3b30;
     --text: #ffffff;
 
-    --airbus-panel: #384a5f;
-    --airbus-subpanel: #2f3f52;
-    --airbus-pedestal-bezel: #4a5560;
-    --airbus-pedestal-housing: #2c3238;
+    --airbus-surface: #2f3f52;
+    --airbus-panel: var(--airbus-surface);
+    --airbus-subpanel: var(--airbus-surface);
+    --airbus-pedestal-bezel: var(--airbus-surface);
+    --airbus-pedestal-housing: var(--airbus-surface);
     --airbus-btn: #1e2535;
     --airbus-btn-on: #161d2c;
     --airbus-text: #d8dce6;
@@ -62,13 +89,22 @@ body {
 }
 
 .screen-layout.fenix-a320-layout {
-    grid-template-columns: minmax(320px, min(500px, max(420px, 34vw))) 1fr 218px;
-    gap: 10px;
-    padding: 8px 10px 6px 10px;
+    grid-template-columns: minmax(280px, min(520px, 38vw)) minmax(0, 1fr) minmax(200px, 218px);
+    gap: 0;
+    padding: 8px 0 6px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    height: 100%;
+    min-height: 0;
 }
 
 body.fenix-a320-body {
     background: var(--airbus-subpanel);
+    padding-top: 15px;
+    box-sizing: border-box;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
 }
 
 .screen-layout.fenix-a320-layout>.left-column {
@@ -83,22 +119,45 @@ body.fenix-a320-body {
     overflow-x: hidden;
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    padding: 4px 6px 6px 0;
+    border-radius: 0;
 }
 
-.screen-layout.fenix-a320-layout .eng-master-engine-row {
-    flex-shrink: 0;
+.screen-layout.fenix-a320-layout > .left-column {
+    border-radius: 0;
+    border-left: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .screen-layout.fenix-a320-layout>.center-zone {
     background: var(--airbus-panel);
-    border-radius: 8px;
-    padding: 8px 10px 10px;
+    border-radius: 0;
+    padding: 0;
     box-sizing: border-box;
     min-height: 0;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    min-width: 0;
+    border: none;
+    border-left: 1px solid rgba(0, 0, 0, 0.25);
+    border-right: 1px solid rgba(0, 0, 0, 0.25);
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.06),
         inset 0 -2px 10px rgba(0, 0, 0, 0.28);
+}
+
+.screen-layout.fenix-a320-layout>.left-column,
+.screen-layout.fenix-a320-layout>.center-zone,
+.screen-layout.fenix-a320-layout>.throttle-zone,
+.screen-layout.fenix-a320-layout .airbus-center-display,
+.screen-layout.fenix-a320-layout .pedestal-row .gear-pedestal-column,
+.screen-layout.fenix-a320-layout .gear-pedestal-column,
+.screen-layout.fenix-a320-layout .pedestal-middle-stack > .pedestal-flaps-brake-row > .v-group,
+.screen-layout.fenix-a320-layout .radar-pws-3d-mount,
+.screen-layout.fenix-a320-layout .brake-pedals-test-mount,
+.screen-layout.fenix-a320-layout .parking-brake-3d-mount,
+.screen-layout.fenix-a320-layout .gear-3d-mount {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
 }
 
 .screen-layout.fenix-a320-layout .airbus-center-display {
@@ -108,7 +167,7 @@ body.fenix-a320-body {
     flex-shrink: 0;
     background: var(--airbus-subpanel);
     border-radius: 6px;
-    padding: 8px 10px 10px;
+    padding: 0;
     box-sizing: border-box;
     border: 1px solid rgba(0, 0, 0, 0.4);
     box-shadow:
@@ -118,6 +177,127 @@ body.fenix-a320-body {
 
 .screen-layout.fenix-a320-layout .airbus-center-display .grid-container {
     margin-bottom: 0;
+    height: auto;
+    position: relative;
+}
+
+.screen-layout.fenix-a320-layout #camGrid.grid-layer {
+    position: relative;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+}
+
+.screen-layout.fenix-a320-layout #camGrid.grid-layer.ecam-cp {
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0;
+    padding: 8px 10px 12px;
+    box-sizing: border-box;
+}
+
+#camGrid .ecam-matrix {
+    display: grid;
+    grid-template-columns: repeat(6, 65px);
+    grid-auto-rows: 42px;
+    gap: 20px 18px;
+    justify-content: center;
+    margin: 0 auto;
+    width: max-content;
+    max-width: 100%;
+}
+
+#camGrid .ecam-matrix .ecam-cell-empty {
+    min-height: 42px;
+    pointer-events: none;
+}
+
+#camGrid.ecam-cp .btn,
+.cam-btn {
+    touch-action: manipulation;
+}
+
+#camGrid.ecam-cp .btn {
+    width: 65px;
+    height: 42px;
+    background-color: var(--ecam-btn-bg);
+    border: 2px solid var(--ecam-btn-border);
+    border-radius: 5px;
+    color: var(--airbus-text);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 0;
+    margin: 0;
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    box-shadow:
+        inset 0 15px 12px -10px rgba(0, 0, 0, 1),
+        0 0 5px rgba(0, 0, 0, 0.8);
+    transition: all 0.1s ease-out;
+    transform: scale(1);
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#camGrid.ecam-cp .btn.active {
+    transform: scale(0.96);
+    background-color: #000000;
+    box-shadow:
+        inset 0 22px 18px -12px rgba(0, 0, 0, 1),
+        0 0 2px rgba(0, 0, 0, 0.9);
+    color: var(--text);
+}
+
+#camGrid.ecam-cp .btn.ecam-momentary:active,
+#camGrid.ecam-cp .btn.ecam-momentary.ecam-pressing {
+    transform: scale(0.96);
+    background-color: #000000;
+    box-shadow:
+        inset 0 22px 18px -12px rgba(0, 0, 0, 1),
+        0 0 2px rgba(0, 0, 0, 0.9);
+    color: var(--text);
+}
+
+#camGrid.ecam-cp .btn .label {
+    line-height: 1.2;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    font-size: 11px;
+    font-weight: 700;
+    color: inherit;
+    text-transform: none;
+}
+
+#camGrid .stripes {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+#camGrid .stripe {
+    width: 28px;
+    height: 2px;
+    background-color: var(--ecam-stripe-off);
+    transition: background-color 0.1s, box-shadow 0.1s;
+}
+
+#camGrid.ecam-cp .ecam-page.active .stripe {
+    background-color: var(--led-green);
+    box-shadow: 0 0 8px var(--led-green);
 }
 
 .screen-layout.fenix-a320-layout .pedestal-row {
@@ -125,54 +305,90 @@ body.fenix-a320-body {
     min-height: 0;
     gap: 0;
     align-items: stretch;
-    justify-content: center;
+    justify-content: stretch;
+    width: 100%;
 }
 
+.screen-layout.fenix-a320-layout .pedestal-row .pedestal-col-label {
+    flex-shrink: 0;
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 8px 4px 8px;
+    line-height: 1.15;
+    text-align: center;
+    font-family: "Rajdhani", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--airbus-label);
+}
 
 .screen-layout.fenix-a320-layout .layout-v-divider {
     flex: 0 0 auto;
     width: 2px;
     align-self: stretch;
     min-height: 80px;
-    margin: 6px 4px;
+    margin: 6px 0;
     background: rgba(255, 255, 255, 0.38);
     border-radius: 1px;
     box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
 }
 
 .screen-layout.fenix-a320-layout .pedestal-row .gear-pedestal-column {
-    background: var(--airbus-subpanel);
+    flex: 1 1 0;
+    min-width: min(200px, 36vw);
+    max-width: none;
+    padding: 0 6px 8px 4px;
+    background: var(--airbus-panel);
     border: 1px solid rgba(0, 0, 0, 0.4);
-    box-shadow:
-        inset 0 2px 10px rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    box-shadow: none;
 }
 
-.screen-layout.fenix-a320-layout .pedestal-row>.v-group {
-    background: var(--airbus-subpanel);
+.screen-layout.fenix-a320-layout .pedestal-middle-stack > .pedestal-flaps-brake-row > .v-group {
+    background: var(--airbus-panel);
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.4);
-    box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.32),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04);
+    box-shadow: none;
     margin-left: 0;
 }
 
-.screen-layout.fenix-a320-layout .pedestal-row>.ap-btn-wrap {
-    background: var(--airbus-subpanel);
-    border-radius: 8px;
-    padding: 10px 8px;
-    border: 1px solid rgba(0, 0, 0, 0.4);
-    box-shadow:
-        inset 0 2px 8px rgba(0, 0, 0, 0.32),
-        inset 0 1px 0 rgba(255, 255, 255, 0.04);
-    box-sizing: border-box;
+.screen-layout.fenix-a320-layout .pedestal-flaps-spoil-wrap {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: stretch;
+    gap: 0;
+    padding: 0;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-flaps-spoil-wrap>.v-group {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    margin-left: 0;
+    border-radius: 0;
+    padding-left: 0;
+    padding-right: 0;
+    flex: 1 1 0;
+    min-width: 0;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-flaps-spoil-wrap>.pedestal-flaps-vgroup {
+    border-right: 0;
 }
 
 .screen-layout.fenix-a320-layout>.throttle-zone {
     background: var(--airbus-panel);
-    border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 0 12px 8px;
     box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.06),
         inset 0 -2px 10px rgba(0, 0, 0, 0.28);
@@ -191,6 +407,30 @@ body.fenix-a320-body {
     border-radius: 8px;
     border: 1px solid rgba(0, 0, 0, 0.4);
     box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.screen-layout.fenix-a320-layout > .center-zone.ofp-mode {
+    min-height: 0;
+}
+
+.screen-layout.fenix-a320-layout > .center-zone.ofp-mode .airbus-center-display {
+    flex: 1 1 0;
+    min-height: 0;
+    align-self: stretch;
+}
+
+.screen-layout.fenix-a320-layout > .center-zone.ofp-mode .ofp-container {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.screen-layout.fenix-a320-layout > .center-zone.ofp-mode .ofp-frame {
+    flex: 1 1 0;
+    min-height: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .screen-layout.fenix-a320-layout .nav-bar .nav-btn {
@@ -283,19 +523,6 @@ body.fenix-a320-body {
 
 .left-column.fenix-ovhd-dense .ext-lt-viewport {
     padding-bottom: 66%;
-}
-
-.left-column.fenix-ovhd-dense .eng-master-panel-col {
-    width: 142px;
-}
-
-.left-column.fenix-ovhd-dense .eng-mode-inline-wrap {
-    max-width: 280px;
-    padding: 0 2px 1px;
-}
-
-.left-column.fenix-ovhd-dense .eng-mode-inline-wrap .eng-mode-horiz {
-    max-width: 260px;
 }
 
 .tod-panel {
@@ -467,6 +694,61 @@ body.fenix-a320-body {
     min-height: 0;
 }
 
+.screen-layout.fenix-a320-layout .pedestal-middle-stack {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-width: 0;
+    max-width: none;
+    width: auto;
+    gap: 10px;
+    align-items: stretch;
+    align-self: stretch;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-flaps-brake-row {
+    display: flex;
+    flex-direction: row;
+    flex: 0 0 auto;
+    align-items: flex-start;
+    justify-content: stretch;
+    gap: 0;
+    min-height: 0;
+    width: 100%;
+}
+
+.screen-layout.fenix-a320-layout .layout-v-divider--in-stack {
+    align-self: stretch;
+    min-height: 120px;
+    margin: 6px 0;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-middle-stack .tcas-xpdr-pedestal-fullrow {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin-top: 0;
+    flex: 0 0 auto;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-radar-pws-block {
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 4px 0 0;
+    box-sizing: border-box;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-radar-pws-block .radar-pws-3d-mount {
+    flex: 1 1 auto;
+    min-height: 140px;
+    width: 100%;
+}
+
 .v-group {
     background: var(--card);
     border-radius: 20px;
@@ -478,6 +760,16 @@ body.fenix-a320-body {
     padding: 20px 10px;
     position: relative;
     margin-left: 10px;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-middle-stack > .pedestal-flaps-brake-row > .v-group {
+    width: auto;
+    padding: 0;
+    margin-left: 0;
+}
+
+.screen-layout.fenix-a320-layout .pedestal-row > .gear-pedestal-column {
+    margin-left: 0;
 }
 
 .flap-labels-container {
@@ -536,20 +828,68 @@ body.fenix-a320-body {
 
 .screen-layout.fenix-a320-layout .pedestal-flaps-vgroup,
 .screen-layout.fenix-a320-layout .pedestal-spoil-vgroup {
-    padding: 10px 0 0;
+    padding: 0;
     box-sizing: border-box;
 }
 
-.screen-layout.fenix-a320-layout .pedestal-flaps-vgroup>.label {
-    display: block;
-    width: 100%;
-    line-height: 1.15;
-    margin: 0;
-    text-align: center;
+.screen-layout.fenix-a320-layout .pedestal-flaps-spoil-wrap .pedestal-flaps-vgroup .spacer-btn,
+.screen-layout.fenix-a320-layout .pedestal-flaps-spoil-wrap .pedestal-spoil-vgroup .spacer-btn {
+    margin-top: 0;
+    height: 0;
+    min-height: 0;
+    flex: 0 0 0;
+    overflow: hidden;
+    pointer-events: none;
 }
 
-.screen-layout.fenix-a320-layout .pedestal-flaps-vgroup .spacer-btn {
-    margin-top: auto;
+.screen-layout.fenix-a320-layout .pedestal-flaps-vgroup .layout-h-divider {
+    height: 2px;
+    width: 100%;
+    margin: 8px 0 4px;
+    background: rgba(255, 255, 255, 0.28);
+    border-radius: 1px;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.4);
+}
+
+.screen-layout.fenix-a320-layout .pedestal-flaps-vgroup .pedestal-subtitle,
+.screen-layout.fenix-a320-layout .pedestal-radar-pws-block .pedestal-subtitle {
+    color: var(--airbus-label);
+    font-family: "Rajdhani", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-align: center;
+    margin: 0 0 0;
+    line-height: 1.1;
+}
+
+.radar-pws-3d-mount {
+    width: 100%;
+    min-height: 112px;
+    height: clamp(112px, 15vh, 200px);
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--airbus-subpanel);
+    position: relative;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    line-height: 0;
+    font-size: 0;
+}
+
+.radar-pws-3d-mount canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    margin: 0;
+    padding: 0;
+    vertical-align: top;
+    touch-action: none;
+    -webkit-touch-callout: none;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .flap-3d-mount {
@@ -591,19 +931,6 @@ body.fenix-a320-body {
     align-items: stretch;
 }
 
-.screen-layout.fenix-a320-layout .pedestal-spoil-vgroup>.label {
-    display: block;
-    width: 100%;
-    line-height: 1.15;
-    margin: 0;
-    text-align: center;
-}
-
-.screen-layout.fenix-a320-layout .pedestal-spoil-vgroup .spacer-btn {
-    margin-top: auto;
-    min-height: 1px;
-}
-
 .spoiler-3d-mount {
     flex: 0 1 auto;
     width: 100%;
@@ -627,6 +954,12 @@ body.fenix-a320-body {
     -webkit-tap-highlight-color: transparent;
 }
 
+.screen-layout.fenix-a320-layout .pedestal-flaps-spoil-wrap .flap-3d-mount,
+.screen-layout.fenix-a320-layout .pedestal-flaps-spoil-wrap .spoiler-3d-mount {
+    height: clamp(228px, 34vh, min(400px, 46vh));
+    flex: 0 0 auto;
+}
+
 .screen-layout.fenix-a320-layout .pedestal-brake-vgroup {
     justify-content: flex-start;
     align-items: stretch;
@@ -634,19 +967,12 @@ body.fenix-a320-body {
     overflow-y: auto;
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
-    padding: 10px 4px 12px;
+    padding: 0 0 8px 4px;
     box-sizing: border-box;
-    width: 186px;
-    min-width: 186px;
-    max-width: 186px;
-}
-
-.screen-layout.fenix-a320-layout .pedestal-brake-vgroup>.label {
-    display: block;
-    width: 100%;
-    line-height: 1.15;
-    margin: 0;
-    text-align: center;
+    flex: 1 1 0;
+    width: auto;
+    min-width: min(186px, 42vw);
+    max-width: none;
 }
 
 .brake-pedals-mount {
@@ -674,11 +1000,17 @@ body.fenix-a320-body {
 }
 
 .screen-layout.fenix-a320-layout .pedestal-brake-vgroup .brake-pedals-test-mount {
-    height: clamp(210px, 34vh, min(52vh, 460px));
+    height: auto;
+    aspect-ratio: 5 / 4;
+    min-height: 120px;
+    max-height: min(320px, 36vh);
 }
 
 .screen-layout.fenix-a320-layout .pedestal-brake-vgroup .parking-brake-3d-mount {
-    height: clamp(168px, 24vh, min(34vh, 320px));
+    height: auto;
+    aspect-ratio: 1 / 1.08;
+    min-height: 96px;
+    max-height: min(200px, 26vh);
 }
 
 .brake-pedals-test-mount canvas {
@@ -692,7 +1024,7 @@ body.fenix-a320-body {
 }
 
 .screen-layout.fenix-a320-layout .pedestal-brake-vgroup .parking-brake-mount {
-    padding-top: 4px;
+    padding-top: 2px;
     margin-top: 0;
     flex: 0 0 auto;
 }
@@ -757,7 +1089,8 @@ body.fenix-a320-body {
 
 /* ROTATION FIX: 90deg = 0 at top. -90deg = 0 at bottom */
 #fSlider:not([type='hidden']),
-#sSlider {
+#sSlider,
+#bSlider {
     -webkit-appearance: none;
     appearance: none;
     width: 32vh;
@@ -1066,6 +1399,9 @@ body.fenix-a320-body {
 }
 
 #camGrid {
+    --ecam-btn-bg: #000000;
+    --ecam-btn-border: #050505;
+    --ecam-stripe-off: #73787d;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: repeat(2, 1fr);
 }
@@ -1106,7 +1442,8 @@ body.fenix-a320-body {
 
 /* REDUCED SLIDER HEIGHTS TO PREVENT OVERFLOW */
 #fSlider:not([type='hidden']),
-#sSlider {
+#sSlider,
+#bSlider {
     width: 32vh;
 }
 
@@ -1516,13 +1853,87 @@ button {
     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.8);
 }
 
-.ap-btn-wrap {
+.b777-lt-panel {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 6px;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto 12px;
+    padding: 8px 10px 10px;
+    background: linear-gradient(180deg, #1f1f1f 0%, #121212 100%);
+    border: 2px solid #0a0a0a;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    box-sizing: border-box;
+}
+
+.b777-lt-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #9aa3ad;
+    text-align: center;
+}
+
+.b777-lt-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(68px, 1fr));
+    gap: 6px;
+}
+
+.b777-lt-toggle {
+    position: relative;
+    min-height: 52px;
+    padding: 6px 4px 5px;
+    border: 1px solid #050505;
+    border-radius: 3px;
+    background: linear-gradient(180deg, #2a2a2a 0%, #151515 100%);
+    color: #8f98a3;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 2px 4px rgba(0, 0, 0, 0.45);
+}
+
+.b777-lt-toggle:active {
+    transform: translateY(1px);
+}
+
+.b777-lt-led {
+    display: block;
+    width: 100%;
+    height: 7px;
+    margin-bottom: 5px;
+    border-radius: 2px;
+    background: #101010;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.b777-lt-label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.04em;
+    text-align: center;
+}
+
+.b777-lt-toggle.on {
+    color: #f4f7fb;
+}
+
+.b777-lt-toggle.on .b777-lt-led {
+    background: linear-gradient(180deg, #fff8d8 0%, #f0c85a 100%);
+    box-shadow: 0 0 8px rgba(255, 214, 96, 0.55);
+}
+
+.b777-brake-pedals-wrap {
+    display: flex;
     justify-content: center;
-    width: 70px;
-    gap: 10px;
+    align-items: flex-end;
+    min-width: 0;
+    padding: 0 4px;
 }
 
 .refresh-site-btn {
@@ -2178,8 +2589,106 @@ button {
     width: 100%;
 }
 
+.packs-row-center-inner {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 14px;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
 .pack-apu-wrap {
     margin-top: 2px;
+}
+
+.pack-extpwr-wrap {
+    margin-top: 2px;
+}
+
+.pack-btn.pack-extpwr {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 52px;
+    padding-top: 2px;
+    padding-bottom: 5px;
+}
+
+.pack-btn.pack-extpwr .ext-pwr-avail {
+    position: absolute;
+    z-index: 2;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-top: 10px;
+    font-family: 'Lato', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    color: rgba(24, 208, 80, 0.22);
+    text-transform: uppercase;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+    white-space: nowrap;
+    transition: color 0.15s, text-shadow 0.15s;
+}
+
+.pack-btn.pack-extpwr .ext-pwr-avail.lit {
+    color: #18d050;
+    text-shadow:
+        0 0 10px rgba(24, 208, 80, 0.75),
+        0 0 16px rgba(24, 208, 80, 0.45);
+}
+
+.pack-btn.pack-extpwr .ext-pwr-on {
+    position: relative;
+    z-index: 1;
+    width: calc(100% - 4px);
+    border: 1.5px solid rgba(200, 212, 228, 0.38);
+    border-radius: 4px;
+    padding: 3px 0;
+    margin-top: auto;
+    text-align: center;
+    font-family: 'Lato', sans-serif;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+    color: rgba(200, 212, 228, 0.38);
+    box-shadow: none;
+    text-shadow: none;
+    pointer-events: none;
+    user-select: none;
+    transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.pack-btn.pack-extpwr .ext-pwr-on.lit {
+    border: 1.5px solid #1e7fd4;
+    color: #1e7fd4;
+    box-shadow:
+        0 0 8px rgba(15, 100, 190, 0.48),
+        inset 0 0 3px rgba(10, 75, 150, 0.28);
+    text-shadow: 0 0 5px rgba(30, 120, 200, 0.55);
+}
+
+.pack-btn.pack-apu-start .apu-start-avail.lit {
+    color: #18d050;
+    text-shadow:
+        0 0 10px rgba(24, 208, 80, 0.75),
+        0 0 16px rgba(24, 208, 80, 0.45);
+}
+
+.pack-btn.pack-apu-start .pack-apu-start-on.lit {
+    border: 1.5px solid #1e7fd4;
+    color: #1e7fd4;
+    box-shadow:
+        0 0 8px rgba(15, 100, 190, 0.48),
+        inset 0 0 3px rgba(10, 75, 150, 0.28);
+    text-shadow: 0 0 5px rgba(30, 120, 200, 0.55);
 }
 
 .pack-btn.pack-apu .pack-apu-readout {
@@ -2233,159 +2742,8 @@ button {
     padding-bottom: 0;
 }
 
-.eng-master-engine-row {
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 6px;
-    margin-top: 4px;
-    padding: 2px 2px 0;
-    width: 100%;
-}
-
-.eng-master-panel-col {
-    flex: 0 0 auto;
-    width: 104px;
-    min-width: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 3px;
-    transform: translateY(6px);
-}
-
-.eng-master-panel-label,
-.eng-mode-panel-label {
-    font-family: 'Barlow Condensed', 'B612', sans-serif;
-    font-size: 10px;
-    font-weight: 600;
-    color: #e8eef6;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    user-select: none;
-    -webkit-user-select: none;
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.6);
-}
-
-.eng-master-switch-housing {
-    width: 100%;
-    border-radius: 5px;
-    padding: 1px;
-    box-sizing: border-box;
-    box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.28),
-        inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.12);
-}
-
-.eng-mode-inline-wrap {
-    flex: 1 1 0;
-    min-width: 0;
-    max-width: 380px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    align-self: stretch;
-    gap: 5px;
-    padding: 0 4px 1px;
-    box-shadow: none;
-}
-
-.eng-mode-inline-wrap .eng-mode-horiz {
-    width: 100%;
-    max-width: none;
-    margin: 0;
-}
-
-.eng-master-3d-viewport {
-    width: 100%;
-    height: 0;
-    min-height: 0;
-    position: relative;
-    overflow: hidden;
-    border-radius: 4px;
-    background: var(--airbus-panel);
-    touch-action: none;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
-    padding-bottom: 100%;
-    outline: none;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-.eng-master-3d-viewport:focus,
-.eng-master-3d-viewport:focus-visible,
-.eng-master-3d-viewport:active {
-    outline: none;
-    box-shadow: none;
-}
-
-.eng-master-3d-viewport canvas {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-.eng-master-3d-viewport canvas:focus,
-.eng-master-3d-viewport canvas:focus-visible,
-.eng-master-3d-viewport canvas:active {
-    outline: none;
-}
-
 .apu-start-wrap {
     flex: 0 0 auto;
-}
-
-.eng-mode-horiz {
-    width: 100%;
-    max-width: 380px;
-    margin: 0 auto;
-    user-select: none;
-    -webkit-user-select: none;
-}
-
-.eng-mode-3d-host {
-    width: 100%;
-    position: relative;
-    border: none;
-    outline: none;
-    box-shadow: none;
-}
-
-.eng-mode-3d-viewport {
-    width: 100%;
-    height: 0;
-    min-height: 0;
-    position: relative;
-    overflow: hidden;
-    border-radius: 0;
-    border: none;
-    outline: none;
-    box-shadow: none;
-    background: var(--airbus-panel);
-    touch-action: none;
-    -webkit-touch-callout: none;
-    -webkit-tap-highlight-color: transparent;
-    padding-bottom: 58%;
-}
-
-.eng-mode-3d-viewport canvas {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    display: block;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
 }
 
 .pack-btn.pack-apu-start {
@@ -2412,11 +2770,9 @@ button {
     transition: color 0.15s, text-shadow 0.15s;
 }
 
-.pack-btn.pack-apu-start:not(.off) .apu-start-avail {
-    color: #18d050;
-    text-shadow:
-        0 0 10px rgba(24, 208, 80, 0.75),
-        0 0 16px rgba(24, 208, 80, 0.45);
+.pack-btn.pack-apu-start:not(.off) .apu-start-avail:not(.lit) {
+    color: rgba(24, 208, 80, 0.35);
+    text-shadow: none;
 }
 
 .pack-btn.pack-apu-start .pack-fault {
@@ -2444,13 +2800,11 @@ button {
     transition: border-color 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
-.pack-btn.pack-apu-start:not(.off) .pack-apu-start-on {
-    border: 1.5px solid #1e7fd4;
-    color: #1e7fd4;
-    box-shadow:
-        0 0 8px rgba(15, 100, 190, 0.48),
-        inset 0 0 3px rgba(10, 75, 150, 0.28);
-    text-shadow: 0 0 5px rgba(30, 120, 200, 0.55);
+.pack-btn.pack-apu-start:not(.off) .pack-apu-start-on:not(.lit) {
+    border: 1.5px solid rgba(30, 127, 212, 0.45);
+    color: rgba(30, 127, 212, 0.5);
+    box-shadow: none;
+    text-shadow: none;
 }
 
 .pack-btn-wrap {
@@ -2520,7 +2874,7 @@ button {
         inset 0 5px 12px rgba(0, 0, 0, 0.65);
     touch-action: manipulation;
     -webkit-touch-callout: none;
-    transform: perspective(120px) translateZ(-4px) scale(0.97);
+    transform: translateZ(0) scale(0.97);
 }
 
 .pack-btn.off {
@@ -2530,39 +2884,39 @@ button {
         inset 0 3px 8px rgba(0, 0, 0, 0.55),
         0 0 0 1px rgba(0, 0, 0, 0.5),
         0 6px 14px rgba(0, 0, 0, 0.92);
-    transform: perspective(120px) translateZ(5px) scale(1.02);
+    transform: translateZ(0) scale(1.02);
 }
 
 /* Press animations — per-segment easing defined in keyframes, outer timing is linear */
 @keyframes pack-spring-release {
     0% {
-        transform: perspective(120px) translateZ(-4px) scale(0.97);
+        transform: translateZ(0) scale(0.97);
         animation-timing-function: cubic-bezier(0.55, 0, 1, 0.6);
     }
 
     30% {
-        transform: perspective(120px) translateZ(-12px) scale(0.91);
+        transform: translateZ(0) scale(0.91);
         animation-timing-function: cubic-bezier(0, 0, 0.35, 1);
     }
 
     100% {
-        transform: perspective(120px) translateZ(5px) scale(1.02);
+        transform: translateZ(0) scale(1.02);
     }
 }
 
 @keyframes pack-spring-press {
     0% {
-        transform: perspective(120px) translateZ(5px) scale(1.02);
+        transform: translateZ(0) scale(1.02);
         animation-timing-function: cubic-bezier(0.55, 0, 1, 0.6);
     }
 
     35% {
-        transform: perspective(120px) translateZ(-12px) scale(0.91);
+        transform: translateZ(0) scale(0.91);
         animation-timing-function: cubic-bezier(0, 0, 0.35, 1);
     }
 
     100% {
-        transform: perspective(120px) translateZ(-4px) scale(0.97);
+        transform: translateZ(0) scale(0.97);
     }
 }
 
@@ -2632,4 +2986,125 @@ button {
 .throttle-zone .apu-panel {
     margin-top: 8px;
     flex-shrink: 0;
+}
+/* ------------------------------------------------------------------
+   Fenix A320 only: no overhead switch panel, throttle, flaps, spoilers,
+   parking brake or brake pedals. Single full-width center column sized
+   to fit an 11" iPad in landscape without clipping at the bottom.
+   ------------------------------------------------------------------ */
+.screen-layout.fenix-a320-layout.a320-no-throttle {
+    /* ---- Adjust these to taste (A320 page only) ----
+       --a320-gear-height : height of the 3D gear lever box. Any CSS length, e.g. 140px, 18vh.
+                            The default grows with screen height: 120px on iPad Safari, ~250px full screen.
+       --a320-gear-width  : max width of the gear lever box.
+       --a320-clock-scale : clock size multiplier (1 = design size, 0.8 = smaller, 1.2 = larger). */
+    --a320-gear-height: clamp(110px, calc(var(--vh, 1vh) * 100 - 680px), 260px);
+    --a320-gear-width: 200px;
+    --a320-clock-scale: 1.2;
+    grid-template-columns: minmax(0, 1fr);
+    padding-left: max(8px, env(safe-area-inset-left, 0px));
+    padding-right: max(8px, env(safe-area-inset-right, 0px));
+}
+
+body.fenix-a320-body:has(.a320-no-throttle) {
+    padding-top: 6px;
+}
+
+/* Keep the fixed "← Aircraft" button from covering the OFP tab. */
+.screen-layout.fenix-a320-layout.a320-no-throttle .airbus-center-display .nav-bar {
+    margin-right: 118px;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle > .center-zone {
+    min-height: 0;
+    gap: 8px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .pedestal-row {
+    min-height: 0;
+    gap: 8px;
+}
+
+/* Left pedestal area, top to bottom: AUTO BRK, GEAR, CLOCK (sizes set by the variables above). */
+.screen-layout.fenix-a320-layout.a320-no-throttle .pedestal-row > .gear-pedestal-column {
+    flex: 1 1 auto;
+    width: auto;
+    max-width: none;
+    min-width: 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 2px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 8px 8px;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .gear-pedestal-column > .gear-pedestal-h-rule {
+    display: none;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .gear-pedestal-column > .pedestal-col-label,
+.screen-layout.fenix-a320-layout.a320-no-throttle .gear-pedestal-column > .gear-pedestal-section-title {
+    align-self: stretch;
+    padding: 6px 4px 2px;
+    margin: 0;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .gear-pedestal-column > .gear-ldg-row {
+    flex: 0 0 auto;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .gear-pedestal-column > .gear-3d-mount {
+    flex: 0 0 auto;
+    width: 100%;
+    max-width: var(--a320-gear-width);
+    height: var(--a320-gear-height);
+    min-height: 0;
+    max-height: none;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .gear-pedestal-column > #pedestalClockHost.gear-clock-host {
+    flex: 0 0 auto;
+    width: auto;
+    margin-top: 0;
+    zoom: var(--a320-clock-scale);
+}
+
+/* Right pedestal area: TCAS / XPDR on top, RADAR & PWS below, pinned to the right edge. */
+.screen-layout.fenix-a320-layout.a320-no-throttle .pedestal-middle-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    flex: 0 0 auto;
+    width: clamp(520px, 52vw, 720px);
+    margin-left: auto;
+    gap: 8px;
+    min-width: 0;
+    min-height: 0;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .pedestal-middle-stack > .tcas-xpdr-pedestal-fullrow {
+    width: 100%;
+    max-width: 100%;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .pedestal-middle-stack > .pedestal-radar-pws-block {
+    width: 100%;
+    max-width: 100%;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.screen-layout.fenix-a320-layout.a320-no-throttle .pedestal-radar-pws-block .radar-pws-3d-mount {
+    flex: 1 1 auto;
+    min-height: 110px;
+    height: auto;
+    max-height: 300px;
 }

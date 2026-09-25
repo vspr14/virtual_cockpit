@@ -41,11 +41,18 @@ def _normalize_expr(lvar):
         return lvar
     return f"({lvar})"
 
-def _find_lvar(vars_list, key):
+def _find_entry(vars_list, key):
     for item in vars_list:
         if item.get("key") == key:
-            return item.get("lvar")
+            return item
     return None
+
+
+def _find_lvar(vars_list, key):
+    entry = _find_entry(vars_list, key)
+    if not entry:
+        return None
+    return entry.get("lvar")
 
 def read_lvars_payload(profile_name):
     if SimConnectMobiFlight is None or MobiFlightVariableRequests is None:
@@ -74,12 +81,20 @@ def write_lvar_value(profile_name, key, value):
     if SimConnectMobiFlight is None or MobiFlightVariableRequests is None:
         return {"error": "mobiflight_module_not_installed"}
     vars_list = _load_mapping(profile_name)
-    lvar = _find_lvar(vars_list, key)
-    if not lvar:
+    entry = _find_entry(vars_list, key)
+    if not entry:
         return {"error": "unknown_key"}
     _, vr = _get_mf()
     if vr is None:
         return {"error": "mobiflight_init_failed"}
+    rpn = entry.get("write_rpn")
+    if rpn:
+        vr.set(rpn)
+        vr.send_command(rpn)
+        return {"status": "ok"}
+    lvar = entry.get("lvar")
+    if not lvar:
+        return {"error": "unknown_key"}
     target = lvar if lvar.startswith("L:") else f"L:{lvar}"
     cmd = f"{value} (>{target})"
     vr.set(cmd)
@@ -104,7 +119,10 @@ def step_lvar_value(profile_name, key, delta):
     if SimConnectMobiFlight is None or MobiFlightVariableRequests is None:
         return {"error": "mobiflight_module_not_installed"}
     vars_list = _load_mapping(profile_name)
-    lvar = _find_lvar(vars_list, key)
+    entry = _find_entry(vars_list, key)
+    if not entry:
+        return {"error": "unknown_key"}
+    lvar = entry.get("lvar")
     if not lvar:
         return {"error": "unknown_key"}
     _, vr = _get_mf()
@@ -117,9 +135,22 @@ def step_lvar_value(profile_name, key, delta):
     expr = _normalize_expr(lvar)
     current = vr.get(expr)
     try:
-        next_val = float(current) + float(delta)
+        cur = float(current)
+    except Exception:
+        cur = 0.0
+    try:
+        d = float(delta)
     except Exception:
         return {"error": "invalid_delta"}
+    if key in ("bat1", "bat2"):
+        try:
+            i = int(round(cur)) % 3
+        except Exception:
+            i = 0
+        di = int(round(d))
+        next_val = float((i + di) % 3)
+    else:
+        next_val = cur + d
     target = lvar if lvar.startswith("L:") else f"L:{lvar}"
     cmd = f"{next_val} (>{target})"
     vr.set(cmd)

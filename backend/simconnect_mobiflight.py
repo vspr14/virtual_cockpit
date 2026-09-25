@@ -18,13 +18,13 @@ class SimConnectMobiFlight(SimConnect):
 
     def register_client_data_handler(self, handler):
         if not handler in self.client_data_handlers:
-            logging.info("Register new client data handler")
+            logging.debug("Register new client data handler")
             self.client_data_handlers.append(handler)
 
 
     def unregister_client_data_handler(self, handler):
         if handler in self.client_data_handlers:
-            logging.info("Unregister client data handler")
+            logging.debug("Unregister client data handler")
             self.client_data_handlers.remove(handler)
 
 

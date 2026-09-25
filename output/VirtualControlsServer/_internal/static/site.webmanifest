@@ -1,0 +1,11 @@
+{
+  "name": "Virtual Cockpit",
+  "short_name": "VC",
+  "description": "MSFS glass cockpit remote",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#050505",
+  "orientation": "any"
+}

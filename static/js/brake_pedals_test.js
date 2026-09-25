@@ -214,10 +214,33 @@ export function initBrakePedalsTest(mount, options) {
     mount.appendChild(renderer.domElement);
 
     const cam = new THREE.PerspectiveCamera(62, 1, 0.1, 2000);
-    cam.position.set(0, 58, 392);
     const lookAt = new THREE.Vector3(0, 12, 0);
-    cam.lookAt(lookAt);
-    const sph = new THREE.Spherical().setFromVector3(cam.position.clone().sub(lookAt));
+    const sph = new THREE.Spherical();
+
+    function framePedalView() {
+        const box = new THREE.Box3();
+        scene.traverse(function (o) {
+            if (o.isMesh) {
+                o.updateMatrixWorld(true);
+                box.expandByObject(o);
+            }
+        });
+        if (box.isEmpty()) return;
+        const c = box.getCenter(new THREE.Vector3());
+        const s = box.getSize(new THREE.Vector3());
+        lookAt.copy(c);
+        const pad = 1.12;
+        const vFOV = (cam.fov * Math.PI) / 180;
+        const tanHalfV = Math.tan(vFOV / 2);
+        const aspect = Math.max(0.001, cam.aspect);
+        const tanHalfH = tanHalfV * aspect;
+        const distY = (s.y * pad) / (2 * tanHalfV);
+        const distX = (s.x * pad) / (2 * tanHalfH);
+        const dist = Math.max(distX, distY, 180);
+        cam.position.set(c.x, c.y + s.y * 0.06, c.z + dist * 0.82);
+        cam.lookAt(lookAt);
+        sph.setFromVector3(cam.position.clone().sub(lookAt));
+    }
 
     scene.add(new THREE.AmbientLight(0xb8c8d8, 0.85));
     scene.add(new THREE.HemisphereLight(0xd8e4f0, 0x4a5f78, 0.65));
@@ -352,6 +375,7 @@ export function initBrakePedalsTest(mount, options) {
         renderer.setSize(w, h, false);
         cam.aspect = w / Math.max(1, h);
         cam.updateProjectionMatrix();
+        framePedalView();
     }
 
     function onPointerDown(e) {
@@ -408,6 +432,19 @@ export function initBrakePedalsTest(mount, options) {
         ro = new ResizeObserver(syncSize);
         ro.observe(mount);
     }
+    let ioVis;
+    if (typeof IntersectionObserver !== 'undefined') {
+        ioVis = new IntersectionObserver(function (entries) {
+            for (let i = 0; i < entries.length; i++) {
+                if (entries[i].isIntersecting) {
+                    syncSize();
+                    requestAnimationFrame(syncSize);
+                    break;
+                }
+            }
+        }, { root: null, threshold: 0.02 });
+        ioVis.observe(mount);
+    }
     window.addEventListener('resize', syncSize);
     syncSize();
     requestAnimationFrame(syncSize);
@@ -445,6 +482,7 @@ export function initBrakePedalsTest(mount, options) {
         domEl.removeEventListener('wheel', onWheel);
         window.removeEventListener('resize', syncSize);
         if (ro) ro.disconnect();
+        if (ioVis) ioVis.disconnect();
         renderer.dispose();
         if (mount.contains(renderer.domElement)) mount.removeChild(renderer.domElement);
     }

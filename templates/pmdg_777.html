@@ -3,13 +3,15 @@
 <head>
     <title>MSFS Glass Cockpit</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    {% include 'partials/pwa_head.html' %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+{% include 'partials/plane_back_nav.html' %}
     <div class="screen-layout">
         <div class="left-column">
+            <div id="pmdg777LightsRoot" class="b777-lt-panel-host" aria-label="Exterior lights"></div>
+
             <div class="joy-zone-container stick-right">
                 <span class="label">FLIGHT STICK</span>
                 <div class="joy-zone" id="joyZone">
@@ -42,7 +44,6 @@
             <div id="ofpContainer" class="ofp-container hidden"></div>
             <div id="ofpCameraButtons" class="ofp-camera-buttons hidden"></div>
             <div class="pedestal-row hidden">
-               
                 <div class="b777-gear-container">
                     <span class="label">GEAR</span>
                     <div class="b777-gear-track">
@@ -51,7 +52,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="v-group" style="padding-left: 30px;">
                     <span class="label">FLAPS</span>
                     <div class="center-v-wrap">
@@ -71,14 +72,13 @@
 
                 <div class="v-group">
                     <span class="label">PARK</span>
+                    <div class="center-v-wrap">
+                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="bSlider">
+                    </div>
                     <button id="pbBtn" class="sub-btn red-btn">PARKING BRAKE</button>
                 </div>
             </div>
 
-            <div class="rudder-card">
-                <span class="label">RUDDER CONTROL</span>
-                <input type="range" min="0" max="1" step="0.001" value="0.5" id="rSlider">
-            </div>
         </div>
 
         <div class="throttle-zone">
@@ -94,6 +94,8 @@
     <script>window.DEBUG_UI = {{ 'true' if debug_ui else 'false' }};</script>
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
     <script src="{{ url_for('serve_profile', profile_name=profile_name + '.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/page_pmdg_777.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pwa_standalone_boot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main_core.js') }}"></script>
 </body>
 </html>

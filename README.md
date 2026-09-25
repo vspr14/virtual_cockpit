@@ -13,7 +13,6 @@ Key goals:
 - Minimal external dependencies so the UI logic is mostly self-contained in the browser
 
 Special cases:
-- Fenix A320 autopilot uses L:Vars via `data/lvars.json` and `backend/fsuipc_wapi_reader.py` to engage/disconnect AP in a Fenix-specific way.
 - SimBrief OFP PDF and basic METAR strings are fetched via the backend for display, but they do not drive sim controls.
 
 ## 2. How to install (including dependencies)
@@ -115,15 +114,7 @@ virtual_cockpit/
   - Camera shortcuts (`camera`)
 
 - **No continuous SimConnect sim-state polling**  
-  The previous SimConnect-based `/get_sim` endpoint and periodic JS polling have been removed. The UI state (sliders, indicators) is driven entirely by local interactions, not by sim feedback. This avoids any dependency on SimVar reads for flaps, brakes, spoilers, or autopilot state.
-
-- **Fenix A320 autopilot (L:Vars)**  
-  For the Fenix A320 profile only:
-  - The A/P button in the UI calls `/lvars` and `/lvars/step` in `app.py`, which in turn use `backend/fsuipc_wapi_reader.py`.
-  - Pressing A/P:
-    - When off: steps the `ap_engage` L:Var to engage autopilot.
-    - When on: pulses `ap_disconnect` once and then sets `ap_state_off` as defined in `data/lvars.json`.
-  - Other aircraft use a simple vJoy button mapping for A/P so you can bind it directly in MSFS.
+  The previous SimConnect-based `/get_sim` endpoint and periodic JS polling have been removed. The UI state (sliders, indicators) is driven entirely by local interactions, not by sim feedback. This avoids any dependency on SimVar reads for flaps, brakes, or spoilers.
 
 - **Aircraft profiles**  
   Profiles in `profiles/*.js` define:
@@ -167,7 +158,7 @@ virtual_cockpit/
 - Adjust UI behavior (sliders, joystick, TD timer, camera logic, state saving) in `static/js/main.js`.
 - Modify styles (layout, fonts, sizes) in `static/css/style.css`.
 
-The backend (`app.py`) is intentionally kept small: it accepts high-level events from the browser and pushes them to vJoy (and L:Vars for the Fenix A320 autopilot), without trying to mirror full sim state back into the UI.
+The backend (`app.py`) is intentionally kept small: it accepts high-level events from the browser and pushes them to vJoy (and L:Vars for Fenix/MobiFlight cockpit controls where configured), without trying to mirror full sim state back into the UI.
 
 ## 7. Plan of action: native iPad app (AI-agent–readable spec)
 
@@ -217,19 +208,15 @@ Base URL: `http://<PC_IP>:5000`. All requests that need an active profile must e
 
 - Response: `200` with `{ "status": "success" }` or `{ "error": "..." }` with `500` on failure.
 
-**L:Vars (Fenix A320 autopilot only)**
+**L:Vars (Fenix / MobiFlight cockpit controls)**
 
 - `POST /lvars`  
   - Body: `{ "key": "<lvar_key>", "value": <number> }`.  
-  - Used to set a L:Var (e.g. `ap_disconnect` = 1 then 0; `ap_state_off` = 0).  
   - Profile is taken from session. Returns `200` with result or `400`/`503` with error.
 
 - `POST /lvars/step`  
   - Body: `{ "key": "<lvar_key>", "delta": <number> }`.  
-  - Used to step a L:Var (e.g. `ap_engage` with delta 1).  
   - Profile from session. Returns `200` or `400`/`503`.
-
-- For Fenix A320 AP disconnect: call `POST /lvars` with `{"key":"ap_disconnect","value":1}`, then after ~50 ms `{"key":"ap_disconnect","value":0}`, then after another ~50 ms `{"key":"ap_state_off","value":0}`. For engage: `POST /lvars/step` with `{"key":"ap_engage","delta":1}`.
 
 **OFP and METAR (read-only)**
 
@@ -292,7 +279,6 @@ Each profile has this structure (mirror of `profiles/*.js`):
       "ARM_SPOILERS": 35,
       "GEAR_UP": 4,
       "GEAR_DOWN": 4,
-      "AUTOPILOT": 5,
       "CAM_BASE": 10,
       ...
     }
@@ -305,7 +291,7 @@ Each profile has this structure (mirror of `profiles/*.js`):
 - **throttle_detents**: same idea; throttle slider can snap within `throttle_detent_snap` of a detent value.  
 - **reverse_behavior**: when `spool_down_ms === 0`, reverse is “instant”: going to reverse sets throttle 0 and sends a brief bump; coming out of reverse uses `idle_bump_up` / `idle_bump_ms` / `idle_floor`.  
 - **arm_spoilers_button**: if true, arm is a vJoy button only; if false, arm sends `arm_spoilers` axis value.  
-- **mappings.vjoy**: logical name → vJoy button index (1-based). Use for PARKING_BRAKE, AUTOPILOT, ARM_SPOILERS, etc. Defaults are in `static/js/config.js` (VJOY_MAP) if a key is missing in the profile.
+- **mappings.vjoy**: logical name → vJoy button index (1-based). Use for PARKING_BRAKE, ARM_SPOILERS, etc. Defaults are in `static/js/config.js` (VJOY_MAP) if a key is missing in the profile.
 
 ---
 
@@ -319,7 +305,6 @@ Each profile has this structure (mirror of `profiles/*.js`):
 - **Rudder**: Slider 0–1 (center 0.5); apply same response/sensitivity as joystick; send `rudder`.  
 - **Gear**: Toggle button. Send `gear_command` (backend ignores `state` and toggles; or keep local state and send once per tap).  
 - **Parking brake**: Local boolean, default **true** (ON) at launch. Toggle on tap; send `vjoy_button` with PARKING_BRAKE mapping. No sim-state read.  
-- **A/P**: For profile name “Fenix A320” use L:Var flow (engage: `lvars/step` ap_engage 1; disconnect: ap_disconnect 1→0, then ap_state_off 0). For all other profiles send `vjoy_button` with AUTOPILOT mapping.  
 - **Cameras**: Grid of buttons from `camera_config`; on tap send `camera` with `cam_id: item.id`.  
 - **State persistence**: Save to local storage (e.g. UserDefaults or file) once per minute: `{ profile, flaps, throttle, spoilers, brake, rudder }`. On launch, if saved state exists for current profile and is not the default (e.g. all zeros and rudder 0.5), restore sliders and send each axis once.  
 - **TD timer (Fenix A320 only)**: Show UTC clock (update every second). Input HH:MM (UTC); “Set TD” stores target UTC time (if in the past, use next day). Every second, if current time ≥ target and not yet fired: show “TD reached”, play short sound (use a pre-created AudioContext on first user gesture to avoid iOS blocking), and show an alert. Persist target time (and “fired” flag) in local storage so that if the user reopens the app after TD, they still get the alert once.
@@ -360,13 +345,12 @@ Each profile has this structure (mirror of `profiles/*.js`):
 4. **iPad app – main cockpit view (single screen first)**  
    - One scrollable or stacked layout that includes:  
      - Left: UTC clock + TD input + “Set TD” (Fenix A320 only); virtual joystick (drag view).  
-     - Center: Flaps, spoilers, brakes sliders with labels from profile; gear lever; parking brake; A/P button; camera grid (from `camera_config`).  
+     - Center: Flaps, spoilers, brakes sliders with labels from profile; gear lever; parking brake; camera grid (from `camera_config`).  
      - Right: Throttle slider with detent labels; IDLE button; REVERSE toggle.  
      - Rudder: full-width horizontal slider (center 0.5).  
    - Wire each control to the correct `sendControl(...)` payload and apply profile (detents, mappings, reverse_behavior, arm_spoilers_button).
 
 5. **iPad app – Fenix A320 specifics**  
-   - A/P: use L:Var API (step for engage; set ap_disconnect 1→0 then ap_state_off 0 for disconnect).  
    - TD: UTC clock, HH:MM field, “Set TD” button; timer that checks every second; on fire: “TD reached”, sound, alert; persist in UserDefaults.
 
 6. **iPad app – state persistence**  
@@ -383,7 +367,7 @@ Each profile has this structure (mirror of `profiles/*.js`):
    - If backend supports `POST /session`, “Change aircraft” without re-entering PIN.
 
 9. **Testing**  
-   - Backend on Windows, app on iPad on same LAN; verify every control type and profile; test TD timer, state restore, and L:Var A/P for Fenix A320.
+   - Backend on Windows, app on iPad on same LAN; verify every control type and profile; test TD timer and state restore.
 
 ---
 

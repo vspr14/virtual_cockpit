@@ -1,6 +1,9 @@
+window.__lvarProfile = "fenix_a320";
 window.PROFILE = {
     name: "Fenix A320",
     ui: {
+        mobiflight_mip_controls: true,
+        mobiflight_skip_lvar_types: ['brakes'],
         camera_config: [
             { id: 1, name: "Captain"},
             { id: 2, name: "Left Engine"},
@@ -11,7 +14,8 @@ window.PROFILE = {
             { id: 7, name: "FMC"},
             { id: 8, name: "Overhead"},
             { id: 9, name: "MCP"},
-            { id: 10, name: "Custom"}
+            { id: 10, name: "Custom"},
+            { id: 11, name: "EXT"}
         ],
         flap_detents: [
             { index: 0, label: "0", val: 0.0 },
@@ -40,12 +44,8 @@ window.PROFILE = {
     },
     mappings: {
         vjoy: {
-            PARKING_BRAKE: 1,
             REVERSE_TOGGLE: 2,
             IDLE_BUTTON: 3,
-            ARM_SPOILERS: 35,
-            GEAR_UP: 4,
-            GEAR_DOWN: 4,
             CAM_MOVE_MODE: 8,
             CAM_BASE: 10
         }

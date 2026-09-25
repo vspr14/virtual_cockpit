@@ -255,6 +255,9 @@ export async function initSpoilerLever3D(mount, options) {
     let dragLastY = 0;
     let activePointerId = null;
     let lastEmittedAxis = 0;
+    let lastArmBandAtTop = false;
+    /** One-shot meta merged into the next onAxis (e.g. fromExternal after applyAxisValue from sim poll). */
+    let pendingOnAxisMeta = null;
 
     function syncHidden(v) {
         const x = Math.max(0, Math.min(1, v));
@@ -263,10 +266,17 @@ export async function initSpoilerLever3D(mount, options) {
 
     function emitAxis(v) {
         const x = Math.max(0, Math.min(1, v));
-        if (Math.abs(x - lastEmittedAxis) > 0.002) {
+        const armBandAtTop = currentArmExt >= 0.02 && x <= PROG_AT_TOP + 0.05;
+        if (Math.abs(x - lastEmittedAxis) > 0.002 || armBandAtTop !== lastArmBandAtTop) {
             lastEmittedAxis = x;
+            lastArmBandAtTop = armBandAtTop;
             syncHidden(x);
-            onAxis(x);
+            const meta = { armBandAtTop };
+            if (pendingOnAxisMeta) {
+                Object.assign(meta, pendingOnAxisMeta);
+                pendingOnAxisMeta = null;
+            }
+            onAxis(x, meta);
         }
     }
 
@@ -397,9 +407,11 @@ export async function initSpoilerLever3D(mount, options) {
         }
         if (currentArmExt >= ARM_CALLBACK_ON && !armCallbackLatched) {
             armCallbackLatched = true;
+            lastEmittedAxis = currentProgress - 10;
             onArmChange(true);
         } else if (currentArmExt <= ARM_CALLBACK_OFF && armCallbackLatched && currentProgress <= PROG_AT_TOP) {
             armCallbackLatched = false;
+            lastEmittedAxis = currentProgress - 10;
             onArmChange(false);
         }
     }
@@ -430,8 +442,8 @@ export async function initSpoilerLever3D(mount, options) {
         }
         updateLeverVisuals(currentProgress, currentArmExt);
         syncHidden(currentProgress);
-        emitAxis(currentProgress);
         syncArmGate();
+        emitAxis(currentProgress);
         renderer.render(scene, camera);
     }
     animate();
@@ -444,17 +456,29 @@ export async function initSpoilerLever3D(mount, options) {
     syncHidden(0);
 
     return {
-        applyAxisValue(axis) {
+        applyAxisValue(axis, opts) {
             const v = Math.max(0, Math.min(1, axis));
+            const simArmed = opts && opts.simArmed === true;
+            const fromExternal = opts && opts.fromExternal === true;
+            if (fromExternal) {
+                pendingOnAxisMeta = { fromExternal: true };
+            }
             targetProgress = currentProgress = v;
             if (v > 0.05) {
+                targetArmExt = currentArmExt = 0;
+                armCallbackLatched = false;
+            } else if (simArmed) {
+                targetArmExt = currentArmExt = 1;
+                armCallbackLatched = true;
+            } else {
                 targetArmExt = currentArmExt = 0;
                 armCallbackLatched = false;
             }
             armClearForNextTouch = v <= ARM_START_MAX_PROGRESS;
             updateLeverVisuals(currentProgress, currentArmExt);
             syncHidden(v);
-            lastEmittedAxis = v;
+            lastEmittedAxis = v - 10;
+            lastArmBandAtTop = currentArmExt >= 0.02 && v <= PROG_AT_TOP + 0.05;
         },
         getDetentIndex() {
             return Math.max(0, Math.min(2, Math.round(currentProgress * 2)));

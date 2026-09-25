@@ -207,13 +207,24 @@ function addLandBracketLegend(panelRoot, xc, rowY) {
 
 function lvarOut(lvarKey, stateIdx, positions) {
     if (positions >= 3) return stateIdx;
-    if (lvarKey === 'wing_scan') return stateIdx === 1 ? 1 : 0;
     if (lvarKey === 'rwy_turnoff') return stateIdx === 1 ? 0 : 1;
     return stateIdx === 1 ? 0 : 1;
 }
 
-export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
+function lvarIn(lvarKey, raw, positions) {
+    const n = Number(raw);
+    if (!Number.isFinite(n)) return null;
+    if (positions >= 3) {
+        return Math.max(0, Math.min(2, Math.round(n)));
+    }
+    if (lvarKey === 'rwy_turnoff') return n >= 0.5 ? 0 : 1;
+    return n >= 0.5 ? 0 : 1;
+}
+
+export async function attachExtLtLightsPanel(viewportEl, { emit, onUserInteraction } = {}) {
     if (!viewportEl || typeof emit !== 'function') return null;
+    const bumpHold =
+        onUserInteraction && typeof onUserInteraction === 'function' ? onUserInteraction : null;
     try {
         if (document.fonts?.ready) await document.fonts.ready;
         if (document.fonts?.load) {
@@ -450,6 +461,7 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
                 const n = Math.min(maxIdx, Math.max(0, next));
                 if (n === sw.state) return;
                 sw.state = n;
+                if (bumpHold) bumpHold();
                 emit(lvarKey, lvarOut(lvarKey, sw.state, positions));
             },
         };
@@ -543,47 +555,36 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
         },
     ];
 
-    let landPairPointerTarget = null;
-    let landPairHitMat = null;
-
     cfgs.forEach((c) => {
         const x = col4[c.col];
         const y = c.row === 0 ? rowT : rowB;
         buildOne({ ...c, x, y, initState: c.init });
     });
 
-    const swLandL = switches.find((s) => s.sid === 'swLandL');
-    const swLandR = switches.find((s) => s.sid === 'swLandR');
-    if (swLandL && swLandR) {
-        landPairPointerTarget = {
-            landPair: true,
-            positions: 3,
-            maxIdx: 2,
-            angles: swLandL.angles,
-            get state() {
-                return swLandL.state;
-            },
-            setState(n) {
-                const v = Math.min(2, Math.max(0, n | 0));
-                swLandL.setState(v);
-                swLandR.setState(v);
-            },
-        };
-        const xcPair = (col4[1] + col4[2]) * 0.5;
-        const gapHitW = Math.max(0.12, col4[2] - col4[1] - 1.74 * swScale * 1.02);
-        const gapHitH = 1.48 * swScale * 1.45;
-        landPairHitMat = new THREE.MeshBasicMaterial({
-            transparent: true,
-            opacity: 0,
-            depthWrite: false,
-            side: THREE.DoubleSide,
-        });
-        if ('toneMapped' in landPairHitMat) landPairHitMat.toneMapped = false;
-        const landPairHit = new THREE.Mesh(new THREE.BoxGeometry(gapHitW, gapHitH, 0.14), landPairHitMat);
-        landPairHit.position.set(xcPair, rowB, 0.11);
-        landPairHit.userData.sid = 'swLandPair';
-        panelRoot.add(landPairHit);
-    }
+    const colStep = col4[1] - col4[0];
+    const signsRowY = rowT;
+    const xSeatBelts = col4[3] + colStep;
+    const xNoSmoking = xSeatBelts + colStep;
+    buildOne({
+        sid: 'swSeatBelts',
+        lvarKey: 'seat_belts',
+        positions: 2,
+        x: xSeatBelts,
+        y: signsRowY,
+        initState: 0,
+        titleLines: ['SEAT', 'BELTS'],
+        extLtRecipe: 'onOff',
+    });
+    buildOne({
+        sid: 'swNoSmoking',
+        lvarKey: 'no_smoking',
+        positions: 3,
+        x: xNoSmoking,
+        y: signsRowY,
+        initState: 1,
+        titleLines: ['NO', 'SMOKING'],
+        extLtRecipe: 'strobe',
+    });
 
     extLtAddLandPairCenterLabels(panelRoot, (col4[1] + col4[2]) * 0.5, rowB, swScale);
     addLandBracketLegend(panelRoot, (col4[1] + col4[2]) / 2, rowB);
@@ -645,7 +646,6 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
             const o = hits[i].object;
             if (o.userData.skipPick) continue;
             const sid = o.userData.sid;
-            if (sid === 'swLandPair' && landPairPointerTarget) return landPairPointerTarget;
             if (!sid) continue;
             return switches.find((s) => s.sid === sid) || null;
         }
@@ -656,6 +656,7 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
         if (e.button !== undefined && e.button !== 0) return;
         active = hitSwitch(e);
         if (!active) return;
+        if (bumpHold) bumpHold();
         dragOk = true;
         isDragging = true;
         startY = e.clientY;
@@ -663,10 +664,12 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
         movedPx = 0;
         viewportEl.setPointerCapture(e.pointerId);
         e.preventDefault();
+        e.stopPropagation();
     };
 
     const onPointerMove = (e) => {
         if (!isDragging || !dragOk || !active) return;
+        e.stopPropagation();
         movedPx = Math.max(movedPx, Math.hypot(e.clientX - startX, e.clientY - startY));
         const diff = e.clientY - startY;
         if (Math.abs(diff) > threshold) {
@@ -696,6 +699,7 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
     };
 
     const onPointerUp = (e) => {
+        e.stopPropagation();
         const sw = active;
         if (dragOk && isDragging && viewportEl.hasPointerCapture(e.pointerId)) {
             viewportEl.releasePointerCapture(e.pointerId);
@@ -770,7 +774,24 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
     };
     tick();
 
+    const syncFromSim = (map) => {
+        if (!map || typeof map !== 'object') return;
+        switches.forEach((sw) => {
+            let raw = map[sw.lvarKey];
+            if (typeof raw !== 'number' || !Number.isFinite(raw)) {
+                const p = parseFloat(raw);
+                if (!Number.isFinite(p)) return;
+                raw = p;
+            }
+            const next = lvarIn(sw.lvarKey, raw, sw.positions);
+            if (next === null || next === sw.state) return;
+            sw.state = next;
+            sw.pivot.rotation.x = sw.angles[next];
+        });
+    };
+
     return {
+        syncFromSim,
         dispose() {
             cancelAnimationFrame(raf);
             ro.disconnect();
@@ -783,7 +804,6 @@ export async function attachExtLtLightsPanel(viewportEl, { emit } = {}) {
             stripedMat.map?.dispose?.();
             backMat.dispose?.();
             recessMatBlack.dispose?.();
-            landPairHitMat?.dispose?.();
             renderer.domElement.remove();
         },
     };

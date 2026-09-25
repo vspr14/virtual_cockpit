@@ -1,0 +1,614 @@
+﻿<div class="screen-layout {{ layout_class }}">
+        <div class="left-column fenix-ovhd-dense">
+            <div class="tod-panel">
+                <div id="utcClock" class="utc-clock">--:--Z</div>
+            </div>
+
+            <div id="leftBrakeContainer" class="left-brake-container hidden">
+                <div class="v-group">
+                    <span class="label">PARK</span>
+                    <div class="parking-brake-mount parking-brake-mount--compact">
+                        <div id="pb-left-3d-mount" class="parking-brake-3d-mount" role="button" tabindex="0"
+                            aria-label="Parking brake"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="left-ovhd-pair">
+                <div class="ovhd-section packs-panel ovhd-flush">
+                    <div class="fuel-pumps-row">
+                        <div class="fuel-pumps-group">
+                            <span class="fuel-pumps-group-title">L TK</span>
+                            <div class="fuel-pumps-group-btns">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">1</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelLt1" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">2</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelLt2" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fuel-pumps-group">
+                            <span class="fuel-pumps-group-title">CTR XFR</span>
+                            <div class="fuel-pumps-group-btns">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">L</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelCtr1" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">R</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelCtr2" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="fuel-pumps-group">
+                            <span class="fuel-pumps-group-title">R TK</span>
+                            <div class="fuel-pumps-group-btns">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">1</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelRt1" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">2</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="btnFuelRt2" class="pack-btn off">
+                                            <div class="pack-fault">FAULT</div>
+                                            <div class="pack-off-ind">OFF</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ovhd-pbpair-row">
+                        <div class="ovhd-pbpair-btns">
+                            <div class="pack-btn-wrap">
+                                <span class="pack-label">BAT 1</span>
+                                <div class="pack-housing">
+                                    <button type="button" id="btnBat1" class="pack-btn off">
+                                        <div class="pack-fault">FAULT</div>
+                                        <div class="pack-off-ind">OFF</div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="pack-btn-wrap">
+                                <span class="pack-label">BAT 2</span>
+                                <div class="pack-housing">
+                                    <button type="button" id="btnBat2" class="pack-btn off">
+                                        <div class="pack-fault">FAULT</div>
+                                        <div class="pack-off-ind">OFF</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="packs-stack">
+                        <div class="packs-row packs-row-endcaps">
+                            <div class="pack-btn-wrap">
+                                <span class="pack-label">PACK 1</span>
+                                <div class="pack-housing">
+                                    <button type="button" id="btnPack1" class="pack-btn">
+                                        <div class="pack-fault">FAULT</div>
+                                        <div class="pack-off-ind">OFF</div>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="pack-btn-wrap">
+                                <span class="pack-label">PACK 2</span>
+                                <div class="pack-housing">
+                                    <button type="button" id="btnPack2" class="pack-btn">
+                                        <div class="pack-fault">FAULT</div>
+                                        <div class="pack-off-ind">OFF</div>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="packs-row packs-row-center">
+                            <div class="packs-row-center-inner">
+                                <div class="pack-btn-wrap pack-apu-wrap">
+                                    <span class="pack-label">APU BLEED</span>
+                                    <div class="pack-housing pack-apu-housing">
+                                        <button type="button" id="btnApuBleed" class="pack-btn pack-apu off">
+                                            <div class="pack-off-ind pack-apu-readout">ON</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap pack-extpwr-wrap">
+                                    <span class="pack-label">EXT PWR</span>
+                                    <div class="pack-housing pack-extpwr-housing">
+                                        <button type="button" id="btnExtPwrOh" class="pack-btn pack-extpwr off">
+                                            <div class="ext-pwr-avail">AVAIL</div>
+                                            <div class="ext-pwr-on">ON</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ovhd-section lights-panel ovhd-flush">
+                    <div class="ext-lt-panel" id="extLtLightsHost">
+                        <div class="ext-lt-viewport" id="extLtLightsViewport" tabindex="0" role="region"
+                            aria-label="Exterior lights"></div>
+                    </div>
+                </div>
+                <div class="ovhd-section apu-oh-stack ovhd-flush">
+                    <div class="apu-oh-row apu-master-row">
+                        <div class="pack-btn-wrap">
+                            <span class="pack-label">MASTER SW</span>
+                            <div class="pack-housing pack-apu-housing">
+                                <button type="button" id="btnApuMasterOh" class="pack-btn pack-apu off">
+                                    <div class="pack-off-ind pack-apu-readout">ON</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="apu-oh-row apu-start-only-row">
+                        <div class="pack-btn-wrap apu-start-wrap">
+                            <span class="pack-label">START</span>
+                            <div class="pack-housing">
+                                <button type="button" id="btnApuStartOh" class="pack-btn pack-apu-start off">
+                                    <div class="apu-start-avail">AVAIL</div>
+                                    <div class="pack-fault">FAULT</div>
+                                    <div class="pack-apu-start-on">ON</div>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="apu-oh-row eng-master-engine-row">
+                        <div class="eng-master-panel-col">
+                            <span class="eng-master-panel-label">MASTER 1</span>
+                            <div class="eng-master-switch-housing">
+                                <div class="eng-master-3d-viewport" id="engMaster3dViewport" role="img"
+                                    aria-label="Engine 1 master"></div>
+                            </div>
+                        </div>
+                        <div class="eng-mode-inline-wrap">
+                            <span class="eng-mode-panel-label">MODE SEL</span>
+                            <div class="eng-mode-horiz" id="engModeOhRoot" data-pos="1">
+                                <div class="eng-mode-3d-host">
+                                    <div class="eng-mode-3d-viewport" id="engMode3dViewport" tabindex="0" role="region"
+                                        aria-label="Engine mode"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="eng-master-panel-col">
+                            <span class="eng-master-panel-label">MASTER 2</span>
+                            <div class="eng-master-switch-housing">
+                                <div class="eng-master-3d-viewport" id="engMaster3dViewport2" role="img"
+                                    aria-label="Engine 2 master"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="center-zone">
+            <div class="airbus-center-display">
+                <div class="nav-bar">
+                    <button id="showCams" class="nav-btn active">CAMERAS</button>
+                    <button id="showOfp" class="nav-btn">OFP</button>
+                </div>
+
+                <div class="grid-container">
+                    <div id="camGrid" class="grid-layer active ecam-cp">
+                        <div class="ecam-matrix">
+                            <div class="ecam-cell-empty" aria-hidden="true"></div>
+                            <button type="button" class="btn ecam-toconfig ecam-momentary">
+                                <div class="label">T.O.<br>CONFIG</div>
+                            </button>
+                            <div class="ecam-cell-empty" aria-hidden="true"></div>
+                            <div class="ecam-cell-empty" aria-hidden="true"></div>
+                            <div class="ecam-cell-empty" aria-hidden="true"></div>
+                            <div class="ecam-cell-empty" aria-hidden="true"></div>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">CAPT</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">L. ENG</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">L. WING</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">R. ENG</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">R. WING</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">EFB</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">MCDU</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">OVHD</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">MCP</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">EXT</div>
+                            </button>
+                            <button type="button" class="btn ecam-page">
+                                <div class="stripes">
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                    <div class="stripe"></div>
+                                </div>
+                                <div class="label">custom_03</div>
+                            </button>
+                            <button type="button" class="btn ecam-all ecam-momentary">
+                                <div class="label">ALL</div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div id="metarContainer" class="metar-container hidden">
+                    <div id="metarContent" class="metar-content"></div>
+                    <button id="metarRefreshBtn" class="metar-refresh-btn" title="Refresh METAR">↻</button>
+                    <button id="ofpRefreshBtn" class="metar-refresh-btn ofp-refresh-btn"
+                        title="Refresh SimBrief PDF">PDF ↻</button>
+                </div>
+                <div id="ofpContainer" class="ofp-container hidden"></div>
+                <div id="ofpCameraButtons" class="ofp-camera-buttons hidden"></div>
+            </div>
+
+            <div class="pedestal-row hidden">
+                <!--
+                <div class="b777-gear-container">
+                    <span class="label">GEAR</span>
+                    <div class="b777-gear-track">
+                        <div id="gearHandle" class="b777-gear-arm gear-up">
+                            <div class="b777-gear-knob"></div>
+                        </div>
+                    </div>
+                </div>
+                -->
+                <div class="gear-pedestal-column">
+                    <div class="pedestal-col-label">AUTO BRK</div>
+                    <div class="ovhd-pbpair-row gear-ldg-row">
+                        <div class="gear-ldg-push-row">
+                            <div class="ovhd-pbpair-btns gear-ldg-pair">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">LO</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="gearPb1"
+                                            class="pack-btn pack-apu-start gear-autobrk-pb off">
+                                            <div class="apu-start-avail autobrake-annunc-upper">DECEL</div>
+                                            <div class="pack-apu-start-on autobrake-annunc-lower">ON</div>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">MED</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="gearPb2"
+                                            class="pack-btn pack-apu-start gear-autobrk-pb off">
+                                            <div class="apu-start-avail autobrake-annunc-upper">DECEL</div>
+                                            <div class="pack-apu-start-on autobrake-annunc-lower">ON</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="gear-pedestal-divider" aria-hidden="true"></div>
+                            <div class="ovhd-pbpair-btns gear-ldg-single">
+                                <div class="pack-btn-wrap">
+                                    <span class="pack-label">MAX</span>
+                                    <div class="pack-housing">
+                                        <button type="button" id="gearPb3"
+                                            class="pack-btn pack-apu-start gear-autobrk-pb off">
+                                            <div class="apu-start-avail autobrake-annunc-upper">DECEL</div>
+                                            <div class="pack-apu-start-on autobrake-annunc-lower">ON</div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="gear-pedestal-h-rule" aria-hidden="true"></div>
+                    <div class="gear-pedestal-section-title">GEAR</div>
+                    <div id="gear-3d-mount" class="gear-3d-mount"></div>
+                    <div class="gear-pedestal-h-rule" aria-hidden="true"></div>
+                    <div class="gear-pedestal-section-title">CLOCK</div>
+                    <div id="pedestalClockHost" class="gear-clock-host">
+                        <div class="pedestal-clock-bezel">
+                            <div class="pedestal-clock-housing">
+                                <div class="pedestal-clock-panel-row">
+                                    <div class="pedestal-clock-title-above">T/D</div>
+                                    <div class="pedestal-clock-picker-wrap" data-pc="picker-wrap">
+                                        <div class="pedestal-clock-glass">
+                                            <div class="pedestal-clock-td-inner">
+                                                <div class="pedestal-clock-td-display" data-pc="td-display">--:--</div>
+                                            </div>
+                                            <div class="pedestal-clock-sub-row">
+                                                <span class="pedestal-clock-sub">HR</span>
+                                                <span class="pedestal-clock-sub">MIN</span>
+                                            </div>
+                                            <button type="button" class="pedestal-clock-set-btn"
+                                                data-pc="set-btn">SET</button>
+                                        </div>
+                                        <div class="pedestal-clock-picker-drop" data-pc="picker-drop">
+                                            <input type="time" value="00:00" data-pc="td-input">
+                                            <button type="button" class="pedestal-clock-confirm-btn"
+                                                data-pc="confirm-btn">CONFIRM</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pedestal-clock-panel-row">
+                                    <div class="pedestal-clock-title-above">UTC</div>
+                                    <div class="pedestal-clock-glass">
+                                        <div class="pedestal-clock-digit-row">
+                                            <span class="pedestal-clock-d" data-pc="uh1">0</span><span
+                                                class="pedestal-clock-d" data-pc="uh2">0</span>
+                                            <span class="pedestal-clock-sep pedestal-clock-blink">:</span>
+                                            <span class="pedestal-clock-d" data-pc="um1">0</span><span
+                                                class="pedestal-clock-d" data-pc="um2">0</span>
+                                            <span class="pedestal-clock-sep pedestal-clock-blink">:</span>
+                                            <span class="pedestal-clock-d" data-pc="us1">0</span><span
+                                                class="pedestal-clock-d" data-pc="us2">0</span>
+                                        </div>
+                                        <div class="pedestal-clock-sub-row">
+                                            <span class="pedestal-clock-sub">HR</span>
+                                            <span class="pedestal-clock-sub">MIN</span>
+                                            <span class="pedestal-clock-sub">SEC</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="pedestal-clock-panel-row">
+                                    <div class="pedestal-clock-glass">
+                                        <div class="pedestal-clock-digit-row">
+                                            <span class="pedestal-clock-d" data-pc="es">&thinsp;</span>
+                                            <span class="pedestal-clock-d" data-pc="eh1">-</span><span
+                                                class="pedestal-clock-d" data-pc="eh2">-</span>
+                                            <span class="pedestal-clock-sep">:</span>
+                                            <span class="pedestal-clock-d" data-pc="em1">-</span><span
+                                                class="pedestal-clock-d" data-pc="em2">-</span>
+                                        </div>
+                                        <div class="pedestal-clock-sub-row">
+                                            <span class="pedestal-clock-sub">HR</span>
+                                            <span class="pedestal-clock-sub">MIN</span>
+                                        </div>
+                                    </div>
+                                    <div class="pedestal-clock-title-below">ET</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pedestal-refresh-wrap">
+                        <button type="button" id="refreshPageBtn" class="refresh-site-btn" title="Reload page">↻</button>
+                    </div>
+                </div>
+
+                <div class="layout-v-divider" aria-hidden="true"></div>
+
+                <div class="pedestal-middle-stack">
+                    <div class="pedestal-flaps-brake-row">
+                        <div class="v-group pedestal-flaps-spoil-wrap">
+                            <div class="v-group pedestal-flaps-vgroup">
+                                <span class="label pedestal-col-label">FLAPS</span>
+                                <div class="flap-lever-mount">
+                                    <div id="flap-3d-mount" class="flap-3d-mount"></div>
+                                </div>
+                                <input type="hidden" id="fSlider" value="0">
+                                <div class="spacer-btn"></div>
+                            </div>
+
+                            <div class="v-group pedestal-spoil-vgroup">
+                                <span class="label pedestal-col-label">SPOIL</span>
+                                <div class="spoiler-lever-mount">
+                                    <div id="spoiler-3d-mount" class="spoiler-3d-mount"></div>
+                                </div>
+                                <input type="hidden" id="sSlider" value="0">
+                                <div class="spacer-btn" aria-hidden="true"></div>
+                            </div>
+                        </div>
+
+                        <div class="layout-v-divider layout-v-divider--in-stack" aria-hidden="true"></div>
+
+                        <div class="v-group pedestal-brake-vgroup">
+                            <span class="label pedestal-col-label">BRAKES</span>
+                            <div class="brake-pedals-mount">
+                                <div id="brake-pedals-main-mount" class="brake-pedals-test-mount"></div>
+                            </div>
+                            <div class="parking-brake-mount">
+                                <div id="pb-3d-mount" class="parking-brake-3d-mount" role="button" tabindex="0"
+                                    aria-label="Parking brake"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                <div class="tcas-xpdr-embed-wrap tcas-xpdr-pedestal-fullrow" id="tcas-xpdr-root">
+                    <div class="tcas-xpdr-scale">
+                        <div class="tcas-panel">
+                            <div class="vert-text vert-atc">A<br>T<br>C</div>
+                            <div class="col-left">
+                                <div class="knob-group knob-g-k1">
+                                    <svg class="knob-mark" viewBox="0 0 108 96" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                                        <line x1="30.6" y1="56.5" x2="21.9" y2="51.5" />
+                                        <line x1="54" y1="43" x2="54" y2="33" />
+                                        <line x1="77.4" y1="56.5" x2="86.1" y2="51.5" />
+                                    </svg>
+                                    <span class="knob-lbl kb-l">STBY</span>
+                                    <span class="knob-lbl kb-t">AUTO</span>
+                                    <span class="knob-lbl kb-r">ON</span>
+                                    <div class="knob-mount" data-knob-detents="-60,0,60" data-knob-initial="0">
+                                        <div class="knob">
+                                            <div class="knob-handle">
+                                                <div class="knob-indicator"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-center">
+                                <div class="numpad">
+                                    <button type="button" class="num-btn" data-xpdr-digit="1"><span>1</span></button>
+                                    <button type="button" class="num-btn" data-xpdr-digit="2"><span>2</span></button>
+                                    <button type="button" class="num-btn" data-xpdr-digit="3"><span>3</span></button>
+                                    <button type="button" class="num-btn" data-xpdr-digit="4"><span>4</span></button>
+                                    <button type="button" class="num-btn" data-xpdr-digit="5"><span>5</span></button>
+                                    <button type="button" class="num-btn" data-xpdr-digit="6"><span>6</span></button>
+                                    <button type="button" class="num-btn" data-xpdr-digit="7"><span>7</span></button>
+                                    <button type="button" class="num-btn" data-xpdr-digit="0"><span>0</span></button>
+                                    <button type="button" class="num-btn clr" data-xpdr-clr><span>CLR</span></button>
+                                </div>
+                            </div>
+                            <div class="col-right">
+                                <div class="screen-bezel">
+                                    <div class="mini-screw ms-tl"></div>
+                                    <div class="mini-screw ms-tr"></div>
+                                    <div class="mini-screw ms-bl"></div>
+                                    <div class="mini-screw ms-br"></div>
+                                    <div class="screen-glass">
+                                        <div class="xpdr-digits" role="img" aria-label="empty">
+                                            <span class="xpdr-d xpdr-d--empty"></span>
+                                            <span class="xpdr-d xpdr-d--empty"></span>
+                                            <span class="xpdr-d xpdr-d--empty"></span>
+                                            <span class="xpdr-d xpdr-d--empty"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="right-knobs">
+                                    <div class="knob-group knob-g-k4">
+                                        <svg class="knob-mark" viewBox="0 0 114 104" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                                            <line x1="33.6" y1="91.5" x2="24.9" y2="96.5" />
+                                            <line x1="33.6" y1="64.5" x2="24.9" y2="59.5" />
+                                            <line x1="57" y1="51" x2="57" y2="41" />
+                                            <line x1="80.4" y1="64.5" x2="89.1" y2="59.5" />
+                                        </svg>
+                                        <span class="knob-lbl kb-t">ABV</span>
+                                        <span class="knob-lbl kb-l">ALL</span>
+                                        <span class="knob-lbl kb-b">THRT</span>
+                                        <span class="knob-lbl kb-r">BLW</span>
+                                        <div class="knob-mount" data-knob-detents="-120,-60,0,60" data-knob-initial="0">
+                                            <div class="knob">
+                                                <div class="knob-handle">
+                                                    <div class="knob-indicator"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="knob-group knob-g-k5">
+                                        <svg class="knob-mark" viewBox="0 0 118 102" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                                            <line x1="32" y1="76" x2="22" y2="76" />
+                                            <line x1="59" y1="49" x2="59" y2="39" />
+                                            <line x1="86" y1="76" x2="96" y2="76" />
+                                        </svg>
+                                        <span class="knob-lbl kb-t">TA</span>
+                                        <span class="knob-lbl kb-l">STBY</span>
+                                        <span class="knob-lbl kb-r">TA/RA</span>
+                                        <div class="knob-mount" data-knob-detents="-90,0,90" data-knob-initial="90">
+                                            <div class="knob">
+                                                <div class="knob-handle">
+                                                    <div class="knob-indicator"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="vert-text vert-tcas">T<br>C<br>A<br>S</div>
+                        </div>
+                    </div>
+                </div>
+
+                    <div class="pedestal-radar-pws-block">
+                        <div class="pedestal-subtitle">Radar &amp; PWS</div>
+                        <div id="radar-pws-3d-mount" class="radar-pws-3d-mount" tabindex="0" role="region"
+                            aria-label="Radar and PWS switches"></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="throttle-zone a320">
+            <span class="label">THROTTLE</span>
+            <div id="throttleLabels" class="throttle-labels-container"></div>
+            <div class="t-v-wrap">
+                <input type="range" min="0" max="1" step="0.001" value="0" class="t-slider" id="tSlider">
+            </div>
+            <button id="idleBtn" class="btn-rev" style="background: #444; margin-bottom: 8px;">IDLE</button>
+            <button id="revBtn" class="btn-rev" style="margin-bottom: 8px;">REVERSE</button>
+        </div>
+    </div>

@@ -46,7 +46,6 @@ window.PROFILE = {
             ARM_SPOILERS: 35,
             GEAR_UP: 4,
             GEAR_DOWN: 4,
-            AUTOPILOT: 5,
             CAM_MOVE_MODE: 8,
             CAM_BASE: 10
         }

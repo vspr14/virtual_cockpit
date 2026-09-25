@@ -32,7 +32,7 @@ function basicFromColor(col) {
 
 export function initGearLever3D(mount, options) {
     const onCommit = options && typeof options.onCommit === 'function' ? options.onCommit : function () { };
-    if (!mount) return;
+    if (!mount) return null;
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 1000);
     camera.position.set(0, -7, 56);
@@ -182,4 +182,13 @@ export function initGearLever3D(mount, options) {
         renderer.render(scene, camera);
     }
     animate();
+    return {
+        applySimGearDown(down) {
+            const d = !!down;
+            const p = d ? 0 : 1;
+            targetProgress = p;
+            currentProgress = p;
+            lastCommittedDown = d;
+        }
+    };
 }

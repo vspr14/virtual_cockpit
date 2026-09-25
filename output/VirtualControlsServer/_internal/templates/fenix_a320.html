@@ -1,122 +1,50 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>MSFS Glass Cockpit</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    {% include 'partials/pwa_head.html' %}
+    <script>
+        (function () {
+            var ua = navigator.userAgent || '';
+            var isIPad = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+            if (!isIPad) return;
+            var m = document.querySelector('meta[name="viewport"]');
+            if (!m) return;
+            m.setAttribute('content', 'width=device-width, initial-scale=0.9, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+        })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/tcas_xpdr_embed.css') }}">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
+            "pako": "https://esm.sh/pako@2.1.0"
+        }
+    }
+    </script>
 </head>
-<body>
-    <div class="screen-layout">
-        <div class="left-column">
-            <div class="tod-panel">
-                <div id="utcClock" class="utc-clock">--:--Z</div>
-                <div class="tod-input-row">
-                    <input id="todHour" class="tod-input" type="number" min="0" max="23" placeholder="HH">
-                    <span class="tod-separator">:</span>
-                    <input id="todMinute" class="tod-input" type="number" min="0" max="59" placeholder="MM">
-                    <button id="todSetBtn" class="tod-btn">SET TD</button>
-                </div>
-                <div id="todStatus" class="tod-status"></div>
-            </div>
-            <div class="joy-zone-container stick-right">
-                <span class="label">FLIGHT STICK</span>
-                <div class="joy-zone" id="joyZone">
-                    <div class="joy-puck" id="joyPuck"></div>
-                </div>
-            </div>
 
-            <div id="leftBrakeContainer" class="left-brake-container hidden">
-                <div class="v-group">
-                    <span class="label">BRAKE</span>
-                    <div class="center-v-wrap">
-                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="bSliderLeft">
-                    </div>
-                    <button id="pbBtnLeft" class="sub-btn red-btn">PARKING BRAKE</button>
-                </div>
-            </div>
-        </div>
+{% set body_class = 'fenix-a320-body' %}
+{% set layout_class = 'fenix-a320-layout' %}
+<body class="{{ body_class }}">
+{% include 'partials/plane_back_nav.html' %}
+{% include 'partials/fenix_cockpit_body.html' %}
 
-        <div class="center-zone">
-            <div class="nav-bar">
-                <button id="showCams" class="nav-btn active">CAMERAS</button>
-                <button id="showOfp" class="nav-btn">OFP</button>
-            </div>
-
-            <div class="grid-container">
-                <div id="camGrid" class="grid-layer active"></div>
-            </div>
-            <div id="metarContainer" class="metar-container hidden">
-                <div id="metarContent" class="metar-content"></div>
-                <button id="metarRefreshBtn" class="metar-refresh-btn" title="Refresh METAR">↻</button>
-                <button id="ofpRefreshBtn" class="metar-refresh-btn ofp-refresh-btn" title="Refresh SimBrief PDF">PDF ↻</button>
-            </div>
-            <div id="ofpContainer" class="ofp-container hidden"></div>
-            <div id="ofpCameraButtons" class="ofp-camera-buttons hidden"></div>
-            <div class="pedestal-row hidden">
-               
-                <div class="b777-gear-container">
-                    <span class="label">GEAR</span>
-                    <div class="b777-gear-track">
-                        <div id="gearHandle" class="b777-gear-arm gear-up">
-                            <div class="b777-gear-knob"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="v-group" style="padding-left: 30px;">
-                    <span class="label">FLAPS</span>
-                    <div class="center-v-wrap">
-                        <div id="flapLabels" class="flap-labels-container"></div>
-                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="fSlider">
-                    </div>
-                    <div class="spacer-btn"></div>
-                </div>
-
-                <div class="v-group">
-                    <span class="label">SPOIL</span>
-                    <div class="center-v-wrap">
-                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="sSlider">
-                    </div>
-                    <button id="armBtn" class="sub-btn blue-btn">ARM SPOILERS</button>
-                </div>
-
-                <div class="v-group">
-                    <span class="label">BRAKE</span>
-                    <div class="center-v-wrap">
-                        <input type="range" min="0" max="1" step="0.001" value="0" class="center-v-slider" id="bSlider">
-                    </div>
-                    <button id="pbBtn" class="sub-btn red-btn">PARKING BRAKE</button>
-                </div>
-                <div class="ap-btn-wrap">
-                    <button id="apBtn" class="ap-btn">
-                        <div id="apIndicator" class="ap-indicator"></div>
-                        A/P
-                    </button>
-                </div>
-            </div>
-
-            <div class="rudder-card">
-                <span class="label">RUDDER CONTROL</span>
-                <input type="range" min="0" max="1" step="0.001" value="0.5" id="rSlider">
-            </div>
-        </div>
-
-        <div class="throttle-zone a320">
-            <span class="label">THROTTLE</span>
-            <div id="throttleLabels" class="throttle-labels-container"></div>
-            <div class="t-v-wrap">
-                <input type="range" min="0" max="1" step="0.001" value="0" class="t-slider" id="tSlider">
-            </div>
-            <button id="idleBtn" class="btn-rev" style="background: #444; margin-bottom: 30px;">IDLE</button>
-            <button id="revBtn" class="btn-rev">REVERSE</button>
-        </div>
-    </div>
-
-    <script>window.DEBUG_UI = {{ 'true' if debug_ui else 'false' }};</script>
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
     <script src="{{ url_for('serve_profile', profile_name=profile_name + '.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/tcas_xpdr_panel.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/page_fenix_a320.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pwa_standalone_boot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main_core.js') }}"></script>
 </body>
+
 </html>
