@@ -1,0 +1,15 @@
+{# One momentary annunciator pushbutton. Usage:
+     {% from 'widgets/annunciator_pb.html' import annunciator_pb %}
+     {{ annunciator_pb('LO', upper='DECEL', lower='ON', attrs='data-autobrake="LO"') }}
+   Lights are addressed by data-light="upper" / "lower" (see js/widgets/annunciator_pb_group.js). #}
+{% macro annunciator_pb(label, upper='', lower='', attrs='') %}
+<div class="pb-wrap">
+    <span class="pb-label">{{ label }}</span>
+    <div class="pb-housing">
+        <button type="button" class="pb" {{ attrs|safe }}>
+            <div class="pb-light-upper" data-light="upper">{{ upper }}</div>
+            <div class="pb-light-lower" data-light="lower">{{ lower }}</div>
+        </button>
+    </div>
+</div>
+{% endmacro %}

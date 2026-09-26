@@ -1,0 +1,355 @@
+/* Displays tab (templates/widgets/display_view.html, js/widgets/display_view.js). */
+
+.display-view {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.display-chips,
+.display-menu-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.display-chip,
+.display-tool,
+.display-setup-actions button {
+    min-height: 36px;
+    padding: 0 14px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.16);
+    background: var(--airbus-btn, #1e2535);
+    color: var(--airbus-text, #d8dce6);
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.display-chip.active {
+    border-color: var(--led-green, #18d050);
+    color: #fff;
+    box-shadow: inset 0 0 0 1px rgba(24, 208, 80, 0.35);
+}
+
+.display-chip:active,
+.display-tool:active { transform: scale(0.97); }
+
+/* Menu: opened by tapping the DISPLAYS tab while it's open; floats over the screens, top right. */
+.display-menu {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: min(560px, 100%);
+    padding: 14px;
+    box-sizing: border-box;
+    border-radius: 10px;
+    border: 1px solid #2a3140;
+    background: rgba(12, 15, 22, 0.97);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.display-menu-label {
+    color: var(--airbus-label, #c8cdd8);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.display-menu-actions { padding-top: 10px; border-top: 1px solid #262d3b; }
+
+/* Arrange mode: a small floating bar instead of a toolbar row. */
+.display-arrange-bar {
+    display: none;
+    position: absolute;
+    left: 50%;
+    bottom: 10px;
+    transform: translateX(-50%);
+    z-index: 25;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 8px 8px 14px;
+    border-radius: 12px;
+    background: rgba(12, 15, 22, 0.92);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+    color: var(--airbus-label, #c8cdd8);
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.display-view.arranging .display-arrange-bar { display: flex; }
+.display-arrange-done { border-color: var(--led-green, #18d050); color: #fff; }
+
+/* Tiles are placed absolutely by display_view.js (auto layout or the saved arrangement). */
+.display-stage {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    overflow: hidden;
+}
+
+.display-stage.is-empty::after {
+    content: 'Tap DISPLAYS again to pick screens';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--airbus-label, #c8cdd8);
+    font-size: 14px;
+}
+
+.display-tile {
+    position: absolute;
+    background: #000;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px #0b0d12, 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.display-tile img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    visibility: hidden;
+    pointer-events: none;
+    -webkit-user-drag: none;
+}
+
+.display-tile.has-frame img { visibility: visible; }
+
+/* Web tiles (displays.json "web", e.g. the Fenix EFB): the aircraft's own web page, live and touchable. */
+.display-tile iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: #000;
+}
+
+.display-view.arranging .display-tile iframe { pointer-events: none; }   /* drag the tile, not the page */
+
+.display-tile-expand {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 2;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.45);
+    color: #fff;
+    font-size: 17px;
+    line-height: 1;
+    opacity: 0.7;
+    cursor: pointer;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.display-tile-expand:active { opacity: 1; }
+.display-view.arranging .display-tile-expand { display: none; }
+.display-tile.expanded { z-index: 20 !important; }
+
+.display-tile-status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    text-align: center;
+    color: #9aa3b2;
+    font-size: 13px;
+    line-height: 1.4;
+    background: rgba(0, 0, 0, 0.72);
+}
+
+.display-tile-name { color: #fff; font-weight: 700; font-size: 15px; letter-spacing: 0.04em; }
+
+/* Arrange mode: outline, name, resize handle; the whole tile is the drag target. */
+.display-tile-label,
+.display-tile-handle { display: none; }
+
+.display-view.arranging .display-tile {
+    touch-action: none;
+    cursor: move;
+    box-shadow: 0 0 0 2px var(--blue, #2f7cf6), 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.display-view.arranging .display-tile.dragging {
+    box-shadow: 0 0 0 2px var(--led-green, #18d050), 0 6px 22px rgba(0, 0, 0, 0.65);
+    opacity: 0.92;
+}
+
+.display-view.arranging .display-tile-label {
+    display: block;
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    pointer-events: none;
+}
+
+.display-view.arranging .display-tile-handle {
+    display: block;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 44px;
+    height: 44px;
+    cursor: nwse-resize;
+    background:
+        linear-gradient(135deg, transparent 50%, rgba(47, 124, 246, 0.9) 50%) no-repeat right bottom / 26px 26px;
+}
+
+/* ---------- setup ---------- */
+
+.display-setup {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background: rgba(12, 15, 22, 0.97);
+    border-radius: 6px;
+}
+
+.display-setup-head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; }
+.display-setup-title { font-size: 17px; font-weight: 700; color: #fff; }
+.display-setup-note { margin: 6px 0 0; color: #aeb5c2; font-size: 13px; line-height: 1.45; max-width: 64ch; }
+.display-setup-actions { display: flex; gap: 8px; flex-shrink: 0; }
+
+.display-setup-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+}
+
+.display-setup-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding: 10px;
+    border-radius: 8px;
+    background: #161b26;
+    border: 1px solid #262d3b;
+}
+
+.display-setup-item img {
+    width: 96px;
+    height: 96px;
+    object-fit: contain;
+    background: #000;
+    border-radius: 4px;
+    flex-shrink: 0;
+}
+
+.display-setup-meta { display: flex; flex-direction: column; gap: 8px; min-width: 0; font-size: 12px; color: #aeb5c2; }
+
+.display-setup-meta select {
+    min-height: 36px;
+    border-radius: 8px;
+    border: 2px solid #3a3a3c;
+    background: #0f131b;
+    color: #fff;
+    font-size: 13px;
+    padding: 0 8px;
+    max-width: 100%;
+}
+
+/* ---------- setup: automatic pop-out ---------- */
+
+.display-popout {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 12px;
+    border-top: 1px solid #262d3b;
+}
+
+.display-popout-row,
+.display-popout-targets { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.display-popout-camera {
+    min-height: 32px;
+    border-radius: 8px;
+    border: 2px solid #3a3a3c;
+    background: #0f131b;
+    color: #fff;
+    font-size: 13px;
+    padding: 0 8px;
+}
+
+.display-popout-auto { display: flex; align-items: center; gap: 6px; color: #d8dce6; font-size: 13px; }
+.display-popout-auto input { width: 20px; height: 20px; }
+
+.display-tool:disabled { opacity: 0.45; }
+
+.display-popout-targets .display-chip.placed { border-color: rgba(24, 208, 80, 0.55); }
+.display-popout-targets .display-chip.active { border-color: var(--blue, #2f7cf6); color: #fff; box-shadow: none; }
+
+.display-popout-shot {
+    position: relative;
+    width: 100%;
+    max-width: 960px;
+    aspect-ratio: 16 / 9;
+    background: #000;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.display-popout-shot.has-picture { aspect-ratio: auto; cursor: crosshair; }
+.display-popout-shot img { display: none; width: 100%; height: auto; -webkit-user-drag: none; }
+.display-popout-shot.has-picture img { display: block; }
+
+.display-popout-markers { position: absolute; inset: 0; pointer-events: none; }
+
+.display-popout-marker {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    margin: -9px 0 0 -9px;
+    border-radius: 50%;
+    border: 3px solid var(--led-green, #18d050);
+    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.7);
+}
+
+.display-popout-marker.current { border-color: var(--blue, #2f7cf6); }
+
+.display-popout-marker span {
+    position: absolute;
+    left: 20px;
+    top: -4px;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}

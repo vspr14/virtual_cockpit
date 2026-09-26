@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=B612+Mono&family=B612:wght@400;700&family=Barlow+Condensed:wght@400;600;700&family=Lato:wght@400;700;900&display=swap');
+
+:root {
+    --bg: #050505;
+    --card: #161618;
+    --blue: #007aff;
+    --orange: #ff9500;
+    --red: #ff3b30;
+    --text: #ffffff;
+
+    --airbus-surface: #2f3f52;
+    --airbus-panel: var(--airbus-surface);
+    --airbus-subpanel: var(--airbus-surface);
+    --airbus-pedestal-bezel: var(--airbus-surface);
+    --airbus-pedestal-housing: var(--airbus-surface);
+    --airbus-btn: #1e2535;
+    --airbus-btn-on: #161d2c;
+    --airbus-text: #d8dce6;
+    --airbus-label: #c8cdd8;
+    --airbus-indicator: #08090e;
+    --led-green: #18d050;
+    --led-amber: #ffaa00;
+    --led-blue: #00aaff;
+    --led-red: #ff3b30;
+}
+
+html,
+body {
+    position: fixed;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    height: calc(var(--vh, 1vh) * 100);
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Lato', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    touch-action: pan-x pan-y;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: auto;
+}
+
+.nav-bar {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: auto repeat(var(--nav-tabs, 2), 1fr) auto;   /* back link, the tabs, reload */
+    gap: 10px;
+    height: 45px;
+    flex-shrink: 0;
+}
+
+/* "← Aircraft" link at the start of a page's nav bar (templates/widgets/back_nav.html) */
+.nav-back {
+    display: flex;
+    align-items: center;
+    padding: 0 16px;
+    border-radius: 10px;
+    border: 2px solid rgba(255, 255, 255, 0.18);
+    background: rgba(22, 22, 24, 0.92);
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+
+.nav-back:active {
+    opacity: 0.9;
+    transform: scale(0.98);
+}
+
+/* ↻ reload at the end of the nav bar (templates/widgets/refresh_nav.html) */
+.nav-refresh {
+    justify-content: center;
+    min-width: 52px;
+    padding: 0 14px;
+    font-family: inherit;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.nav-btn {
+    background: #2c2c2e;
+    border: 2px solid #3a3a3c;
+    color: white;
+    border-radius: 10px;
+    font-weight: bold;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+    transform: translateY(0);
+    cursor: pointer;
+    touch-action: auto;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1000;
+}
+
+.nav-btn:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.nav-btn.active {
+    border-color: var(--blue);
+    background: #1c1c1e;
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+.ofp-container {
+    flex: 1;
+    width: 100%;
+    background: #111;
+    border-radius: 16px;
+    overflow: auto;
+    display: flex;
+    align-items: stretch;
+    justify-content: center;
+    color: #b0b0b0;
+    font-size: 1.05em;
+    -webkit-overflow-scrolling: touch;
+}
+
+.ofp-frame {
+    border: none;
+    width: 100%;
+    height: 100%;
+    align-self: stretch;
+    display: block;
+}
+
+.metar-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    flex-shrink: 0;
+    gap: 10px;
+}
+
+.metar-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 1.15em;
+    font-weight: 600;
+    color: #b0b0b0;
+    line-height: 1.4;
+}
+
+.metar-refresh-btn {
+    background: #2c2c2e;
+    border: 2px solid #3a3a3c;
+    color: white;
+    border-radius: 8px;
+    width: 40px;
+    height: 40px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.metar-refresh-btn:active {
+    transform: scale(0.95);
+    background: #1c1c1e;
+}
+
+.ofp-refresh-btn {
+    font-size: 0.85em;
+    min-width: 48px;
+}
+
+button {
+    touch-action: manipulation;
+    /* Prevents long-press context menus (right click menu) */
+    -webkit-touch-callout: none;
+}

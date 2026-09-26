@@ -1,0 +1,395 @@
+:root {
+    --tcas-panel-bg: var(--airbus-subpanel, #2f3f52);
+    --tcas-panel-dark: var(--airbus-subpanel, #2f3f52);
+    --tcas-text-panel: #e8edf4;
+    --tcas-knob-face: linear-gradient(180deg, #b4bcc8 0%, #8f98a6 42%, #6f7a89 100%);
+    --tcas-knob-rim: rgba(0, 0, 0, 0.22);
+    --tcas-knob-grip: linear-gradient(90deg, #5c6572 0%, #3e4652 48%, #5c6572 100%);
+    --tcas-xpdr-amber: #8f6a38;
+    --tcas-screw-color: #2b3542;
+}
+
+.tcas-panel {
+    position: relative;
+    width: 780px;
+    min-height: 340px;
+    background-color: var(--tcas-panel-bg);
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.tcas-panel * {
+    box-sizing: border-box;
+}
+
+.tcas-panel .vert-text {
+    position: absolute;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--tcas-text-panel);
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    line-height: 1.5;
+    text-align: center;
+}
+
+.tcas-panel .vert-atc  { left: 16px; top: 96px; }
+
+.tcas-panel .vert-tcas { right: 16px; top: 100px; }
+
+.tcas-panel .col-left {
+    width: 210px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-left: 20px;
+}
+
+.tcas-panel .col-center {
+    width: 224px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: calc(5px + 85px / 2);
+}
+
+.tcas-panel .col-right {
+    flex-grow: 1;
+    height: 100%;
+    min-height: 270px;
+    position: relative;
+    padding-left: 8px;
+}
+
+.tcas-panel .knob-group {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.tcas-panel .knob-mount {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    z-index: 3;
+    width: 68px;
+    height: 68px;
+    transform: translateX(-50%);
+    cursor: grab;
+    touch-action: none;
+}
+
+.tcas-panel .knob-mount:active { cursor: grabbing; }
+
+.tcas-panel .knob-mount .knob {
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform-origin: 50% 50%;
+    transition: transform 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.tcas-panel .knob-mount.is-dragging .knob { transition: none; }
+
+.tcas-panel .knob-lbl {
+    position: absolute;
+    z-index: 2;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tcas-text-panel);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.65);
+    line-height: 1.15;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.tcas-panel .knob-mark {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    color: var(--tcas-text-panel);
+    overflow: visible;
+}
+
+.tcas-panel .knob-mark line {
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.tcas-panel .knob-g-k1 { width: 138px; height: 120px; }
+
+.tcas-panel .knob-g-k1 .kb-t {
+    left: 50%;
+    top: 4px;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.tcas-panel .knob-g-k1 .kb-l {
+    left: 2px;
+    top: 54px;
+}
+
+.tcas-panel .knob-g-k1 .kb-r {
+    right: 2px;
+    top: 54px;
+}
+
+.tcas-panel .knob-g-k4 { width: 146px; height: 130px; }
+
+.tcas-panel .knob-g-k4 .kb-t {
+    left: 50%;
+    top: 4px;
+    transform: translateX(-50%);
+}
+
+.tcas-panel .knob-g-k4 .kb-l {
+    left: 2px;
+    top: 62px;
+}
+
+.tcas-panel .knob-g-k4 .kb-b {
+    left: 2px;
+    top: 106px;
+}
+
+.tcas-panel .knob-g-k4 .kb-r {
+    right: 2px;
+    top: 62px;
+}
+
+.tcas-panel .knob-g-k5 { width: 150px; height: 126px; }
+
+.tcas-panel .knob-g-k5 .kb-t {
+    left: 50%;
+    top: 4px;
+    transform: translateX(-50%);
+}
+
+.tcas-panel .knob-g-k5 .kb-l {
+    left: 2px;
+    top: 86px;
+}
+
+.tcas-panel .knob-g-k5 .kb-r {
+    right: 2px;
+    top: 86px;
+    font-size: 10px;
+    letter-spacing: -0.03em;
+}
+
+.tcas-panel .knob {
+    width: 68px;
+    height: 68px;
+    background: var(--tcas-knob-face);
+    border-radius: 50%;
+    position: relative;
+    border: 1px solid var(--tcas-knob-rim);
+    box-shadow:
+        inset 0 1px 2px rgba(255,255,255,0.55),
+        inset 0 -3px 6px rgba(0,0,0,0.28),
+        0 4px 8px rgba(0,0,0,0.35);
+}
+
+.tcas-panel .knob-handle {
+    position: absolute;
+    top: -2px;
+    left: 25px;
+    width: 18px;
+    height: 72px;
+    background: var(--tcas-knob-grip);
+    border-radius: 3px;
+    box-shadow:
+        -1px 0 2px rgba(0,0,0,0.35),
+         1px 0 2px rgba(0,0,0,0.35),
+        inset 0 1px 0 rgba(255,255,255,0.2);
+}
+
+.tcas-panel .knob-indicator {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    width: 2px;
+    height: 15px;
+    background-color: #1a1f26;
+    border-radius: 1px;
+}
+
+.tcas-panel .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 44px);
+    grid-template-rows: repeat(3, 44px);
+    gap: 20px 24px;
+}
+
+.tcas-panel .num-btn {
+    width: 44px;
+    height: 44px;
+    background-color: #080808;
+    border-radius: 4px;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #f2f2f2;
+    font-size: 18px;
+    font-weight: bold;
+    font-family: inherit;
+    box-shadow:
+        inset 0 2px 5px rgba(0,0,0,0.65),
+        inset 0 -1px 0 rgba(255,255,255,0.05),
+        0 2px 3px rgba(0,0,0,0.5);
+}
+
+.tcas-panel .num-btn.clr span { font-size: 13px; letter-spacing: -0.02em; }
+
+.tcas-panel .screen-bezel {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    width: 250px;
+    height: 85px;
+    background-color: var(--tcas-panel-dark);
+    border-radius: 0;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.45);
+    padding: 12px 20px;
+}
+
+.tcas-panel .screen-glass {
+    width: 100%;
+    height: 100%;
+    background-color: #000;
+    border-radius: 0;
+    padding: 6px 10px 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.tcas-panel .xpdr-digits {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 2px;
+    width: 60%;
+    align-items: center;
+    justify-items: center;
+}
+
+.tcas-panel .xpdr-d {
+    font-family: 'Share Tech Mono', ui-monospace, monospace;
+    font-size: 40px;
+    font-weight: 400;
+    color: var(--tcas-xpdr-amber);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    min-width: 0;
+    width: 100%;
+}
+
+.tcas-panel .xpdr-d--empty {
+    opacity: 0.22;
+}
+
+.tcas-panel .mini-screw {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: #222;
+    border-radius: 50%;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.9), 0 1px 1px rgba(255,255,255,0.2);
+}
+
+.tcas-panel .ms-tl { top: 6px; left: 6px; }
+
+.tcas-panel .ms-tr { top: 6px; right: 6px; }
+
+.tcas-panel .ms-bl { bottom: 6px; left: 6px; }
+
+.tcas-panel .ms-br { bottom: 6px; right: 6px; }
+
+.tcas-panel .right-knobs {
+    position: absolute;
+    bottom: 6px;
+    left: 2px;
+    right: 2px;
+    width: auto;
+    max-width: 320px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.tcas-xpdr-embed-wrap {
+    width: 100%;
+    max-width: 100%;
+    position: relative;
+    overflow: hidden;
+    min-height: 100px;
+    margin-top: 6px;
+    border-radius: 0;
+    background: var(--airbus-subpanel, #2f3f52);
+    flex-shrink: 0;
+    box-sizing: border-box;
+    z-index: 0;
+    transform: translateZ(0);
+}
+
+.tcas-xpdr-embed-wrap .tcas-xpdr-scale {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 780px;
+    height: 310px;
+    transform: translateX(-50%) translateZ(0) scale(0.58);
+    transform-origin: top center;
+}
+
+
+.tcas-panel .knob-lbl {
+    pointer-events: auto;
+    cursor: pointer;
+    padding: 6px 8px;
+    margin: -6px -8px;
+    border-radius: 4px;
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: color 0.12s, text-shadow 0.12s;
+}
+
+.tcas-panel .knob-lbl.knob-lbl--active {
+    color: #ffffff;
+    text-shadow: 0 0 6px rgba(120, 200, 255, 0.85), 0 1px 2px rgba(0, 0, 0, 0.65);
+}
+
+.tcas-panel .knob-mount {
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.tcas-panel .num-btn {
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    transition: transform 0.06s, background-color 0.06s;
+}
+
+.tcas-panel .num-btn.num-btn--pressed {
+    transform: scale(0.92);
+    background-color: #1c2630;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.8);
+}

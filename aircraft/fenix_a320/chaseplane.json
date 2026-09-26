@@ -1,0 +1,283 @@
+{
+  "match": [
+    "simobjects/airplanes/fnx_32x/*",
+    "fnx_32*"
+  ],
+  "global_cameras": {
+    "11": "CAM_TOGGLE_IN_OUT"
+  },
+  "views": {
+    "1": {
+      "name": "Captain",
+      "mode": 0,
+      "profile_preset": "d116f279-0000-0000-987c-49924356deb4",
+      "profile_physics_type": "HUMAN",
+      "profile_theme": "ONBOARD_PIC",
+      "can_cinematics": false,
+      "can_smart_view": true,
+      "is_tracking": false,
+      "is_gimbal": false,
+      "skip_cycle": false,
+      "position": {
+        "x": 0.0,
+        "y": 0.0024373868136231547,
+        "z": -0.019850922589123243,
+        "pitch": -7.0,
+        "yaw": 0.0,
+        "roll": 0.0,
+        "zoom": 0.49110770176410673
+      },
+      "position_frame": "cockpit-anchor-v1",
+      "anchor_at_save": [
+        0.5397089750289918,
+        1.8806750988006593,
+        10.937041009521485
+      ],
+      "cockpit_anchor_migration_version": 1,
+      "camera_definition_frame_version": 2,
+      "source": {
+        "profile": "fnx_320_cfm_sl",
+        "view": "Pilot",
+        "guid": "d8944e04-0000-0000-a738-4ce81559da1d"
+      }
+    },
+    "2": {
+      "name": "Left Engine",
+      "mode": 0,
+      "profile_preset": "e2abef7b-0000-0000-b488-402c9176f44b",
+      "profile_physics_type": "HUMAN",
+      "profile_theme": "ONBOARD_CABIN",
+      "can_cinematics": false,
+      "can_smart_view": true,
+      "is_tracking": false,
+      "is_gimbal": false,
+      "skip_cycle": false,
+      "position": {
+        "x": -1.2123502191872344,
+        "y": -0.12221653804301402,
+        "z": -6.199357530080175,
+        "pitch": -6.149093952143663,
+        "yaw": -131.22475870504493,
+        "roll": 0.0,
+        "zoom": 0.49374081269106435
+      },
+      "position_frame": "cockpit-anchor-v1",
+      "anchor_at_save": [
+        0.5397089750289918,
+        1.8806750988006593,
+        10.937041009521485
+      ],
+      "cockpit_anchor_migration_version": 1,
+      "camera_definition_frame_version": 2,
+      "source": {
+        "profile": "fnx_320_cfm_sl",
+        "view": "Cabin Window (Forward)",
+        "guid": "2f5ea314-0000-0000-868d-404213452b53"
+      }
+    },
+    "3": {
+      "name": "Left Wing",
+      "mode": 0,
+      "profile_preset": "e2abef7b-0000-0000-b488-402c9176f44b",
+      "profile_physics_type": "HUMAN",
+      "profile_theme": "ONBOARD_CABIN",
+      "can_cinematics": false,
+      "can_smart_view": true,
+      "is_tracking": false,
+      "is_gimbal": false,
+      "skip_cycle": false,
+      "position": {
+        "x": -1.1888672130995206,
+        "y": -0.12221653804301402,
+        "z": -12.767523712672215,
+        "pitch": -5.722331891440144,
+        "yaw": -104.90486709882772,
+        "roll": 0.0,
+        "zoom": 0.49374081269106435
+      },
+      "position_frame": "cockpit-anchor-v1",
+      "anchor_at_save": [
+        0.5397089750289918,
+        1.8806750988006593,
+        10.937041009521485
+      ],
+      "cockpit_anchor_migration_version": 1,
+      "camera_definition_frame_version": 2,
+      "source": {
+        "profile": "fnx_320_cfm_sl",
+        "view": "Cabin Window (Middle)",
+        "guid": "75dba623-0000-0000-8a57-48037f47ed70"
+      }
+    },
+    "4": {
+      "name": "Right Engine",
+      "mode": 0,
+      "profile_preset": "e2abef7b-0000-0000-b488-402c9176f44b",
+      "profile_physics_type": "HUMAN",
+      "profile_theme": "ONBOARD_CABIN",
+      "can_cinematics": false,
+      "can_smart_view": true,
+      "is_tracking": false,
+      "is_gimbal": false,
+      "skip_cycle": false,
+      "position": {
+        "x": 2.2652211237465294,
+        "y": -0.12221653804301402,
+        "z": -6.181107470719392,
+        "pitch": -5.803158157519866,
+        "yaw": 115.19899321749534,
+        "roll": 0.0,
+        "zoom": 0.49374081269106435
+      },
+      "position_frame": "cockpit-anchor-v1",
+      "anchor_at_save": [
+        0.5397089750289918,
+        1.8806750988006593,
+        10.937041009521485
+      ],
+      "cockpit_anchor_migration_version": 1,
+      "camera_definition_frame_version": 2,
+      "source": {
+        "profile": "fnx_320_cfm_sl",
+        "view": "Cabin Window (Forward)",
+        "guid": "4ba745a6-0000-0000-af33-4ac256b5720f"
+      }
+    },
+    "5": {
+      "name": "Right Wing",
+      "mode": 0,
+      "profile_preset": "e2abef7b-0000-0000-b488-402c9176f44b",
+      "profile_physics_type": "HUMAN",
+      "profile_theme": "ONBOARD_CABIN",
+      "can_cinematics": false,
+      "can_smart_view": true,
+      "is_tracking": false,
+      "is_gimbal": false,
+      "skip_cycle": false,
+      "position": {
+        "x": 2.2301902829917837,
+        "y": -0.12221653804301402,
+        "z": -19.866406229989465,
+        "pitch": -4.114746416097435,
+        "yaw": 64.65341771907768,
+        "roll": 0.0,
+        "zoom": 0.49374081269106435
+      },
+      "position_frame": "cockpit-anchor-v1",
+      "anchor_at_save": [
+        0.5397089750289918,
+        1.8806750988006593,
+        10.937041009521485
+      ],
+      "cockpit_anchor_migration_version": 1,
+      "camera_definition_frame_version": 2,
+      "source": {
+        "profile": "fnx_320_cfm_sl",
+        "view": "Cabin Window",
+        "guid": "f9de3c44-0000-0000-a417-48a95860ec8a"
+      }
+    },
+    "6": {
+      "name": "EFB",
+      "mode": 0,
+      "profile_preset": "091df936-0000-0000-b51f-457b880ec933",
+      "profile_physics_type": "HUMAN",
+      "profile_theme": "ONBOARD_SYSTEMS",
+      "can_cinematics": false,
+      "can_smart_view": true,
+      "is_tracking": false,
+      "is_gimbal": false,
+      "skip_cycle": false,
+      "position": {
+        "x": -0.2525695630331507,
+        "y": -0.17025175374027648,
+        "z": 0.15030682997161904,
+        "pitch": -26.1,
+        "yaw": -53.46100000000002,
+        "roll": 0.0,
+        "zoom": 0.38971537392044986
+      },
+      "position_frame": "cockpit-anchor-v1",
+      "anchor_at_save": [
+        0.5397089750289918,
+        1.8806750988006593,
+        10.937041009521485
+      ],
+      "cockpit_anchor_migration_version": 1,
+      "camera_definition_frame_version": 2,
+      "source": {
+        "profile": "fnx_320_cfm_sl",
+        "view": "EFB (Captain)",
+        "guid": "f508d208-0000-0000-9a8d-49f34ce6a76b"
+      }
+    },
+    "7": {
+      "name": "FMC",
+      "mode": 0,
+      "profile_preset": "091df936-0000-0000-b51f-457b880ec933",
+      "profile_physics_type": "HUMAN",
+      "profile_theme": "ONBOARD_SYSTEMS",
+      "can_cinematics": false,
+      "can_smart_view": true,
+      "is_tracking": false,
+      "is_gimbal": false,
+      "skip_cycle": false,
+      "position": {
+        "x": 0.24473530289781004,
+        "y": -0.14785165640561848,
+        "z": 0.3071261623306989,
+        "pitch": -55.17740715377734,
+        "yaw": 9.718928020441687,
+        "roll": 0.0,
+        "zoom": 0.5450656549399402
+      },
+      "position_frame": "cockpit-anchor-v1",
+      "anchor_at_save": [
+        0.5397089750289918,
+        1.8806750988006593,
+        10.937041009521485
+      ],
+      "cockpit_anchor_migration_version": 1,
+      "camera_definition_frame_version": 2,
+      "source": {
+        "profile": "fnx_320_cfm_sl",
+        "view": "MCDU (Captain)",
+        "guid": "114bc65d-0000-0000-8186-4d602fe4979c"
+      }
+    },
+    "8": {
+      "name": "Overhead",
+      "mode": 0,
+      "profile_preset": "091df936-0000-0000-b51f-457b880ec933",
+      "profile_physics_type": "HUMAN",
+      "profile_theme": "ONBOARD_SYSTEMS",
+      "can_cinematics": false,
+      "can_smart_view": true,
+      "is_tracking": false,
+      "is_gimbal": false,
+      "skip_cycle": false,
+      "position": {
+        "x": 0.5395010011781607,
+        "y": -0.49402112990074776,
+        "z": -0.18618033974935777,
+        "pitch": 72.00000000000027,
+        "yaw": -1.0922316471176664e-05,
+        "roll": 0.0,
+        "zoom": 0.5762269382153418
+      },
+      "position_frame": "cockpit-anchor-v1",
+      "anchor_at_save": [
+        0.5397089750289918,
+        1.8806750988006593,
+        10.937041009521485
+      ],
+      "cockpit_anchor_migration_version": 1,
+      "camera_definition_frame_version": 2,
+      "source": {
+        "profile": "fnx_320_cfm_sl",
+        "view": "Overhead",
+        "guid": "cfe95c08-0000-0000-9450-4d1f0ac56eea"
+      }
+    }
+  }
+}

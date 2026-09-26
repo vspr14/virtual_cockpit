@@ -1,0 +1,78 @@
+{# Airbus ATC / TCAS panel. Behaviour: static/js/widgets/tcas_xpdr_panel.js; styles: css/widgets/tcas_xpdr.css #}
+<div class="tcas-xpdr-embed-wrap" id="tcas-xpdr-root">
+    <div class="tcas-xpdr-scale">
+        <div class="tcas-panel">
+            <div class="vert-text vert-atc">A<br>T<br>C</div>
+            <div class="col-left">
+                <div class="knob-group knob-g-k1">
+                    <svg class="knob-mark" viewBox="0 0 108 96" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                        <line x1="30.6" y1="56.5" x2="21.9" y2="51.5" />
+                        <line x1="54" y1="43" x2="54" y2="33" />
+                        <line x1="77.4" y1="56.5" x2="86.1" y2="51.5" />
+                    </svg>
+                    <span class="knob-lbl kb-l">STBY</span>
+                    <span class="knob-lbl kb-t">AUTO</span>
+                    <span class="knob-lbl kb-r">ON</span>
+                    <div class="knob-mount" data-knob-detents="-60,0,60" data-knob-initial="0">
+                        <div class="knob"><div class="knob-handle"><div class="knob-indicator"></div></div></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-center">
+                <div class="numpad">
+                    {% for d in ['1', '2', '3', '4', '5', '6', '7', '0'] %}
+                    <button type="button" class="num-btn" data-xpdr-digit="{{ d }}"><span>{{ d }}</span></button>
+                    {% endfor %}
+                    <button type="button" class="num-btn clr" data-xpdr-clr><span>CLR</span></button>
+                </div>
+            </div>
+            <div class="col-right">
+                <div class="screen-bezel">
+                    <div class="mini-screw ms-tl"></div>
+                    <div class="mini-screw ms-tr"></div>
+                    <div class="mini-screw ms-bl"></div>
+                    <div class="mini-screw ms-br"></div>
+                    <div class="screen-glass">
+                        <div class="xpdr-digits" role="img" aria-label="empty">
+                            <span class="xpdr-d xpdr-d--empty"></span>
+                            <span class="xpdr-d xpdr-d--empty"></span>
+                            <span class="xpdr-d xpdr-d--empty"></span>
+                            <span class="xpdr-d xpdr-d--empty"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="right-knobs">
+                    <div class="knob-group knob-g-k4">
+                        <svg class="knob-mark" viewBox="0 0 114 104" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                            <line x1="33.6" y1="91.5" x2="24.9" y2="96.5" />
+                            <line x1="33.6" y1="64.5" x2="24.9" y2="59.5" />
+                            <line x1="57" y1="51" x2="57" y2="41" />
+                            <line x1="80.4" y1="64.5" x2="89.1" y2="59.5" />
+                        </svg>
+                        <span class="knob-lbl kb-t">ABV</span>
+                        <span class="knob-lbl kb-l">ALL</span>
+                        <span class="knob-lbl kb-b">THRT</span>
+                        <span class="knob-lbl kb-r">BLW</span>
+                        <div class="knob-mount" data-knob-detents="-120,-60,0,60" data-knob-initial="0">
+                            <div class="knob"><div class="knob-handle"><div class="knob-indicator"></div></div></div>
+                        </div>
+                    </div>
+                    <div class="knob-group knob-g-k5">
+                        <svg class="knob-mark" viewBox="0 0 118 102" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+                            <line x1="32" y1="76" x2="22" y2="76" />
+                            <line x1="59" y1="49" x2="59" y2="39" />
+                            <line x1="86" y1="76" x2="96" y2="76" />
+                        </svg>
+                        <span class="knob-lbl kb-t">TA</span>
+                        <span class="knob-lbl kb-l">STBY</span>
+                        <span class="knob-lbl kb-r">TA/RA</span>
+                        <div class="knob-mount" data-knob-detents="-90,0,90" data-knob-initial="90">
+                            <div class="knob"><div class="knob-handle"><div class="knob-indicator"></div></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="vert-text vert-tcas">T<br>C<br>A<br>S</div>
+        </div>
+    </div>
+</div>

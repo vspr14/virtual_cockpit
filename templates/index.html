@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-    {% include 'partials/pwa_head.html' %}
+    {% include 'widgets/pwa_head.html' %}
     <title>Select Aircraft</title>
     <style>
         html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;background:#050505;color:#fff;overflow:hidden;}
@@ -64,6 +64,7 @@
             transition: all 0.2s;
         }
         .air-btn:active { border-color: #007aff; transform: scale(0.98); }
+        .air-btn-secondary { background: transparent; padding: 14px; font-size: 13px; color: #b8bcc6; }
         #loginScreen, #buttonsWrap { transition: opacity 350ms ease, transform 350ms ease; }
         .hidden { opacity: 0; transform: translateY(20px); pointer-events: none; }
         .visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
@@ -75,7 +76,7 @@
 </head>
 <body>
     <div class="wrap">
-        <div id="loginScreen" class="visible">
+        <div id="loginScreen" class="{{ 'hidden' if authed else 'visible' }}">
             <h2 style="margin:0 0 20px; font-size: 28px;">Enter PIN</h2>
             <div id="pinDots" style="display:flex; gap:15px; margin-bottom:20px">
                 <div class="dot" style="width:16px; height:16px; border-radius:50%; border:2px solid #3a3a3c"></div>
@@ -99,18 +100,19 @@
                 <button id="backBtn" class="kbtn">⌫</button>
             </div>
         </div>
-        <div id="buttonsWrap" class="hidden">
+        <div id="buttonsWrap" class="{{ 'visible' if authed else 'hidden' }}">
             <h2 style="margin-bottom: 30px;">Select Aircraft</h2>
             <div class="btns">
-                <a class="air-btn" href="fenix_a320.html">Fenix A320</a>
-                <a class="air-btn" href="fenix_a350.html">Fenix A350</a>
-                <a class="air-btn" href="ini_a350.html">iniBuilds A350</a>
-                <a class="air-btn" href="pmdg_737.html">PMDG 737</a>
-                <a class="air-btn" href="pmdg_777.html">PMDG 777</a>
+                {% for a in aircraft_list %}
+                <a class="air-btn" href="{{ url_for('pages.cockpit', aircraft_id=a.id) }}">{{ a.name }}</a>
+                {% endfor %}
+                {% if aircraft_list | selectattr('chaseplane') | list %}
+                <a class="air-btn air-btn-secondary" href="{{ url_for('chaseplane.page') }}">ChasePlane views</a>
+                {% endif %}
             </div>
         </div>
     </div>
-    <script src="{{ url_for('static', filename='js/pwa_standalone_boot.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/core/pwa_boot.js') }}"></script>
     <script>
         (function(){
             let pin = '';

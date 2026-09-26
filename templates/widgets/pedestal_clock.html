@@ -1,0 +1,58 @@
+{# Airbus pedestal clock (T/D alarm, UTC, elapsed time). Behaviour: static/js/widgets/pedestal_clock.js #}
+<div id="pedestalClockHost" class="gear-clock-host">
+    <div class="pedestal-clock-bezel">
+        <div class="pedestal-clock-housing">
+            <div class="pedestal-clock-panel-row">
+                <div class="pedestal-clock-title-above">T/D</div>
+                <div class="pedestal-clock-picker-wrap" data-pc="picker-wrap">
+                    <div class="pedestal-clock-glass">
+                        <div class="pedestal-clock-td-inner">
+                            <div class="pedestal-clock-td-display" data-pc="td-display">--:--</div>
+                        </div>
+                        <div class="pedestal-clock-sub-row">
+                            <span class="pedestal-clock-sub">HR</span>
+                            <span class="pedestal-clock-sub">MIN</span>
+                        </div>
+                        <button type="button" class="pedestal-clock-set-btn" data-pc="set-btn">SET</button>
+                    </div>
+                    <div class="pedestal-clock-picker-drop" data-pc="picker-drop">
+                        <input type="time" value="00:00" data-pc="td-input">
+                        <button type="button" class="pedestal-clock-confirm-btn" data-pc="confirm-btn">CONFIRM</button>
+                    </div>
+                </div>
+            </div>
+            <div class="pedestal-clock-panel-row">
+                <div class="pedestal-clock-title-above">UTC</div>
+                <div class="pedestal-clock-glass">
+                    <div class="pedestal-clock-digit-row">
+                        <span class="pedestal-clock-d" data-pc="uh1">0</span><span class="pedestal-clock-d" data-pc="uh2">0</span>
+                        <span class="pedestal-clock-sep pedestal-clock-blink">:</span>
+                        <span class="pedestal-clock-d" data-pc="um1">0</span><span class="pedestal-clock-d" data-pc="um2">0</span>
+                        <span class="pedestal-clock-sep pedestal-clock-blink">:</span>
+                        <span class="pedestal-clock-d" data-pc="us1">0</span><span class="pedestal-clock-d" data-pc="us2">0</span>
+                    </div>
+                    <div class="pedestal-clock-sub-row">
+                        <span class="pedestal-clock-sub">HR</span>
+                        <span class="pedestal-clock-sub">MIN</span>
+                        <span class="pedestal-clock-sub">SEC</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pedestal-clock-panel-row">
+                <div class="pedestal-clock-glass">
+                    <div class="pedestal-clock-digit-row">
+                        <span class="pedestal-clock-d" data-pc="es">&thinsp;</span>
+                        <span class="pedestal-clock-d" data-pc="eh1">-</span><span class="pedestal-clock-d" data-pc="eh2">-</span>
+                        <span class="pedestal-clock-sep">:</span>
+                        <span class="pedestal-clock-d" data-pc="em1">-</span><span class="pedestal-clock-d" data-pc="em2">-</span>
+                    </div>
+                    <div class="pedestal-clock-sub-row">
+                        <span class="pedestal-clock-sub">HR</span>
+                        <span class="pedestal-clock-sub">MIN</span>
+                    </div>
+                </div>
+                <div class="pedestal-clock-title-below">ET</div>
+            </div>
+        </div>
+    </div>
+</div>

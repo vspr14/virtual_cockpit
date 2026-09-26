@@ -1,379 +1,218 @@
-# iPad Joy
+# Virtual Cockpit
 
-**Apple Developer account note:** The native SwiftUI iPad app for this project is designed to be built and run with a free Apple Developer account. All features described in section 7 for the iPad app (LAN networking to the Flask backend, TD timer with in-app alert and sound while the app is in the foreground, local state persistence, haptics, and OFP/METAR viewing) are supported under a free account. You cannot distribute the app via the App Store or TestFlight with a free account and will need to periodically rebuild it on your device because free provisioning profiles expire. Adding future integrations with advanced Apple services (such as Apple Pay, In-App Purchase, remote push notifications, or Sign in with Apple) would require upgrading to a paid Apple Developer Program membership.
+Touch-friendly cockpit panels for Microsoft Flight Simulator, served from your PC to an iPad (or any browser)
+on the same network. Each aircraft gets its own page; controls talk to the sim through MobiFlight WASM
+(LVars), and camera views through vJoy buttons.
 
-## 1. What this project is about
+Currently included: **Fenix A320**: camera views and T.O. CONFIG, SimBrief OFP and METARs, AUTO BRK,
+landing gear, pedestal clock, ATC/TCAS panel, weather radar SYS / PWS.
 
-This is a touch-friendly flight control panel for MSFS, designed to run on an iPad or any browser and drive simulator controls through vJoy. The UI provides on-screen sliders, a virtual joystick, buttons, and aircraft-specific behavior via profiles. All primary interaction with MSFS is done by sending vJoy axis and button outputs; there is no continuous SimConnect sim-state polling.
+## Requirements (sim PC, Windows)
 
-Key goals:
-- Mobile-friendly cockpit controls
-- Aircraft-specific behavior (Fenix A320, Fenix A350, PMDG 737, PMDG 777)
-- vJoy output for all axes and buttons
-- Minimal external dependencies so the UI logic is mostly self-contained in the browser
+- Python 3.12+ and `pip install -r requirements.txt`
+- MSFS with the [MobiFlight WASM module](https://github.com/MobiFlight/MobiFlight-WASM-Module) installed
+  (reads/writes aircraft LVars)
+- [vJoy](https://github.com/jshafer817/vJoy) with device 1 enabled; bind its buttons to camera views in MSFS
+  (button numbers per aircraft are in `aircraft/<id>/aircraft.json`)
 
-Special cases:
-- SimBrief OFP PDF and basic METAR strings are fetched via the backend for display, but they do not drive sim controls.
-
-## 2. How to install (including dependencies)
-
-### OS and simulator prerequisites
-- Windows with MSFS installed
-- vJoy installed (Device 1 is required; additional devices are not used by default)
-
-### Python requirements
-- Python 3.8+ recommended
-
-### Python packages
-
-Install all required packages:
+## Run
 
 ```bash
-pip install -r requirements.txt
+python app.py            # http://<pc-ip>:5000
+python app.py 1          # debug mode with auto-reload
+python app.py 1 1        # debug + self-signed HTTPS (needs pyOpenSSL)
 ```
 
-Notes:
-- `pyvjoy` is required for vJoy button/axis output.
-- For Fenix A320 AP integration, you need a working MobiFlight WASM / WAPI setup so L:Vars from `data/lvars.json` are accessible.
+Open `http://<pc-ip>:5000` on the iPad, enter the PIN, pick an aircraft. For a full-screen app, use Safari's
+**Share → Add to Home Screen**. The sim can be started before or after the server; the server connects when
+MSFS is running.
 
-## 3. How to set up
+Settings (environment variables): `VC_PIN` (default `1234`), `VC_SIMBRIEF_USERID`, `VC_PORT` (default
+`5000`), `VC_SECRET_KEY`.
 
-### vJoy configuration
-1. Open **vJoy Configuration**.
-2. Enable Device 1.
-3. Ensure Device 1 has at least:
-   - Axes: X, Y, Z, RX, RY, RZ, SL0
-   - Buttons: enough for your mappings (see profile files in `profiles/`)
-4. Apply and save the configuration.
+## Displays tab (live cockpit screens)
 
-### Button/axis verification
-1. Open **vJoy Monitor**.
-2. Move the UI controls in the browser (throttle, flaps, spoilers, brakes, rudder, joystick).
-3. Confirm axes and buttons respond as expected on Device 1.
-4. If a control does nothing, check the vJoy mapping in the corresponding profile.
+The cockpit page has three tabs: **CONTROLS**, **OFP** and **DISPLAYS**. The Displays tab streams the sim's
+screens (Fenix: PFD, ND, upper and lower ECAM) to the iPad. Toggle the screens you want (default PFD + ND); they
+are laid out as large as the screen allows. **ARRANGE** lets you place them yourself: drag a screen to move it,
+its corner to resize it (the shape is kept, edges snap to each other). **AUTO** goes back to the automatic
+layout. Selection and arrangement are remembered on that device.
 
-### Run the app
+How it works: MSFS draws each popped-out screen into its own window. With the **virtual monitor** installed, the
+server moves those windows onto it (borderless, one slot per screen, off the taskbar), so you never see them,
+and captures that monitor as one picture (Windows Graphics Capture) at the capture rate, only while someone
+watches. Measured with four screens streaming at 25 fps: about -3% sim fps and no change in 1% lows, within the
+run-to-run noise. Each screen is a crop of that picture, scaled to the tile's exact pixel size, JPEG-encoded once for every
+viewer and sent over one WebSocket. Without the virtual monitor the windows are captured one by one (Windows
+Graphics Capture) and must stay open on your desktop.
 
-From the project root:
+### Virtual monitor (one-time install)
+
+Uses the free, open-source [Virtual Display Driver](https://github.com/VirtualDrivers/Virtual-Display-Driver)
+(signed by the SignPath Foundation). From an **admin** PowerShell in the repo folder:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tools\virtual_display\install.ps1              # install
+powershell -ExecutionPolicy Bypass -File tools\virtual_display\install.ps1 -Uninstall   # remove
+```
+
+It downloads the pinned driver release, checks its signature, writes `C:\VirtualDisplayDriver\vdd_settings.xml`
+(from `tools/virtual_display/vdd_settings.xml`: one 1600×1600 monitor at 60 Hz on the GPU that drives your main
+monitor) and adds the device. The server then sizes the monitor and tucks it diagonally under a corner of your
+desktop, sharing a single pixel of edge (Windows needs a shared edge), so the mouse can't wander onto it.
+
+Each flight: in the sim hold **Right-Alt** and click each screen to pop it out, then **DISPLAYS → SETUP** and pick
+which screen each window shows. The window moves to the virtual monitor right away. Assignments are remembered;
+a pop-out that reappears where it first opened (or already sits in its slot) is picked up and moved by itself.
+Setting a window to "Not used" gives it back to your desktop with its frame.
+
+### Automatic pop-out
+
+Works like [MSFS Pop Out Panel Manager](https://github.com/hawkeye-stan/msfs-2024-popout-panel-manager), with
+ChasePlane. Once per aircraft, in **DISPLAYS → SETUP → Automatic pop-out**: pick a ChasePlane view that shows the
+screens, **TAKE PICTURE**, then tap a screen's name and tap that screen in the picture (avoid spots near the edge of
+the view). **POP OUT NOW** or, with **Pop out when a flight starts** ticked, the server does it by itself when the
+camera goes from the loading / Ready to Fly screen to the cockpit. Either way, for each screen:
+
+1. ChasePlane jumps straight to the view (its local API, `ws://127.0.0.1:8652`, no transition)
+2. the sim is brought to the front, the cursor is put on the screen and clicked once (to focus the cockpit)
+3. Right-Alt + click, up to 5 tries, until the pop-out window appears; it's moved to the virtual monitor at once
+
+Then ChasePlane returns to its default view, and the cursor and focused window are put back. Takes about 12 s for
+four screens; keep your hands off the mouse meanwhile. Nothing is clicked if the sim window isn't in front or
+another window covers the spot. Calibration: `%LOCALAPPDATA%\VirtualCockpit\popout.json`.
+
+Per aircraft: `aircraft/<id>/displays.json` lists the screens (`id`, `label`, `name`, `aspect`), the default
+selection, the AUTO layout preset (`layout`: a `cols` x `rows` grid of equal tiles in the screens' true shape, as large as the tab allows, `cells` gives each
+screen's `[column, row]` or `[column, row, columns spanned]`; the A320 has PFD, ND, upper ECAM on top, the lower ECAM
+under the upper one and the EFB under PFD + ND), `web` (web pages shown live as tiles instead of streamed: `id`,
+`label`, `name`, `url` where `{host}` becomes this server's host; the A320's is the Fenix EFB that Fenix's gateway
+serves on port 8083: touchable, costs the sim nothing measurable, a button on the tile grows it to the whole tab; it
+needs this site on plain HTTP, since Safari blocks an http page inside an https one) and `match` (aircraft.cfg path globs for the automatic pop-out); the slots on the virtual monitor follow from
+that list and leave out the taskbar Windows shows on it. Settings: `VC_DISPLAY_CAPTURE_FPS` (default 30),
+`VC_DISPLAY_PROCESSES` (sim exe names), `VC_DISPLAY_STATE_FILE`, `VC_DISPLAY_DOCK` (`0` = don't use the virtual
+monitor), `VC_DISPLAY_DOCK_SIZE` (default `1600x1600`; must be a resolution listed in `vdd_settings.xml`),
+`VC_DISPLAY_DOCK_ADAPTER` (adapter name to recognise it by), `VC_DISPLAY_DOCK_CAPTURE` (`wgc`, or `dxgi`),
+`VC_DISPLAY_POPOUT_FILE`, `VC_CHASEPLANE_API_URL`.
+
+### Measuring the cost
+
+`tools/benchmark_displays.py` records the sim's frames with Intel PresentMon (downloaded to
+`%LOCALAPPDATA%\VirtualCockpit\tools\PresentMon.exe`) plus CPU and GPU use, optionally while a headless viewer
+pulls the displays like the iPad does:
 
 ```bash
-python app.py
+python tools/benchmark_displays.py run baseline                     # no pop-outs
+python tools/benchmark_displays.py run popouts                      # pop-outs open, nobody watching
+python tools/benchmark_displays.py run stream4 --stream pfd,nd,ewd,sd
+python tools/benchmark_displays.py report
 ```
 
-Then open in a browser (desktop or iPad):
+With a frame-rate cap the FPS barely moves; compare the GPU/CPU busy time per frame instead, or uncap the sim for
+the test.
 
-```text
-http://localhost:5000
+## ChasePlane views
+
+ChasePlane keeps a separate profile per aircraft preset (the Fenix CFM/IAE × SL/WF are four), so camera
+buttons would have to be bound again for every variant. **ChasePlane views** (link on the aircraft picker,
+`/chaseplane`) gives every variant of an aircraft the same view behind each website camera button:
+
+- The reference views live in `aircraft/<id>/chaseplane.json`. **Use as reference** on a profile copies the
+  views bound to the website's buttons there (tune a view in ChasePlane, bind it, capture, apply).
+- **Apply** writes them, with exactly one vJoy binding per button, into every matching profile. It reuses the
+  view already bound to a button (or an unbound view with the camera's name) and creates missing ones. Other
+  views, keyboard keys and other devices are left alone, and nothing is deleted.
+- The aircraft loaded in MSFS is skipped (ChasePlane holds it in memory); apply after switching aircraft or
+  returning to the menu. If MSFS is running but can't be asked, nothing is written.
+- Every changed profile is backed up first to `%LOCALAPPDATA%\VirtualCockpit\chaseplane_backups`;
+  **Restore backup** puts one back.
+- Command line: `python -m backend.chaseplane status | apply | capture <aircraft> <profile> | restore ...`
+
+`chaseplane.json`: `match` (globs against the preset's aircraft.cfg path or the profile folder name, so new
+variants and livery presets are picked up automatically), `global_cameras` (buttons bound to a ChasePlane
+action instead of a view, e.g. EXT = `CAM_TOGGLE_IN_OUT`; reported, not written) and `views` (camera id →
+reference view). Cameras without a reference view (e.g. `custom_03`) are not synced.
+
+Settings: `VC_CHASEPLANE_DIR` (ChasePlane's `work\aircraft` folder), `VC_CHASEPLANE_BACKUP_DIR`,
+`VC_CHASEPLANE_VJOY` (`"<device id>|<device name>"`; default: newest vJoy binding found in the profiles) and
+`VC_CHASEPLANE_AUTOSYNC=1` (the server applies pending changes by itself whenever the aircraft isn't loaded).
+
+## Adjusting sizes (Fenix A320)
+
+Edit the variables at the top of `static/css/aircraft/fenix_a320.css`:
+
+| Variable | Meaning |
+|---|---|
+| `--gear-height` | Largest height of the gear lever; it shrinks (to 80px) when the screen is short |
+| `--gear-width` | Largest width of the gear lever |
+| `--clock-scale` | Clock size multiplier (1 = design size) |
+| `--clock-width` | Clock width before scaling |
+
+## Project layout
+
+```
+app.py                       Flask app: PIN gate, registers the routes
+backend/
+  aircraft.py                Aircraft registry (scans aircraft/*/aircraft.json)
+  settings.py, paths.py      Settings (env vars) and file locations (source or PyInstaller)
+  routes/                    pages.py (PIN, picker, cockpit pages), lvars.py, camera.py, ofp.py, chaseplane.py,
+                             displays.py (setup API + WebSocket frame stream)
+  chaseplane/                ChasePlane view sync: sync.py (rules), store.py (files, backups), CLI
+  displays/                  Displays tab: dock.py (virtual monitor: placement + capture), popout.py (automatic
+                             pop-out), monitors.py,
+                             winenum.py (sim windows), capture.py (per-window fallback), assignments + encoding
+  sim/                       mobiflight.py (LVar transport), vjoy.py (buttons), simstate.py (loaded aircraft,
+                             flight start), chaseplane_api.py (ChasePlane camera API),
+                             simconnect_mobiflight.py + mobiflight_variable_requests.py (MobiFlight client)
+aircraft/<id>/               One folder per aircraft
+  aircraft.json              name, sim transport, cameras (id, label, vJoy button)
+  lvars.json                 the only sim variables this aircraft's page may read or write
+  chaseplane.json            optional: ChasePlane view set shared by all its variants
+  displays.json              optional: screens the Displays tab can stream
+tools/benchmark_displays.py  what pop-outs and display streaming cost the sim (PresentMon)
+tools/virtual_display/       virtual monitor install script + driver settings
+templates/
+  base.html, index.html      shared page shell; PIN + aircraft picker
+  aircraft/<id>.html         the aircraft's cockpit page
+  widgets/                   reusable markup (TCAS panel, clock, annunciator pushbutton, back link)
+static/js/
+  core/                      api.js (HTTP), sim.js (writes, pulses, polling, write holds), touch.js
+  widgets/                   reusable controls; know nothing about aircraft or LVars
+  aircraft/<id>/             the aircraft's page script: wires widgets to its LVars
+static/css/
+  base.css, widgets/*.css    shared styles
+  aircraft/<id>.css          the aircraft's layout
 ```
 
-You can also access it from another device on the LAN using `http://<your-pc-ip>:5000`.
+### How a page talks to the sim
 
-## 4. Folder structure and responsibilities
+- `GET /api/<id>/lvars` returns every variable in `aircraft/<id>/lvars.json` (polled every 450 ms).
+  MobiFlight forgets registered variables whenever any client clears its shared list (another tool, a second
+  server) or its module restarts; reads would then freeze while writes still work. The server writes a
+  counter to `L:VC_MOBIFLIGHT_CANARY` and re-registers everything when the counter stops coming back.
+- `POST /api/<id>/lvars {key, value}` writes one; unknown keys are rejected.
+- Momentary pushbuttons are sent as a press (1) then release (0) through one queue (`sim.pulse`), spaced so
+  the aircraft registers every press.
+- After a write, that control ignores sim values until the write has landed (`sim.hold` / `sim.isHeld`),
+  so the UI never flickers back to the old state.
+- `POST /api/<id>/camera {cam_id}` presses the vJoy button mapped in `aircraft.json`.
+- `GET /api/ofp`, `GET /api/metar` fetch the SimBrief OFP and METARs.
 
-```text
-virtual_cockpit/
-  app.py                        Flask app and vJoy / L:Var handlers
-  backend/
-    __init__.py
-    simconnect_mobiflight.py    Legacy SimConnect helper (not used by default)
-    mobiflight_variable_requests.py
-    fsuipc_wapi_reader.py       L:Var write/step helper using MobiFlight WAPI
-  data/
-    lvars.json                  L:Var mappings used for Fenix A320 AP
-  profiles/
-    __init__.py
-    fenix_a320.js               Aircraft profile and vJoy mappings (Fenix A320)
-    fenix_a350.js               Profile cloned from A320 with name updated
-    pmdg_737.js                 Profile and mappings for PMDG 737
-    pmdg_777.js                 Profile and mappings for PMDG 777
-  static/
-    css/
-      style.css                 UI styles
-    js/
-      config.js                 Base vJoy mapping defaults
-      main.js                   UI logic and control handlers
-  templates/
-    index.html                  Landing page (aircraft selection)
-    fenix_a320.html             Fenix A320 UI
-    fenix_a350.html             Fenix A350 UI
-    pmdg_737.html               PMDG 737 UI
-    pmdg_777.html               PMDG 777 UI
-```
+## Adding an aircraft
 
-## 5. Core behavior overview
+1. `aircraft/<id>/aircraft.json`: `{"name": "...", "sim": "mobiflight", "cameras": [...]}`
+2. `aircraft/<id>/lvars.json`: `{"my_key": {"lvar": "L:NAME"}}` for each variable the page uses
+   (optionally `"write_rpn"` for a custom MobiFlight RPN write).
+3. `templates/aircraft/<id>.html`: extend `base.html`; include widgets from `templates/widgets/`.
+4. `static/js/aircraft/<id>/main.js`: `createSim('<id>')`, init widgets, map them to your keys, `sim.start()`.
+5. `static/css/aircraft/<id>.css`: page layout.
+6. Optional, `aircraft/<id>/chaseplane.json`: `{"match": ["simobjects/airplanes/<package>/*"], "views": {}}`,
+   then bind the views once in one variant and **Use as reference** on the ChasePlane page.
 
-- **vJoy outputs**  
-  All control surface and button events are sent from the browser to Flask via `POST /update_sim`. `app.py` translates these payloads into `pyvjoy` axis and button outputs on vJoy Device 1. Examples include:
-  - Throttle axis (`throttle`)
-  - Flaps axis (`flaps_axis`)
-  - Spoilers axis and arming (`spoilers`, `arm_spoilers`)
-  - Brake axis (`brakes`)
-  - Rudder axis (`rudder`)
-  - Gear commands (`gear_command`)
-  - Generic button presses (`vjoy_button`)
-  - Camera shortcuts (`camera`)
+The aircraft appears in the picker automatically. Nothing shared needs editing. Keep aircraft-specific
+logic out of `core/` and `widgets/`; add new reusable controls under `widgets/`.
 
-- **No continuous SimConnect sim-state polling**  
-  The previous SimConnect-based `/get_sim` endpoint and periodic JS polling have been removed. The UI state (sliders, indicators) is driven entirely by local interactions, not by sim feedback. This avoids any dependency on SimVar reads for flaps, brakes, or spoilers.
+## Packaging
 
-- **Aircraft profiles**  
-  Profiles in `profiles/*.js` define:
-  - UI configuration (detents, camera buttons, reverse behavior, etc.).
-  - vJoy button mappings for each logical action.
-  - Optional per-aircraft logic for things like throttle shaping.
-
-- **State saving (per profile)**  
-  The frontend (`static/js/main.js`) periodically saves slider positions (flaps, throttle, spoilers, brakes, rudder) to `localStorage` once per minute. On reload:
-  - If a saved state exists for the current profile and is not the default, the sliders are restored and the corresponding vJoy outputs are sent once.
-
-- **Parking brake behavior**  
-  The parking brake button visual state is purely local:
-  - Default load state is “ON” (buttons filled).
-  - Tapping parking brake toggles a local boolean and sends the mapped vJoy button once; there is no sim-state tracking or auto-reset.
-
-- **Flight controls page (per aircraft)**  
-  The flight controls page contains:
-  - Virtual joystick for pitch/roll.
-  - Sliders for flaps, spoilers (with arming support), brakes (with optional left brake slider), and rudder.
-  - Throttle slider with profile-defined detents, reverse logic, and an IDLE helper button.
-  - Gear lever control that sends gear up/down vJoy output.
-
-- **Cameras and OFP / METAR**  
-  - Camera buttons (including a 10th “Custom” button) send camera vJoy button events according to the active profile.
-  - OFP view shows the SimBrief PDF and origin/destination METAR strings, with separate refresh buttons for METAR and OFP/PDF.
-
-- **Top of Descent (TD) timer (Fenix A320 only)**  
-  - On the Fenix A320 flight controls page, above the joystick:
-    - A live UTC clock is shown.
-    - You can enter a TD time in UTC (HH:MM) and press `SET TD`.
-  - The TD time is stored in `localStorage` and checked once per second while the page is open.
-  - When the TD time is reached:
-    - The status text shows that TD has been reached.
-    - A short tone is played using the browser audio API (subject to browser/tab audio rules).
-    - An alert dialog is shown as a reliable fallback notification.
-
-## 6. Customization and extension
-
-- Update mappings per aircraft in `profiles/*.js` (for example, to change which vJoy button is used for a given action).
-- Adjust UI behavior (sliders, joystick, TD timer, camera logic, state saving) in `static/js/main.js`.
-- Modify styles (layout, fonts, sizes) in `static/css/style.css`.
-
-The backend (`app.py`) is intentionally kept small: it accepts high-level events from the browser and pushes them to vJoy (and L:Vars for Fenix/MobiFlight cockpit controls where configured), without trying to mirror full sim state back into the UI.
-
-## 7. Plan of action: native iPad app (AI-agent–readable spec)
-
-This section is a detailed, step-by-step specification so an AI agent (or developer) can build a native iPad client that talks to the existing Windows Flask backend. The backend stays unchanged except where noted; the iPad app is a new Swift/SwiftUI project that replicates the web UI and uses the HTTP API below.
-
----
-
-### 7.1 Backend API contract (source of truth)
-
-Base URL: `http://<PC_IP>:5000`. All requests that need an active profile must either use the session (after login and page load) or send the profile explicitly (see 7.2).
-
-**Authentication (required for all endpoints except index)**
-
-- `POST /verify_pin`  
-  - Body: `{ "pin": "1234" }` (JSON).  
-  - Success: `200`, `{ "ok": true }`; sets server session `authed = true`.  
-  - Failure: `401`, `{ "ok": false }`.  
-  - The native app must call this once after the user enters the PIN; use the same session (cookies) for subsequent requests.
-
-**Profile selection (backend extension recommended)**
-
-- Current behavior: the web app sets `session['active_profile']` by loading a page like `/<profile>.html` (e.g. `fenix_a320.html`). The native app cannot “load” HTML pages to set session.
-- Recommended backend change: add `POST /session` with body `{ "pin": "1234", "profile": "fenix_a320" }` that (1) verifies PIN and sets `authed`, (2) sets `active_profile` to the given profile (one of `fenix_a320`, `fenix_a350`, `pmdg_737`, `pmdg_777`), (3) returns `{ "ok": true }`. If not implemented, the native app must rely on the backend exposing a way to set profile (e.g. header `X-Profile: fenix_a320` and backend reading it in `update_sim` and L:Var routes).
-
-**Control events (primary endpoint)**
-
-- `POST /update_sim`  
-  - Headers: `Content-Type: application/json`.  
-  - Body: one JSON object per request. The backend uses `session['active_profile']` to resolve profile (see `profiles/__init__.py`).  
-  - All axis values are in the range `0.0` to `1.0` unless stated otherwise.  
-  - Payloads (replace `...` with actual numbers):
-
-| `type` | Required fields | Optional / notes | Backend behavior |
-|--------|-----------------|------------------|------------------|
-| `throttle` | `value` (0–1), `reverse` (bool) | — | Sets reverse button 2; axis Z = value × 32767. Profile may transform value (e.g. Fenix idle floor). |
-| `rudder` | `value` (0–1) | — | Axis RX = value × 32767. |
-| `brakes` | `value` (0–1) | — | Axis X = value × 32767. |
-| `spoilers` | `value` (0–1) | — | Axis Y = profile.spoiler_formula(value) × 32767. |
-| `arm_spoilers` | — | — | Axis Y = profile.arm_spoiler_value × 32767. |
-| `flaps_axis` | `value` (0–1) | — | Axis SL0 = profile.flap_axis_mapping(value). Current mapping: (1−value)×32767. |
-| `flight_controls` | `val_x` (0–1), `val_y` (0–1) | — | RZ = val_x × 32767, RY = val_y × 32767. Center is 0.5, 0.5. |
-| `camera` | `cam_id` (int 1–10) | — | Button index = 9 + cam_id (press/release). |
-| `gear_command` | — | `state`: "UP" or "DOWN" (optional) | Button 4 press/release. |
-| `idle_command` | — | — | Axis Z = 0; button 3 press/release. |
-| `vjoy_button` | `button` (int) | — | vJoy button index (1-based); press then release after 50 ms. |
-| `flap_command` | `value` | — | value 0 → button 20, else button 21 (press/release). Rarely used. |
-
-- Response: `200` with `{ "status": "success" }` or `{ "error": "..." }` with `500` on failure.
-
-**L:Vars (Fenix / MobiFlight cockpit controls)**
-
-- `POST /lvars`  
-  - Body: `{ "key": "<lvar_key>", "value": <number> }`.  
-  - Profile is taken from session. Returns `200` with result or `400`/`503` with error.
-
-- `POST /lvars/step`  
-  - Body: `{ "key": "<lvar_key>", "delta": <number> }`.  
-  - Profile from session. Returns `200` or `400`/`503`.
-
-**OFP and METAR (read-only)**
-
-- `GET /ofp`  
-  - No body. Returns JSON: `{ "pdf_url": "<url>", "metars": { "origin": "<string>", "destination": "<string>" }, "origin_icao": "<code>", "destination_icao": "<code>" }` or `502` with `{ "error": "..." }`.
-
-- `GET /metar?origin=<ICAO>&destination=<ICAO>`  
-  - Returns `{ "metars": { "origin": "<raw>", "destination": "<raw>" } }`.
-
-**Profile data (for UI and mappings)**
-
-- Current: `GET /profiles/<profile_name>.js` returns JavaScript that assigns `window.PROFILE = { ... }`.  
-- Recommended backend addition: `GET /profiles/<profile_name>.json` that returns the same structure as JSON (so the native app can parse it without executing JS). Allowed `profile_name`: `fenix_a320`, `fenix_a350`, `pmdg_737`, `pmdg_777` (with or without `.json` suffix).  
-- If `.json` is not added, the iPad app must ship with bundled profile JSON files derived from the existing `profiles/*.js` (see profile schema below).
-
----
-
-### 7.2 Profile JSON schema (for native app)
-
-Each profile has this structure (mirror of `profiles/*.js`):
-
-```json
-{
-  "name": "Fenix A320",
-  "ui": {
-    "camera_config": [
-      { "id": 1, "name": "Captain" },
-      { "id": 2, "name": "Left Engine" },
-      ...
-      { "id": 10, "name": "Custom" }
-    ],
-    "flap_detents": [
-      { "index": 0, "label": "0", "val": 0.0 },
-      { "index": 1, "label": "1", "val": 0.25 },
-      ...
-    ],
-    "throttle_detents": [
-      { "label": "CLB", "val": 0.70 },
-      { "label": "FLX/MCT", "val": 0.85 },
-      { "label": "TO/GA", "val": 1 }
-    ],
-    "control_sensitivity": 1,
-    "control_response": 1.6,
-    "throttle_detent_snap": 0.05,
-    "reverse_behavior": {
-      "spool_down_ms": 0,
-      "idle_floor": 0.007,
-      "idle_rev": 0.0065,
-      "idle_bump_up": 0.05,
-      "idle_bump_ms": 150,
-      "idle_bump_down": 0.0005
-    },
-    "arm_spoilers_button": true
-  },
-  "mappings": {
-    "vjoy": {
-      "PARKING_BRAKE": 1,
-      "REVERSE_TOGGLE": 2,
-      "IDLE_BUTTON": 3,
-      "ARM_SPOILERS": 35,
-      "GEAR_UP": 4,
-      "GEAR_DOWN": 4,
-      "CAM_BASE": 10,
-      ...
-    }
-  }
-}
-```
-
-- **camera_config**: list of `{ id, name }`; `id` 1–10. The app sends `type: "camera", cam_id: id` to the backend.  
-- **flap_detents**: ordered by `val`; slider snaps to nearest; labels shown beside slider.  
-- **throttle_detents**: same idea; throttle slider can snap within `throttle_detent_snap` of a detent value.  
-- **reverse_behavior**: when `spool_down_ms === 0`, reverse is “instant”: going to reverse sets throttle 0 and sends a brief bump; coming out of reverse uses `idle_bump_up` / `idle_bump_ms` / `idle_floor`.  
-- **arm_spoilers_button**: if true, arm is a vJoy button only; if false, arm sends `arm_spoilers` axis value.  
-- **mappings.vjoy**: logical name → vJoy button index (1-based). Use for PARKING_BRAKE, ARM_SPOILERS, etc. Defaults are in `static/js/config.js` (VJOY_MAP) if a key is missing in the profile.
-
----
-
-### 7.3 Client-side logic the native app must implement
-
-- **Joystick**: 2D input (e.g. drag) producing `val_x`, `val_y` in 0–1. Apply optional `control_response` curve (e.g. power curve) and `control_sensitivity` scaling around center 0.5 before sending `flight_controls`. On release, send center (0.5, 0.5).  
-- **Throttle**: If profile has `reverse_behavior.spool_down_ms === 0`, reverse toggle is immediate (no 2 s spool down). When engaging reverse: set local throttle to 0, send `throttle` with `value: reverse_behavior.idle_bump_down`, `reverse: true`, then after `idle_bump_ms` send `value: 0`, `reverse: true`. When leaving reverse: set throttle to `idle_bump_up`, send `throttle` with that value `reverse: false`, then after `idle_bump_ms` set to `idle_floor` and send again. For “IDLE” button: send `idle_command` (or throttle to idle detent if profile has custom throttle command).  
-- **Flaps**: Slider 0–1; snap to nearest `flap_detents[].val`; send `flaps_axis` with that value.  
-- **Spoilers**: Slider 0–1; send `spoilers` with value. If “Arm” is pressed: if `arm_spoilers_button` true, send `vjoy_button` with ARM_SPOILERS mapping (and optionally set slider to 0 and send `spoilers` 0); else send `arm_spoilers` and set slider to 0. When user moves spoiler slider above a small threshold, clear “armed” state locally.  
-- **Brakes**: Slider 0–1; send `brakes` with value.  
-- **Rudder**: Slider 0–1 (center 0.5); apply same response/sensitivity as joystick; send `rudder`.  
-- **Gear**: Toggle button. Send `gear_command` (backend ignores `state` and toggles; or keep local state and send once per tap).  
-- **Parking brake**: Local boolean, default **true** (ON) at launch. Toggle on tap; send `vjoy_button` with PARKING_BRAKE mapping. No sim-state read.  
-- **Cameras**: Grid of buttons from `camera_config`; on tap send `camera` with `cam_id: item.id`.  
-- **State persistence**: Save to local storage (e.g. UserDefaults or file) once per minute: `{ profile, flaps, throttle, spoilers, brake, rudder }`. On launch, if saved state exists for current profile and is not the default (e.g. all zeros and rudder 0.5), restore sliders and send each axis once.  
-- **TD timer (Fenix A320 only)**: Show UTC clock (update every second). Input HH:MM (UTC); “Set TD” stores target UTC time (if in the past, use next day). Every second, if current time ≥ target and not yet fired: show “TD reached”, play short sound (use a pre-created AudioContext on first user gesture to avoid iOS blocking), and show an alert. Persist target time (and “fired” flag) in local storage so that if the user reopens the app after TD, they still get the alert once.
-
----
-
-### 7.4 Backend changes required for the native app
-
-1. **Profile in requests**  
-   Either:  
-   - Add `POST /session` with `{ "pin": "1234", "profile": "fenix_a320" }` that sets `session['authed']` and `session['active_profile']`, and have the native app call it after PIN entry and when changing aircraft; or  
-   - For `POST /update_sim`, `POST /lvars`, `POST /lvars/step`, accept an optional body field `"profile": "fenix_a320"` (or header `X-Profile`) and use it instead of session when present, so the native app can send profile with every request without session.
-
-2. **Profile as JSON**  
-   Add `GET /profiles/<name>.json` (or `GET /api/profiles/<name>`) that returns the profile object as JSON (same structure as in 7.2), so the app can fetch profile config without parsing JS.
-
-3. **CORS (if needed)**  
-   If the native app hits the backend from a different origin (e.g. during development), ensure CORS allows the app’s origin for `POST /update_sim`, `POST /lvars`, `POST /lvars/step`, `GET /ofp`, `GET /metar`. For a pure native app using URLSession to the same LAN IP, same-origin is not an issue; CORS matters for web or hybrid.
-
----
-
-### 7.5 Suggested implementation order for the AI agent
-
-1. **Backend**  
-   - Implement `POST /session` (pin + profile) and/or profile in request body/header for `update_sim` and L:Var routes.  
-   - Implement `GET /profiles/<name>.json` returning profile JSON (or document that the app will bundle profile JSON).
-
-2. **iPad app – project and networking**  
-   - New Xcode project: iPad-only, SwiftUI, minimum iOS 16 (or per your target).  
-   - Create a shared `BackendService`: base URL (e.g. `http://192.168.x.x:5000`), URLSession, cookie storage for session.  
-   - Implement: `verifyPin(pin)`, `setProfile(profile)` (if using `/session`), `sendControl(payload)` (POST `/update_sim`), `setLvar(key, value)`, `stepLvar(key, delta)`, `getOfp()`, `getMetar(origin, destination)`, `getProfile(name)` (if backend serves JSON).  
-   - Persist base URL and optionally PIN in UserDefaults; on first launch show “Enter PC URL and PIN” screen.
-
-3. **iPad app – profile and aircraft selection**  
-   - Load or fetch profiles for `fenix_a320`, `fenix_a350`, `pmdg_737`, `pmdg_777`.  
-   - Aircraft selection screen: four buttons/cards; on tap set active profile and navigate to the main cockpit view.
-
-4. **iPad app – main cockpit view (single screen first)**  
-   - One scrollable or stacked layout that includes:  
-     - Left: UTC clock + TD input + “Set TD” (Fenix A320 only); virtual joystick (drag view).  
-     - Center: Flaps, spoilers, brakes sliders with labels from profile; gear lever; parking brake; camera grid (from `camera_config`).  
-     - Right: Throttle slider with detent labels; IDLE button; REVERSE toggle.  
-     - Rudder: full-width horizontal slider (center 0.5).  
-   - Wire each control to the correct `sendControl(...)` payload and apply profile (detents, mappings, reverse_behavior, arm_spoilers_button).
-
-5. **iPad app – Fenix A320 specifics**  
-   - TD: UTC clock, HH:MM field, “Set TD” button; timer that checks every second; on fire: “TD reached”, sound, alert; persist in UserDefaults.
-
-6. **iPad app – state persistence**  
-   - Timer: every 60 s write current slider values + profile name to UserDefaults.  
-   - On launch: read back; if profile matches and state ≠ default, set slider values and send each axis once.
-
-7. **iPad app – OFP / METAR**  
-   - Optional second screen or sheet: “OFP” button opens a view that calls `getOfp()`, shows PDF (e.g. in `WKWebView` or `SafariServices`) and METAR strings; refresh buttons for METAR and for full OFP refetch.
-
-8. **Polish**  
-   - Haptics on button press and detent snap.  
-   - Connection status (e.g. ping or one failed request) and “Reconnect” or “Check URL”.  
-   - Dark theme matching current web UI.  
-   - If backend supports `POST /session`, “Change aircraft” without re-entering PIN.
-
-9. **Testing**  
-   - Backend on Windows, app on iPad on same LAN; verify every control type and profile; test TD timer and state restore.
-
----
-
-### 7.6 Summary for the agent
-
-- **Backend**: Keep `app.py` and vJoy; add optional `POST /session` and `GET /profiles/<name>.json`; optionally allow profile in request body/header for `update_sim` and L:Var routes.  
-- **API**: Use the exact payloads in 7.1; all values 0–1 unless noted; profile is either session or explicit per request.  
-- **Profile**: Use the schema in 7.2; get it from backend JSON or ship bundled JSON.  
-- **App**: SwiftUI iPad app; BackendService for all HTTP; one main cockpit view with all controls; implement the client logic in 7.3; state save/restore and TD timer for A320; then OFP/METAR, haptics, and connection handling.
+`output/`, `build/` and `dist/` are git-ignored. When building with PyInstaller, include the `templates`,
+`static` and `aircraft` folders as data (`backend/paths.py` resolves them inside the bundle).

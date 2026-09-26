@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{# ChasePlane view sync. Behaviour: static/js/pages/chaseplane.js; logic: backend/chaseplane/ #}
+
+{% block title %}ChasePlane Views{% endblock %}
+
+{% block styles %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/pages/chaseplane.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="cp-page">
+    <header class="cp-header">
+        <h1>ChasePlane views</h1>
+        {% include 'widgets/back_nav.html' %}
+    </header>
+    <p class="cp-intro">
+        Every variant of an aircraft (engine, wingtip, livery presets) gets the same view behind each camera
+        button. The aircraft loaded in MSFS is skipped: it's applied once you switch aircraft or go back to the
+        menu. Each profile is backed up before anything is written.
+    </p>
+    {% for a in aircraft_list %}
+    <section class="cp-aircraft" data-aircraft="{{ a.id }}">
+        <div class="cp-aircraft-head">
+            <h2>{{ a.name }}</h2>
+            <div class="cp-actions">
+                <button type="button" class="cp-btn" data-action="refresh">Refresh</button>
+                <button type="button" class="cp-btn cp-btn-primary" data-action="apply" disabled>Apply</button>
+            </div>
+        </div>
+        <div class="cp-message" role="status"></div>
+        <div class="cp-body">Loading…</div>
+    </section>
+    {% else %}
+    <p class="cp-intro">No aircraft has a chaseplane.json yet (see README, "ChasePlane views").</p>
+    {% endfor %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/pages/chaseplane.js') }}"></script>
+{% endblock %}

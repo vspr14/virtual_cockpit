@@ -1,0 +1,219 @@
+/* Airbus pedestal clock. Size it from the page with --clock-width (default 228px) and `zoom`. */
+.pedestal-clock-bezel {
+    width: var(--clock-width, 228px);
+    max-width: 100%;
+    margin: 0 auto;
+    background: var(--airbus-pedestal-bezel);
+    border-radius: 6px;
+    padding: 8px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), inset 0 -1px 0 rgba(0, 0, 0, 0.4), 0 6px 24px rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
+}
+
+.pedestal-clock-housing {
+    background: var(--airbus-pedestal-housing);
+    border-radius: 3px;
+    padding: 8px 6px;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.pedestal-clock-panel-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+}
+
+.pedestal-clock-title-above,
+.pedestal-clock-title-below {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+    color: #c8d4dc;
+    text-transform: uppercase;
+}
+
+.pedestal-clock-title-below {
+    margin-top: 1px;
+}
+
+.pedestal-clock-glass {
+    background: #000000;
+    border-radius: 8px;
+    padding: 6px 7px 4px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.pedestal-clock-td-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.pedestal-clock-digit-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.pedestal-clock-d {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+
+.pedestal-clock-sep {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 400;
+    color: #ffffff;
+    line-height: 1;
+    margin: 0 1px;
+    position: relative;
+    top: -1px;
+}
+
+.pedestal-clock-sep.pedestal-clock-blink {
+    animation: pedestal-clock-blink 1s step-end infinite;
+}
+
+.pedestal-clock-sub-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 1px 1px 0;
+    position: relative;
+    z-index: 2;
+}
+
+.pedestal-clock-sub {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: #3a9fc8;
+    text-transform: uppercase;
+}
+
+.pedestal-clock-set-btn {
+    position: absolute;
+    right: 5px;
+    bottom: 4px;
+    z-index: 10;
+    background: #111;
+    border: 1px solid #2a4050;
+    color: #3a9fc8;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 7px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    padding: 2px 4px;
+    border-radius: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.pedestal-clock-set-btn:hover {
+    border-color: #3a9fc8;
+    background: #0a1a24;
+}
+
+.pedestal-clock-picker-wrap {
+    position: relative;
+    width: 100%;
+}
+
+.pedestal-clock-picker-drop {
+    display: none;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(100% + 4px);
+    background: #1a2028;
+    border: 1px solid #2a3a48;
+    border-radius: 3px;
+    padding: 8px;
+    z-index: 200;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+.pedestal-clock-picker-drop.pedestal-clock-picker-open {
+    display: block;
+}
+
+.pedestal-clock-picker-drop input[type='time'] {
+    width: 100%;
+    box-sizing: border-box;
+    background: #000;
+    border: 1px solid #2a3a48;
+    color: #ffffff;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    padding: 6px;
+    border-radius: 2px;
+    outline: none;
+    text-align: center;
+    letter-spacing: 2px;
+}
+
+.pedestal-clock-picker-drop input[type='time']::-webkit-calendar-picker-indicator {
+    filter: invert(0.6) sepia(1) saturate(3) hue-rotate(170deg);
+    cursor: pointer;
+}
+
+.pedestal-clock-confirm-btn {
+    width: 100%;
+    margin-top: 6px;
+    background: #0a1820;
+    border: 1px solid #3a9fc8;
+    color: #3a9fc8;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    padding: 5px;
+    border-radius: 2px;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+.pedestal-clock-confirm-btn:hover {
+    background: #102030;
+}
+
+.pedestal-clock-td-display {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -1px;
+    position: relative;
+    z-index: 2;
+    padding: 2px 0;
+}
+
+@keyframes pedestal-clock-blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.15;
+    }
+}

@@ -1,0 +1,16 @@
+{
+  "source": "popout",
+  "match": ["simobjects/airplanes/fnx_32x/*"],
+  "displays": [
+    { "id": "pfd", "label": "PFD",        "name": "Captain PFD",                 "aspect": 1.0 },
+    { "id": "nd",  "label": "ND",         "name": "Captain ND",                  "aspect": 1.0 },
+    { "id": "ewd", "label": "UPPER ECAM", "name": "Engine / Warning Display",    "aspect": 1.0 },
+    { "id": "sd",  "label": "LOWER ECAM", "name": "System Display",              "aspect": 1.0 }
+  ],
+  "web": [
+    { "id": "efb", "label": "EFB", "name": "Fenix EFB", "url": "http://{host}:8083/" }
+  ],
+  "default": ["pfd", "nd", "ewd", "sd", "efb"],
+  "layout": { "cols": 3, "rows": 2,
+              "cells": { "pfd": [0, 0], "nd": [1, 0], "ewd": [2, 0], "sd": [2, 1], "efb": [0, 1, 2] } }
+}

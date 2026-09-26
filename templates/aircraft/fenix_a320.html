@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{# Fenix A320 cockpit page. Behaviour: static/js/aircraft/fenix_a320/; layout: css/aircraft/fenix_a320.css #}
+
+{% block title %}{{ aircraft.name }}{% endblock %}
+
+{% block styles %}
+{% for css in ['widgets/camera_grid.css', 'widgets/annunciator_pb.css', 'widgets/pedestal_clock.css',
+               'widgets/tcas_xpdr.css', 'widgets/display_view.css', 'aircraft/fenix_a320.css'] %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/' + css) }}">
+{% endfor %}
+{% endblock %}
+
+{% block body_attrs %}class="cockpit-body" data-aircraft="{{ aircraft.id }}"{% endblock %}
+
+{% from 'widgets/annunciator_pb.html' import annunciator_pb %}
+
+{% block content %}
+<div class="cockpit">
+    <div class="center-zone">
+        <div class="top-panel">
+            <div class="nav-bar" style="--nav-tabs: {{ 3 if aircraft.displays else 2 }}">
+                {% include 'widgets/back_nav.html' %}
+                <button id="tabControls" class="nav-btn active">CONTROLS</button>
+                <button id="tabOfp" class="nav-btn">OFP</button>
+                {% if aircraft.displays %}<button id="tabDisplays" class="nav-btn">DISPLAYS<span class="nav-caret" aria-hidden="true">▾</span></button>{% endif %}
+                {% include 'widgets/refresh_nav.html' %}
+            </div>
+
+            <div id="camGrid" class="ecam-panel">
+                <div class="ecam-matrix">
+                    <div class="ecam-cell-empty" aria-hidden="true"></div>
+                    <button type="button" id="toConfigBtn" class="ecam-btn ecam-momentary">
+                        <div class="ecam-btn-label">T.O.<br>CONFIG</div>
+                    </button>
+                    {% for _ in range(4) %}<div class="ecam-cell-empty" aria-hidden="true"></div>{% endfor %}
+                    {% for cam in aircraft.cameras %}
+                    <button type="button" class="ecam-btn" data-cam-id="{{ cam.id }}">
+                        <div class="ecam-stripes">
+                            <div class="ecam-stripe"></div>
+                            <div class="ecam-stripe"></div>
+                            <div class="ecam-stripe"></div>
+                        </div>
+                        <div class="ecam-btn-label">{{ cam.label }}</div>
+                    </button>
+                    {% endfor %}
+                    <button type="button" class="ecam-btn ecam-momentary" data-cam-cycle>
+                        <div class="ecam-btn-label">ALL</div>
+                    </button>
+                </div>
+            </div>
+            <div id="metarContainer" class="metar-container hidden">
+                <div id="metarContent" class="metar-content"></div>
+                <button id="metarRefreshBtn" class="metar-refresh-btn" title="Refresh METAR">↻</button>
+                <button id="ofpRefreshBtn" class="metar-refresh-btn ofp-refresh-btn" title="Refresh SimBrief PDF">PDF ↻</button>
+            </div>
+            <div id="ofpContainer" class="ofp-container hidden"></div>
+            <div id="ofpCameraButtons" class="ofp-camera-buttons hidden">
+                {% for cam in aircraft.cameras if cam.ofp %}
+                <button type="button" class="cam-btn" data-cam-id="{{ cam.id }}">{{ cam.name }}</button>
+                {% endfor %}
+            </div>
+            {% if aircraft.displays %}{% include 'widgets/display_view.html' %}{% endif %}
+        </div>
+
+        <div class="pedestal">
+            <div class="ped-left">
+                <div class="ped-label">AUTO BRK</div>
+                <div class="pb-row" id="autobrake">
+                    <div class="pb-group">
+                        {{ annunciator_pb('LO', upper='DECEL', lower='ON', attrs='data-autobrake="LO"') }}
+                        {{ annunciator_pb('MED', upper='DECEL', lower='ON', attrs='data-autobrake="MED"') }}
+                    </div>
+                    <div class="pb-divider" aria-hidden="true"></div>
+                    <div class="pb-group">
+                        {{ annunciator_pb('MAX', upper='DECEL', lower='ON', attrs='data-autobrake="MAX"') }}
+                    </div>
+                </div>
+                <div class="ped-title">GEAR</div>
+                <div id="gear-3d-mount" class="gear-3d-mount"></div>
+                <div class="ped-title">CLOCK</div>
+                {% include 'widgets/pedestal_clock.html' %}
+            </div>
+
+            <div class="ped-divider" aria-hidden="true"></div>
+
+            <div class="ped-right">
+                {% include 'widgets/tcas_xpdr_panel.html' %}
+                <div class="radar-block">
+                    <div class="ped-subtitle">Radar &amp; PWS</div>
+                    <div id="radar-pws-3d-mount" class="radar-pws-3d-mount" tabindex="0" role="region"
+                        aria-label="Radar and PWS switches"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="module" src="{{ url_for('static', filename='js/aircraft/fenix_a320/main.js') }}"></script>
+{% endblock %}

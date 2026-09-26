@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Virtual Display Driver settings for Virtual Cockpit (installed to C:\VirtualDisplayDriver by install.ps1).
+     One monitor that only holds the sim's pop-out screens; the server captures it for the Displays tab.
+     __GPU__ is replaced by the adapter that drives the primary monitor (the one the sim renders on). -->
+<vdd_settings>
+    <monitors>
+        <count>1</count>
+    </monitors>
+    <gpu>
+        <friendlyname>__GPU__</friendlyname>
+    </gpu>
+    <global>
+        <g_refresh_rate>60</g_refresh_rate>
+    </global>
+    <resolutions>
+        <!-- 2 x 2 slots of 800 x 800 (Airbus screens). Larger slots = sharper tiles, more GPU work in the sim. -->
+        <resolution>
+            <width>1600</width>
+            <height>1600</height>
+            <refresh_rate>60</refresh_rate>
+        </resolution>
+        <resolution>
+            <width>2048</width>
+            <height>2048</height>
+            <refresh_rate>60</refresh_rate>
+        </resolution>
+        <resolution>
+            <width>1200</width>
+            <height>1200</height>
+            <refresh_rate>60</refresh_rate>
+        </resolution>
+    </resolutions>
+    <options>
+        <CustomEdid>false</CustomEdid>
+        <PreventSpoof>false</PreventSpoof>
+        <EdidCeaOverride>false</EdidCeaOverride>
+        <HardwareCursor>false</HardwareCursor>
+        <SDR10bit>false</SDR10bit>
+        <HDRPlus>false</HDRPlus>
+        <logging>false</logging>
+        <debuglogging>false</debuglogging>
+    </options>
+</vdd_settings>

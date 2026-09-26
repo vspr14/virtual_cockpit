@@ -1,0 +1,13 @@
+# Python
+__pycache__/
+*.pyc
+
+# PyInstaller
+build/
+dist/
+output/
+
+# Runtime / OS
+logs/
+.DS_Store
+Thumbs.db

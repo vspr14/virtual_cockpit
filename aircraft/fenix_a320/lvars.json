@@ -1,0 +1,32 @@
+{
+  "gear_handle":           { "lvar": "L:S_MIP_GEAR" },
+  "ecam_to":               { "lvar": "L:S_ECAM_TO" },
+
+  "autobrake_lo":          { "lvar": "L:S_MIP_AUTOBRAKE_LO" },
+  "autobrake_med":         { "lvar": "L:S_MIP_AUTOBRAKE_MED" },
+  "autobrake_max":         { "lvar": "L:S_MIP_AUTOBRAKE_MAX" },
+  "i_mip_autobrake_lo_l":  { "lvar": "L:I_MIP_AUTOBRAKE_LO_L" },
+  "i_mip_autobrake_lo_u":  { "lvar": "L:I_MIP_AUTOBRAKE_LO_U" },
+  "i_mip_autobrake_med_l": { "lvar": "L:I_MIP_AUTOBRAKE_MED_L" },
+  "i_mip_autobrake_med_u": { "lvar": "L:I_MIP_AUTOBRAKE_MED_U" },
+  "i_mip_autobrake_max_l": { "lvar": "L:I_MIP_AUTOBRAKE_MAX_L" },
+  "i_mip_autobrake_max_u": { "lvar": "L:I_MIP_AUTOBRAKE_MAX_U" },
+
+  "xpdr_operation":        { "lvar": "L:S_XPDR_OPERATION" },
+  "xpdr_mode":             { "lvar": "L:S_XPDR_MODE" },
+  "tcas_range":            { "lvar": "L:S_TCAS_RANGE" },
+  "xpdr_entry":            { "lvar": "L:N_FREQ_STANDBY_XPDR_SELECTED" },
+  "xpdr_entry_chars":      { "lvar": "L:N_PED_XPDR_CHAR_DISPLAYED" },
+  "ped_atc_0":             { "lvar": "L:S_PED_ATC_0" },
+  "ped_atc_1":             { "lvar": "L:S_PED_ATC_1" },
+  "ped_atc_2":             { "lvar": "L:S_PED_ATC_2" },
+  "ped_atc_3":             { "lvar": "L:S_PED_ATC_3" },
+  "ped_atc_4":             { "lvar": "L:S_PED_ATC_4" },
+  "ped_atc_5":             { "lvar": "L:S_PED_ATC_5" },
+  "ped_atc_6":             { "lvar": "L:S_PED_ATC_6" },
+  "ped_atc_7":             { "lvar": "L:S_PED_ATC_7" },
+  "ped_atc_clr":           { "lvar": "L:S_PED_ATC_CLR" },
+
+  "wr_sys":                { "lvar": "L:S_WR_SYS" },
+  "wr_pws":                { "lvar": "L:S_WR_PRED_WS" }
+}

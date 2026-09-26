@@ -1,0 +1,64 @@
+{# Displays tab: live cockpit screens, edge to edge. Needs `aircraft.displays` (aircraft/<id>/displays.json).
+   The controls live in a menu opened by tapping the (already open) DISPLAYS tab.
+   Behaviour: static/js/widgets/display_view.js; styles: css/widgets/display_view.css #}
+<div id="displayView" class="display-view hidden" data-config='{{ aircraft.displays | tojson }}'>
+    <div class="display-stage"></div>
+    <div class="display-menu hidden" role="dialog" aria-label="Displays menu">
+        <div class="display-menu-label">Screens</div>
+        <div class="display-chips" role="group" aria-label="Displays to show">
+            {% for d in aircraft.displays.displays + (aircraft.displays.web or []) %}
+            <button type="button" class="display-chip" data-display="{{ d.id }}" aria-pressed="false"
+                title="{{ d.name }}">{{ d.label }}</button>
+            {% endfor %}
+        </div>
+        <div class="display-menu-actions">
+            <button type="button" class="display-tool display-arrange-btn">ARRANGE</button>
+            <button type="button" class="display-tool display-auto-btn">AUTO LAYOUT</button>
+            <button type="button" class="display-tool display-setup-btn">SETUP</button>
+        </div>
+    </div>
+    <div class="display-arrange-bar">
+        <span>Drag a screen to move it, its corner to resize</span>
+        <button type="button" class="display-tool display-arrange-auto">AUTO</button>
+        <button type="button" class="display-tool display-arrange-done">DONE</button>
+    </div>
+    <div class="display-setup hidden" role="dialog" aria-label="Display setup">
+        <div class="display-setup-head">
+            <div>
+                <div class="display-setup-title">Display setup</div>
+                <p class="display-setup-note">
+                    In the sim, hold Right-Alt and click a screen to pop it out, then pick what each window shows.
+                    Assigned windows move to the virtual monitor, out of sight, and come back here when set to
+                    “Not used”.
+                </p>
+                <p class="display-setup-note display-dock-note"></p>
+            </div>
+            <div class="display-setup-actions">
+                <button type="button" class="display-setup-refresh">Refresh</button>
+                <button type="button" class="display-setup-close">Done</button>
+            </div>
+        </div>
+        <div class="display-setup-list"></div>
+        <section class="display-popout">
+            <div class="display-setup-title">Automatic pop-out</div>
+            <p class="display-setup-note">
+                Pick a ChasePlane view that shows the screens and take a picture. Tap a screen's name, then tap that screen
+                in the picture. The server then pops them out like Pop Out Panel Manager does (ChasePlane view, Right-Alt +
+                click) and hides them on the virtual monitor. Keep your hands off the mouse while it runs.
+            </p>
+            <div class="display-popout-row">
+                <select class="display-popout-camera" aria-label="ChasePlane view to pop out from"></select>
+                <button type="button" class="display-tool display-popout-picture">TAKE PICTURE</button>
+                <button type="button" class="display-tool display-popout-run">POP OUT NOW</button>
+                <label class="display-popout-auto"><input type="checkbox"> Pop out when a flight starts</label>
+            </div>
+            <div class="display-popout-targets" role="group" aria-label="Screen to place">
+                {% for d in aircraft.displays.displays %}
+                <button type="button" class="display-chip" data-target="{{ d.id }}">{{ d.label }}</button>
+                {% endfor %}
+            </div>
+            <div class="display-popout-shot"><img alt="Sim window"><div class="display-popout-markers"></div></div>
+            <p class="display-setup-note display-popout-status"></p>
+        </section>
+    </div>
+</div>
